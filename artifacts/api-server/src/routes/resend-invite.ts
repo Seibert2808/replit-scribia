@@ -1,10 +1,21 @@
 import { Router, type IRouter } from 'express'
-import { createAdminClient } from '../lib/supabase-admin.js'
+import { createAdminClient, createAnonClient } from '../lib/supabase-admin.js'
 
 const router: IRouter = Router()
 
 router.post('/resend-invite', async (req, res) => {
   try {
+    const supabase = createAnonClient(req.headers.authorization)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) { res.status(401).json({ error: 'Unauthorized' }); return }
+
+    const { data: profile } = await supabase
+      .from('user_profiles').select('roles').eq('id', user.id).single()
+    const roles = (profile as { roles: string[] } | null)?.roles ?? []
+    if (!roles.includes('super_admin') && !roles.includes('organizer')) {
+      res.status(403).json({ error: 'Forbidden' }); return
+    }
+
     const { token } = req.body
     if (!token) { res.status(400).json({ error: 'Token is required' }); return }
 
@@ -21,8 +32,8 @@ router.post('/resend-invite', async (req, res) => {
       res.status(400).json({ error: 'Convite expirado. Solicite um novo ao organizador.' }); return
     }
 
-    const siteUrl = process.env.SITE_URL ?? process.env.REPLIT_DEV_DOMAIN
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://scribia.app'
+    const siteUrl = process.env.SITE_URL
+      ?? (process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'https://scribia.app')
     const redirectTo = `${siteUrl}/auth/set-password?token=${token}`
 
     const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
