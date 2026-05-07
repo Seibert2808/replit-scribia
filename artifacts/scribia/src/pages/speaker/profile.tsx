@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Redirect } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { SpeakerSidebar } from '@/components/layout/speaker-sidebar'
 import { Save } from 'lucide-react'
@@ -24,7 +25,7 @@ export default function SpeakerProfilePage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setSpeakerName('__unauthorized__'); setLoading(false); return }
       const { data } = await supabase.from('speakers').select('id, name, email, bio, company, role, mini_bio, formation, linkedin_url, pronouns, profile_photo_url, avatar_url').eq('user_id', user.id).single()
       if (data) {
         const s = data as SpeakerProfile & { profile_photo_url: string | null; avatar_url: string | null }
@@ -52,6 +53,8 @@ export default function SpeakerProfilePage() {
   function update(field: keyof SpeakerProfile, value: string) {
     setProfile((p) => p ? { ...p, [field]: value } : p)
   }
+
+  if (speakerName === '__unauthorized__') return <Redirect to="/login" />
 
   return (
     <div className="min-h-screen bg-bg">

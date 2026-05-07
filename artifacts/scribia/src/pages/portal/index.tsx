@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation, Redirect } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PortalHeader } from '@/components/layout/portal-header'
 import { Headphones, BookOpen, Users } from 'lucide-react'
@@ -18,15 +19,17 @@ function formatDuration(seconds: number | null) {
 }
 
 export default function PortalPage() {
+  const [, navigate] = useLocation()
   const [userName, setUserName] = useState('Participante')
   const [eventName, setEventName] = useState('ScribIA')
   const [lectures, setLectures] = useState<Lecture[]>([])
   const [loading, setLoading] = useState(true)
+  const [unauthorized, setUnauthorized] = useState(false)
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setUnauthorized(true); setLoading(false); return }
       const { data: profile } = await supabase.from('user_profiles').select('full_name').eq('id', user.id).single()
       setUserName((profile as { full_name: string } | null)?.full_name ?? user.email?.split('@')[0] ?? 'Participante')
 
@@ -46,6 +49,8 @@ export default function PortalPage() {
     }
     load()
   }, [])
+
+  if (unauthorized) return <Redirect to="/login" />
 
   return (
     <div className="min-h-screen bg-bg">

@@ -29,9 +29,11 @@ import AiSettingsPage from '@/pages/admin/ai-settings'
 import AdminPromptsPage from '@/pages/admin/prompts'
 
 import PortalPage from '@/pages/portal/index'
+import PortalLectureDetailPage from '@/pages/portal/lectures/detail'
 import SpeakerDashboardPage from '@/pages/speaker/dashboard'
 import SpeakerLecturesPage from '@/pages/speaker/lectures'
 import SpeakerProfilePage from '@/pages/speaker/profile'
+import SpeakerLectureDetailPage from '@/pages/speaker/lectures/detail'
 
 import { Sidebar } from '@/components/layout/sidebar'
 import { AdminSidebar } from '@/components/layout/admin-sidebar'
@@ -230,10 +232,12 @@ function Router() {
 
       {/* Portal */}
       <Route path="/portal" component={PortalPage} />
+      <Route path="/portal/lectures/:id" component={PortalLectureDetailPage} />
 
       {/* Speaker */}
       <Route path="/speaker/dashboard" component={SpeakerDashboardPage} />
       <Route path="/speaker/lectures" component={SpeakerLecturesPage} />
+      <Route path="/speaker/lectures/:id" component={SpeakerLectureDetailPage} />
       <Route path="/speaker/profile" component={SpeakerProfilePage} />
 
       {/* 404 */}

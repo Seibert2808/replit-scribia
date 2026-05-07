@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Redirect } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { SpeakerSidebar } from '@/components/layout/speaker-sidebar'
 import { StatCard } from '@/components/ui/stat-card'
@@ -23,7 +24,7 @@ export default function SpeakerDashboardPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); setSpeakerName('__unauthorized__'); return }
 
       const { data: speaker } = await supabase.from('speakers').select('id, name, profile_photo_url, avatar_url').eq('user_id', user.id).single()
       if (!speaker) { setLoading(false); return }
@@ -43,6 +44,8 @@ export default function SpeakerDashboardPage() {
     }
     load()
   }, [])
+
+  if (speakerName === '__unauthorized__') return <Redirect to="/login" />
 
   if (loading) return (
     <div className="min-h-screen bg-bg lg:pl-64 pt-14 lg:pt-0">
