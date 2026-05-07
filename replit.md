@@ -1,44 +1,53 @@
-# [Project name]
+# Scribia
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A Portuguese-language event and lecture management platform for organizers, speakers, and participants, backed by Supabase.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/scribia run dev` — run the Scribia web app (port 18777)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- Required secrets: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React + Vite, Tailwind CSS v4, wouter v3 (routing)
+- Auth & DB: Supabase (`@supabase/supabase-js`)
+- Icons: lucide-react
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/scribia/src/App.tsx` — root router with auth guards and role-based redirects
+- `artifacts/scribia/src/lib/supabase.ts` — Supabase browser client
+- `artifacts/scribia/src/hooks/use-auth.ts` — useAuth hook
+- `artifacts/scribia/src/pages/` — all pages (auth, dashboard, admin, speaker, portal)
+- `artifacts/scribia/src/components/` — UI + layout components
+- `artifacts/scribia/src/index.css` — Tailwind v4 design tokens (colors, fonts)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Wouter v3 is used instead of Next.js router — `useNavigate` does not exist; use `useLocation()` which returns `[path, navigate]`
+- Supabase secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) are injected into the Vite bundle via `define` in `vite.config.ts` since Replit secrets are not auto-exposed to `import.meta.env`
+- Role-based access: `super_admin` → `/admin`, `organizer` → `/dashboard`, `speaker` → `/speaker/dashboard`, participant → `/portal`
+- Auth guards are `ProtectedDashboard` and `ProtectedAdmin` wrapper components in App.tsx
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Organizer dashboard**: manage events, lectures, speakers, participants, materials, reports, AI prompts
+- **Admin panel**: manage organizers, events, invitations, AI settings
+- **Speaker portal**: view assigned lectures, manage profile
+- **Participant portal**: view events and content
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Portuguese (Brazilian) language throughout the UI
+- Purple brand color (`#7C5CBF`) with Tailwind v4 custom tokens
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Wouter v3: always use `useLocation()` not `useNavigate()` — the latter doesn't exist
+- Supabase env vars must be injected via Vite `define` — Replit secrets aren't auto-exposed as `import.meta.env.VITE_*`
+- The `VITE_SUPABASE_URL` must start with `https://` (e.g. `https://xxxx.supabase.co`)
 
 ## Pointers
 
