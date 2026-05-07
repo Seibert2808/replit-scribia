@@ -1,51 +1,49 @@
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# compiled output
+dist
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
 
-# Environment & Secrets (AIOX)
-.env
-.env.local
-.env.*.local
-*.key
-*.pem
-
-# Dependencies (AIOX)
-node_modules/
+# dependencies
 node_modules
 
-# Build & Logs (AIOX)
-dist/
-build/
-*.log
-logs/
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# IDE & OS (AIOX)
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
 .DS_Store
 Thumbs.db
-.idea/
-*.swp
 
-# AIOX Local (AIOX)
-.aiox-core/local/
-.claude/settings.local.json
-.aiox/install-log.txt
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
 
-# Next.js
-.next/
-out/
-
-# Turbo
-.turbo/
-
-# Tauri
-src-tauri/target/
-
-# Supabase
-supabase/.temp/
-
-# Testing
-coverage/
-
-# AIOX Runtime
-.aiox/handoffs/
-.ai/
-
-.vercel
+# Replit
+.cache/
+.local/
