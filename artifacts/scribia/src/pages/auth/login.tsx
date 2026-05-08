@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'wouter'
 import { Mail, Lock, Send } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { homeForRole, pickPrimaryRole, setActiveRole, type UserRole } from '@/lib/active-role'
 
 const inputClass = 'w-full bg-bg3 border border-border-subtle rounded-lg pl-10 pr-3.5 py-3 text-[14px] text-text placeholder:text-text3 outline-none transition-all focus:border-border-purple focus:ring-2 focus:ring-purple/20'
 
@@ -26,10 +27,16 @@ export default function LoginPage() {
     setLoading(true)
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) { setError(error.message); setLoading(false); return }
-    const { data: profile } = await supabase.from('user_profiles').select('roles').eq('id', data.user.id).single()
-    const roles = (profile as { roles: string[] } | null)?.roles ?? []
-    const redirectTo = roles.includes('super_admin') ? '/admin' : roles.includes('organizer') ? '/dashboard' : roles.includes('speaker') ? '/speaker/dashboard' : '/portal'
-    navigate(redirectTo)
+    const { data: profile } = await supabase.from('user_profiles').select('roles, role').eq('id', data.user.id).single()
+    const p = profile as { roles?: string[]; role?: string } | null
+    const validRoles: UserRole[] = ((p?.roles ?? (p?.role ? [p.role] : [])) as string[])
+      .filter((r): r is UserRole => r === 'super_admin' || r === 'organizer' || r === 'speaker' || r === 'participant')
+
+    if (validRoles.length === 0) { navigate('/forbidden'); return }
+    if (validRoles.length > 1) { navigate('/select-role'); return }
+    const only = pickPrimaryRole(validRoles)!
+    setActiveRole(only)
+    navigate(homeForRole(only))
   }
 
   async function handleMagicLink() {

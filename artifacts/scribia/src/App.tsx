@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useState } from 'react'
-import { Switch, Route, Router as WouterRouter, Redirect, useLocation } from 'wouter'
+import { Switch, Route, Router as WouterRouter, Redirect } from 'wouter'
 import { ThemeProvider } from '@/components/theme-provider'
 import { supabase } from '@/lib/supabase'
 
@@ -7,7 +7,10 @@ import LoginPage from '@/pages/auth/login'
 import RegisterPage from '@/pages/auth/register'
 import ForgotPasswordPage from '@/pages/auth/forgot-password'
 import SetPasswordPage from '@/pages/auth/set-password'
+import SelectRolePage from '@/pages/auth/select-role'
 import ForbiddenPage from '@/pages/forbidden'
+
+import { homeForRole, useActiveRole } from '@/lib/active-role'
 
 import DashboardPage from '@/pages/dashboard/index'
 import EventsPage from '@/pages/dashboard/events/index'
@@ -47,16 +50,36 @@ function useCurrentUser() {
   const [authed, setAuthed] = useState(false)
 
   useEffect(() => {
+    const withTimeout = <T,>(p: PromiseLike<T>, ms: number, label: string): Promise<T> =>
+      new Promise<T>((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error(`[auth] ${label} timed out after ${ms}ms`)), ms)
+        Promise.resolve(p).then(
+          (v) => { clearTimeout(t); resolve(v) },
+          (e) => { clearTimeout(t); reject(e) },
+        )
+      })
+
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
-      setAuthed(true)
-      const { data: profile } = await supabase.from('user_profiles').select('full_name, roles, role').eq('id', user.id).single()
-      const p = profile as { full_name: string; roles?: string[]; role?: string } | null
-      const userRoles = p?.roles ?? (p?.role ? [p.role] : [])
-      setRoles(userRoles)
-      setUserName(p?.full_name ?? user.email?.split('@')[0] ?? 'Usuário')
-      setLoading(false)
+      try {
+        const { data: { user }, error: userErr } = await withTimeout(supabase.auth.getUser(), 8000, 'getUser')
+        if (userErr) console.error('[auth] getUser failed:', userErr)
+        if (!user) { setAuthed(false); setRoles([]); setUserName(''); return }
+        setAuthed(true)
+        const { data: profile, error: profErr } = await withTimeout(
+          supabase.from('user_profiles').select('full_name, roles, role').eq('id', user.id).single(),
+          8000,
+          'user_profiles fetch',
+        )
+        if (profErr) console.error('[auth] user_profiles fetch failed:', profErr)
+        const p = profile as { full_name: string; roles?: string[]; role?: string } | null
+        const userRoles = p?.roles ?? (p?.role ? [p.role] : [])
+        setRoles(userRoles)
+        setUserName(p?.full_name ?? user.email?.split('@')[0] ?? 'Usuário')
+      } catch (e) {
+        console.error('[auth] load() threw:', e)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => load())
@@ -69,26 +92,10 @@ function useCurrentUser() {
     : roles.includes('participant') ? 'participant'
     : null
 
-  return { authed, loading, primaryRole, userName, roles }
-}
+  const stored = useActiveRole()
+  const activeRole: UserRole = (stored && roles.includes(stored)) ? stored : (roles.length === 1 ? primaryRole : null)
 
-function RequireAuth({ children, role }: { children: React.ReactNode; role?: UserRole }) {
-  const [, navigate] = [useLocation()[0], useLocation()[1]]
-  const { authed, loading, primaryRole } = useCurrentUser()
-
-  if (loading) return <LoadingScreen />
-
-  if (!authed) {
-    navigate('/login')
-    return null
-  }
-
-  if (role && primaryRole !== role) {
-    navigate('/forbidden')
-    return null
-  }
-
-  return <>{children}</>
+  return { authed, loading, activeRole, userName, roles }
 }
 
 function DashboardLayout({ children, userName, isSuperAdmin }: { children: React.ReactNode; userName: string; isSuperAdmin?: boolean }) {
@@ -129,21 +136,22 @@ function LoadingScreen() {
 }
 
 function AppIndex() {
-  const { authed, loading, primaryRole } = useCurrentUser()
+  const { authed, loading, activeRole, roles } = useCurrentUser()
   if (loading) return <LoadingScreen />
   if (!authed) return <Redirect to="/login" />
-  if (primaryRole === 'super_admin') return <Redirect to="/admin" />
-  if (primaryRole === 'organizer') return <Redirect to="/dashboard" />
-  if (primaryRole === 'speaker') return <Redirect to="/speaker/dashboard" />
-  return <Redirect to="/portal" />
+  if (roles.length === 0) return <Redirect to="/forbidden" />
+  if (!activeRole) return <Redirect to="/select-role" />
+  return <Redirect to={homeForRole(activeRole)} />
 }
 
-function ProtectedDashboard({ component: Component, isSuperAdmin }: { component: React.ComponentType; isSuperAdmin?: boolean }) {
-  const { authed, loading, primaryRole, userName, roles } = useCurrentUser()
+function ProtectedDashboard({ component: Component }: { component: React.ComponentType }) {
+  const { authed, loading, activeRole, userName, roles } = useCurrentUser()
   if (loading) return <LoadingScreen />
   if (!authed) return <Redirect to="/login" />
-  const isAdmin = roles.includes('super_admin')
-  if (primaryRole !== 'organizer' && !isAdmin) return <Redirect to="/forbidden" />
+  if (!roles.includes('organizer') && !roles.includes('super_admin')) return <Redirect to="/forbidden" />
+  if (!activeRole) return <Redirect to="/select-role" />
+  if (activeRole !== 'organizer' && activeRole !== 'super_admin') return <Redirect to={homeForRole(activeRole)} />
+  const isAdmin = activeRole === 'super_admin'
   return (
     <DashboardLayout userName={userName} isSuperAdmin={isAdmin}>
       <Component />
@@ -152,10 +160,12 @@ function ProtectedDashboard({ component: Component, isSuperAdmin }: { component:
 }
 
 function ProtectedAdmin({ component: Component }: { component: React.ComponentType }) {
-  const { authed, loading, roles, userName } = useCurrentUser()
+  const { authed, loading, activeRole, roles, userName } = useCurrentUser()
   if (loading) return <LoadingScreen />
   if (!authed) return <Redirect to="/login" />
   if (!roles.includes('super_admin')) return <Redirect to="/forbidden" />
+  if (!activeRole) return <Redirect to="/select-role" />
+  if (activeRole !== 'super_admin') return <Redirect to={homeForRole(activeRole)} />
   return (
     <AdminLayout userName={userName}>
       <Component />
@@ -173,6 +183,7 @@ function Router() {
       <Route path="/register" component={RegisterPage} />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} />
       <Route path="/auth/set-password" component={SetPasswordPage} />
+      <Route path="/select-role" component={SelectRolePage} />
       <Route path="/forbidden" component={ForbiddenPage} />
 
       {/* Dashboard */}

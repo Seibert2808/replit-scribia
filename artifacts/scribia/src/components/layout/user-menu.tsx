@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useLocation } from 'wouter'
-import { LogOut, ChevronUp } from 'lucide-react'
+import { LogOut, ChevronUp, Repeat } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { clearActiveRole, useUserRoles } from '@/lib/active-role'
 
 interface UserMenuProps {
   userName: string
@@ -25,8 +26,18 @@ export function UserMenu({ userName, userRole, variant = 'sidebar' }: UserMenuPr
 
   const handleSignOut = useCallback(async () => {
     setIsSigningOut(true)
+    clearActiveRole()
     await supabase.auth.signOut()
     navigate('/login')
+  }, [navigate])
+
+  const { roles } = useUserRoles()
+  const canSwitchRole = roles.length > 1
+
+  const handleSwitchRole = useCallback(() => {
+    setOpen(false)
+    clearActiveRole()
+    navigate('/select-role')
   }, [navigate])
 
   useEffect(() => {
@@ -58,6 +69,12 @@ export function UserMenu({ userName, userRole, variant = 'sidebar' }: UserMenuPr
               <div className="text-[10px] text-text3">{userRole}</div>
             </div>
             <div className="border-b border-border-subtle"><ThemeToggle /></div>
+            {canSwitchRole && (
+              <button onClick={handleSwitchRole} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-text2 hover:bg-bg4 hover:text-text transition-colors cursor-pointer border-b border-border-subtle">
+                <Repeat className="w-4 h-4" />
+                Trocar perfil
+              </button>
+            )}
             <button onClick={handleSignOut} disabled={isSigningOut} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-scribia-red hover:bg-bg4 transition-colors cursor-pointer disabled:opacity-50">
               <LogOut className="w-4 h-4" />
               {isSigningOut ? 'Saindo...' : 'Sair'}
@@ -81,6 +98,12 @@ export function UserMenu({ userName, userRole, variant = 'sidebar' }: UserMenuPr
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-bg3 border border-border-subtle rounded-lg shadow-xl shadow-black/30 overflow-hidden z-50 animate-fade-up">
           <div className="border-b border-border-subtle"><ThemeToggle /></div>
+          {canSwitchRole && (
+            <button onClick={handleSwitchRole} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-text2 hover:bg-bg4 hover:text-text transition-colors cursor-pointer border-b border-border-subtle">
+              <Repeat className="w-4 h-4" />
+              Trocar perfil
+            </button>
+          )}
           <button onClick={handleSignOut} disabled={isSigningOut} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-scribia-red hover:bg-bg4 transition-colors cursor-pointer disabled:opacity-50">
             <LogOut className="w-4 h-4" />
             {isSigningOut ? 'Saindo...' : 'Sair'}

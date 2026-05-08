@@ -2,8 +2,9 @@ import { Link, useLocation } from 'wouter'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
-import { LayoutDashboard, Mic2, User, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Mic2, User, LogOut, Menu, X, Repeat } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { clearActiveRole, useUserRoles } from '@/lib/active-role'
 
 interface SpeakerSidebarProps {
   userName: string
@@ -21,8 +22,17 @@ export function SpeakerSidebar({ userName, avatarUrl }: SpeakerSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   async function handleLogout() {
+    clearActiveRole()
     await supabase.auth.signOut()
     navigate('/login')
+  }
+
+  const { roles } = useUserRoles()
+  const canSwitchRole = roles.length > 1
+
+  function handleSwitchRole() {
+    clearActiveRole()
+    navigate('/select-role')
   }
 
   const initials = userName.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -83,6 +93,12 @@ export function SpeakerSidebar({ userName, avatarUrl }: SpeakerSidebarProps) {
 
         <div className="p-3 border-t border-border-subtle space-y-1">
           <ThemeToggle />
+          {canSwitchRole && (
+            <button onClick={handleSwitchRole} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-text2 hover:text-text hover:bg-bg3 transition-colors w-full">
+              <Repeat className="w-4 h-4" />
+              Trocar perfil
+            </button>
+          )}
           <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-text3 hover:text-red-500 hover:bg-red-500/5 transition-colors w-full">
             <LogOut className="w-4 h-4" />
             Sair
