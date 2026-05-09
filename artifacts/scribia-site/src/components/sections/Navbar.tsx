@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { SITE } from "@/utils/constants";
+import { LOGIN_URL, SITE } from "@/utils/constants";
 import { useEffect, useState } from "react";
 import { keyBlackToTransparent } from "@/utils/image";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -31,8 +31,9 @@ const Navbar = () => {
         
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-2 lg:gap-3">
-          {/* TODO: hook up later */}
-          <Button variant="outline" size="sm">Login</Button>
+          <Button asChild variant="outline" size="sm">
+            <a href={LOGIN_URL}>Login</a>
+          </Button>
           {/* TODO: hook up later */}
           <Button variant="cta" size="sm" className="hover-scale">Contratar</Button>
         </div>
@@ -57,8 +58,9 @@ const Navbar = () => {
               </a>
               
               <div className="flex flex-col gap-3 pt-4 border-t">
-                {/* TODO: hook up later */}
-                <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>Login</Button>
+                <Button asChild variant="outline" className="w-full">
+                  <a href={LOGIN_URL} onClick={() => setIsOpen(false)}>Login</a>
+                </Button>
                 {/* TODO: hook up later */}
                 <Button variant="cta" className="w-full" onClick={() => setIsOpen(false)}>Contratar</Button>
               </div>

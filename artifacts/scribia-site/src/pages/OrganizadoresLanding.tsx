@@ -7,6 +7,7 @@ import Footer from "@/components/sections/Footer";
 import AgendarSessaoDialog from "@/components/AgendarSessaoDialog";
 import { useState, useEffect } from "react";
 import { keyBlackToTransparent } from "@/utils/image";
+import { LOGIN_URL } from "@/utils/constants";
 import heroBg from "@/assets/organizadores-hero-bg.jpg";
 import sectionImage from "@/assets/organizadores-section-image.png";
 import {
@@ -208,9 +209,8 @@ const OrganizadoresLanding = () => {
           </ul>
 
           <div className="hidden md:flex items-center gap-3">
-            {/* TODO: hook up later */}
-            <Button variant="outline" size="sm">
-              Login
+            <Button asChild variant="outline" size="sm">
+              <a href={LOGIN_URL}>Login</a>
             </Button>
             <Button variant="cta" size="sm" onClick={handleCTAClick}>
               Quero contratar
@@ -218,9 +218,8 @@ const OrganizadoresLanding = () => {
           </div>
 
           <div className="flex md:hidden items-center gap-2">
-            {/* TODO: hook up later */}
-            <Button variant="outline" size="sm">
-              Login
+            <Button asChild variant="outline" size="sm">
+              <a href={LOGIN_URL}>Login</a>
             </Button>
             <Button variant="cta" size="sm" onClick={handleCTAClick}>
               Contratar

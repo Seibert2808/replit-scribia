@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { keyBlackToTransparent } from "@/utils/image";
-import { SITE } from "@/utils/constants";
+import { LOGIN_URL, SITE } from "@/utils/constants";
 
 const SimpleNavbar = () => {
   const [logoSrc, setLogoSrc] = useState("/lovable-uploads/scribia-logo-new.png");
@@ -37,8 +37,9 @@ const SimpleNavbar = () => {
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
-          {/* TODO: hook up later */}
-          <Button variant="ghost" size="sm">Login</Button>
+          <Button asChild variant="ghost" size="sm">
+            <a href={LOGIN_URL}>Login</a>
+          </Button>
           {/* TODO: hook up later */}
           <Button variant="default" size="sm">Contratar</Button>
         </div>

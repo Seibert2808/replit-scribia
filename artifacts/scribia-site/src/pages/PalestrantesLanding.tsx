@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/sections/Footer";
 import { useState, useEffect } from "react";
 import { keyBlackToTransparent } from "@/utils/image";
+import { LOGIN_URL } from "@/utils/constants";
 import palestraRetrato from "@/assets/Nicolai_Site.png";
 import palestraPalco from "@/assets/palestrante-palco.jpeg";
 import AgendarSessaoDialog from "@/components/AgendarSessaoDialog";
@@ -195,8 +196,9 @@ const PalestrantesLanding = () => {
           </ul>
 
           <div className="hidden md:flex items-center gap-3">
-            {/* TODO: hook up later */}
-            <Button variant="outline" size="sm">Login</Button>
+            <Button asChild variant="outline" size="sm">
+              <a href={LOGIN_URL}>Login</a>
+            </Button>
             <Button variant="cta" size="sm" onClick={handleCTAClick}>Agendar Sessão</Button>
           </div>
 
