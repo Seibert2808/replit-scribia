@@ -79,12 +79,20 @@ function RowCard({ ev }: { ev: PublicEvent }) {
   )
 }
 
+function getLocalCoverImage(name: string): string | null {
+  const n = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  if (n.includes('siaparto')) return '/images/siaparto-2025.jpg'
+  if (n.includes('pericia') || n.includes('imersa') || n.includes('imersao')) return '/images/imerso-pericia-pratica-2026.jpg'
+  return null
+}
+
 export default function PublicEventsPage() {
   const [events, setEvents] = useState<PublicEvent[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
+      try {
       const { data: listData } = await supabase
         .from('events')
         .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
@@ -114,11 +122,15 @@ export default function PublicEventsPage() {
           start_date: e.start_date,
           end_date: e.end_date,
           location: e.location,
-          cover_image_url: e.cover_image_url,
+          cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
           organizer_name: orgNameById[e.organizer_id] ?? '',
         }))
       )
-      setLoading(false)
+      } catch (_) {
+        // silent
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
