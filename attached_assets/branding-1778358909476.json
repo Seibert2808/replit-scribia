@@ -1,0 +1,112 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Inter",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#6859C0",
+    "secondary": "#9A82C9",
+    "accent": "#676284",
+    "background": "#F9F8FB",
+    "textPrimary": "#676284",
+    "link": "#676284"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Inter",
+      "heading": "Inter"
+    },
+    "fontStacks": {
+      "heading": [
+        "Inter",
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "sans-serif"
+      ],
+      "body": [
+        "Inter",
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Inter",
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "16px",
+      "h2": "16px",
+      "body": "11px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 8,
+    "borderRadius": "3px"
+  },
+  "components": {
+    "buttonPrimary": {
+      "background": "#F1F0F5",
+      "textColor": "#181528",
+      "borderRadius": "21.6px",
+      "borderRadiusCorners": {
+        "topLeft": "21.6px",
+        "topRight": "21.6px",
+        "bottomRight": "21.6px",
+        "bottomLeft": "21.6px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": null,
+    "favicon": "https://scribiaeventos.replit.app/favicon.svg",
+    "ogImage": null
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Imersão Perícia na Prática - Da Teoria ao Posicionamento28 de mar. de 2026",
+      "reasoning": "Button #0 is selected as the primary CTA because it features a prominent event title and date, suggesting it is a key action for users to explore the event details. The background color, although not vibrant, is consistent with the site's color scheme, indicating importance."
+    },
+    "secondary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "Both buttons share the same background color, making it impossible to select a secondary button with a different color. Therefore, no valid secondary button exists."
+    },
+    "confidence": 0.8
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "event attendees and professionals"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.8,
+    "colors": 0.9,
+    "overall": 0.8500000000000001
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": false,
+      "llmSucceeded": false,
+      "finalSource": "none"
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
