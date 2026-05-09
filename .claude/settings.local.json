@@ -42,7 +42,8 @@
       "Bash(npx tsc *)",
       "Bash(npx vite *)",
       "Bash(PORT=5000 npx vite build)",
-      "Bash(PORT=5000 BASE_PATH=/ npx vite build)"
+      "Bash(PORT=5000 BASE_PATH=/ npx vite build)",
+      "Bash(pnpm --filter @workspace/scribia-site run build)"
     ]
   }
 }
