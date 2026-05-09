@@ -88,7 +88,7 @@ export default function PublicEventsPage() {
       const { data: listData } = await supabase
         .from('events')
         .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
-        .neq('status', 'draft')
+        .eq('status', 'active')
         .order('end_date', { ascending: false })
 
       const list = (listData ?? []) as Array<{
