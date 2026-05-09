@@ -35,7 +35,7 @@ export default function SelectRolePage() {
         }
         const { data, error: profErr } = await supabase
           .from('user_profiles')
-          .select('full_name, roles, role')
+          .select('full_name, roles')
           .eq('id', user.id)
           .single()
         if (cancelled) return
@@ -43,8 +43,8 @@ export default function SelectRolePage() {
           setError('Não foi possível carregar seu perfil. Tente novamente.')
           return
         }
-        const p = data as { full_name?: string; roles?: string[]; role?: string } | null
-        const valid = (p?.roles ?? (p?.role ? [p.role] : []))
+        const p = data as { full_name?: string; roles?: string[] } | null
+        const valid = (p?.roles ?? [])
           .filter((r): r is UserRole => r in ROLE_META)
         setUserName(p?.full_name ?? user.email?.split('@')[0] ?? '')
         setRoles(valid)

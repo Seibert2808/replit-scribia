@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, Redirect } from 'wouter'
+import { useLocation, Redirect, useSearch } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PortalHeader } from '@/components/layout/portal-header'
 import { AudioPlayer } from '@/components/portal/audio-player'
@@ -47,6 +47,11 @@ const TABS = [
 
 export default function PortalLectureDetailPage({ params }: { params: { id: string } }) {
   const [, navigate] = useLocation()
+  const search = useSearch()
+  const initialTab = (() => {
+    const t = new URLSearchParams(search).get('tab')
+    return t === 'player' || t === 'materials' || t === 'overview' ? t : 'overview'
+  })()
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [unauthorized, setUnauthorized] = useState(false)
@@ -58,7 +63,7 @@ export default function PortalLectureDetailPage({ params }: { params: { id: stri
   const [seniorityLevel, setSeniorityLevel] = useState<SeniorityLevel | null>(null)
   const [materialsExpired, setMaterialsExpired] = useState(false)
   const [materialsExpiresAt, setMaterialsExpiresAt] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState(initialTab)
   const [showTranscript, setShowTranscript] = useState(false)
   const [downloading, setDownloading] = useState(false)
 
@@ -71,15 +76,29 @@ export default function PortalLectureDetailPage({ params }: { params: { id: stri
       const { data: profile } = await supabase.from('user_profiles').select('full_name').eq('id', user.id).single()
       setUserName((profile as { full_name: string } | null)?.full_name ?? user.email?.split('@')[0] ?? 'Participante')
 
-      const { data: access } = await supabase.from('lecture_access').select('id, seniority_level').eq('user_id', user.id).eq('lecture_id', params.id).single()
-      if (!access) { setNotFound(true); setLoading(false); return }
-      const acc = access as { id: string; seniority_level: string | null }
-      if (acc.seniority_level) setSeniorityLevel(acc.seniority_level as SeniorityLevel)
-      await supabase.from('lecture_access').update({ accessed_at: new Date().toISOString() } as never).eq('user_id', user.id).eq('lecture_id', params.id)
-
       const { data: lec } = await supabase.from('lectures').select('id, title, status, duration_seconds, audio_path, event_id, ebook_content, playbook_content, summary, topics, transcript_text, speakers(name), events(name, materials_access_days)').eq('id', params.id).single()
       if (!lec) { setNotFound(true); setLoading(false); return }
       const l = lec as unknown as LectureData
+
+      const { data: enrollment } = await supabase
+        .from('event_participants')
+        .select('id')
+        .eq('event_id', l.event_id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (!enrollment) { setNotFound(true); setLoading(false); return }
+
+      const { data: access } = await supabase
+        .from('lecture_access')
+        .upsert(
+          { lecture_id: params.id, user_id: user.id, accessed_at: new Date().toISOString() } as never,
+          { onConflict: 'lecture_id,user_id' },
+        )
+        .select('seniority_level')
+        .single()
+      const acc = access as { seniority_level: string | null } | null
+      if (acc?.seniority_level) setSeniorityLevel(acc.seniority_level as SeniorityLevel)
+
       setLecture(l)
       setEventName(l.events?.name ?? 'ScribIA')
 
@@ -129,9 +148,12 @@ export default function PortalLectureDetailPage({ params }: { params: { id: stri
     setDownloading(true)
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
-      const { data: access } = await supabase.from('lecture_access').select('download_count').eq('lecture_id', lecture!.id).eq('user_id', user.id).single()
+      const { data: access } = await supabase.from('lecture_access').select('download_count').eq('lecture_id', lecture!.id).eq('user_id', user.id).maybeSingle()
       const count = (access as { download_count: number } | null)?.download_count ?? 0
-      await supabase.from('lecture_access').update({ download_count: count + 1 } as never).eq('lecture_id', lecture!.id).eq('user_id', user.id)
+      await supabase.from('lecture_access').upsert(
+        { lecture_id: lecture!.id, user_id: user.id, download_count: count + 1 } as never,
+        { onConflict: 'lecture_id,user_id' },
+      )
     }
     const profileParam = profileType ? `&profile=${profileType}` : ''
     window.open(`${apiBase}/api/materials/${lecture!.id}?type=${type}${profileParam}`, '_blank')

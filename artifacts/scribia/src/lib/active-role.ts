@@ -56,9 +56,9 @@ export function useUserRoles() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) { if (!cancelled) { setRoles([]); setLoading(false) } ; return }
-        const { data } = await supabase.from('user_profiles').select('roles, role').eq('id', user.id).single()
-        const p = data as { roles?: string[]; role?: string } | null
-        const arr = (p?.roles ?? (p?.role ? [p.role] : [])).filter((r): r is UserRole => r in ROLE_HOMES)
+        const { data } = await supabase.from('user_profiles').select('roles').eq('id', user.id).single()
+        const p = data as { roles?: string[] } | null
+        const arr = (p?.roles ?? []).filter((r): r is UserRole => r in ROLE_HOMES)
         if (!cancelled) setRoles(arr)
       } catch (e) {
         console.error('[active-role] useUserRoles failed:', e)

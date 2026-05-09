@@ -74,28 +74,47 @@ export default function PortalPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">{[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-bg3 rounded-xl animate-pulse" />)}</div>
         ) : lectures.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-4.5 stagger-children">
-            {lectures.map((lecture) => (
-              <div key={lecture.id} className="bg-bg2 border border-border-subtle rounded-xl overflow-hidden hover:border-border-purple transition-all animate-fade-up">
-                <div className="h-1.5 bg-gradient-to-r from-purple to-purple-light" />
-                <div className="p-4 sm:p-5">
-                  <h3 className="font-heading font-bold text-[14px] text-text leading-snug">{lecture.title}</h3>
-                  <p className="text-[11.5px] text-text3 mt-1.5">{lecture.speakers?.name ?? 'Palestrante'}</p>
-                  {formatDuration(lecture.duration_seconds) && (
-                    <p className="text-[11.5px] text-text3">{formatDuration(lecture.duration_seconds)}</p>
-                  )}
-                  <div className="flex items-center gap-3 mt-4 pt-3 border-t border-border-subtle">
-                    <button className="flex items-center gap-1.5 text-[12px] text-purple-light hover:text-purple transition-colors font-medium">
-                      <Headphones className="w-3.5 h-3.5" /> Ouvir
-                    </button>
-                    {lecture.ebook_content && (
-                      <button className="flex items-center gap-1.5 text-[12px] text-scribia-green hover:opacity-80 transition-colors font-medium">
-                        <BookOpen className="w-3.5 h-3.5" /> E-book
-                      </button>
+            {lectures.map((lecture) => {
+              const goTo = (tab?: 'player' | 'materials') =>
+                navigate(`/portal/lectures/${lecture.id}${tab ? `?tab=${tab}` : ''}`)
+              return (
+                <div
+                  key={lecture.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => goTo()}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo() } }}
+                  className="bg-bg2 border border-border-subtle rounded-xl overflow-hidden hover:border-border-purple transition-all animate-fade-up cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-light"
+                >
+                  <div className="h-1.5 bg-gradient-to-r from-purple to-purple-light" />
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-heading font-bold text-[14px] text-text leading-snug">{lecture.title}</h3>
+                    <p className="text-[11.5px] text-text3 mt-1.5">{lecture.speakers?.name ?? 'Palestrante'}</p>
+                    {formatDuration(lecture.duration_seconds) && (
+                      <p className="text-[11.5px] text-text3">{formatDuration(lecture.duration_seconds)}</p>
                     )}
+                    <div className="flex items-center gap-3 mt-4 pt-3 border-t border-border-subtle">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); goTo('player') }}
+                        className="flex items-center gap-1.5 text-[12px] text-purple-light hover:text-purple transition-colors font-medium"
+                      >
+                        <Headphones className="w-3.5 h-3.5" /> Ouvir
+                      </button>
+                      {lecture.ebook_content && (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); goTo('materials') }}
+                          className="flex items-center gap-1.5 text-[12px] text-scribia-green hover:opacity-80 transition-colors font-medium"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" /> E-book
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div className="text-center py-16">

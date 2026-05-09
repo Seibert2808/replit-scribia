@@ -38,6 +38,11 @@ import SpeakerLecturesPage from '@/pages/speaker/lectures'
 import SpeakerProfilePage from '@/pages/speaker/profile'
 import SpeakerLectureDetailPage from '@/pages/speaker/lectures/detail'
 
+import PublicEventsPage from '@/pages/public/events'
+import PublicOrganizersPage from '@/pages/public/organizers'
+import PublicOrganizerPage from '@/pages/public/organizer'
+import PublicEventPage from '@/pages/public/event'
+
 import { Sidebar } from '@/components/layout/sidebar'
 import { AdminSidebar } from '@/components/layout/admin-sidebar'
 
@@ -66,13 +71,13 @@ function useCurrentUser() {
         if (!user) { setAuthed(false); setRoles([]); setUserName(''); return }
         setAuthed(true)
         const { data: profile, error: profErr } = await withTimeout(
-          supabase.from('user_profiles').select('full_name, roles, role').eq('id', user.id).single(),
+          supabase.from('user_profiles').select('full_name, roles').eq('id', user.id).single(),
           8000,
           'user_profiles fetch',
         )
         if (profErr) console.error('[auth] user_profiles fetch failed:', profErr)
-        const p = profile as { full_name: string; roles?: string[]; role?: string } | null
-        const userRoles = p?.roles ?? (p?.role ? [p.role] : [])
+        const p = profile as { full_name: string; roles?: string[] } | null
+        const userRoles = p?.roles ?? []
         setRoles(userRoles)
         setUserName(p?.full_name ?? user.email?.split('@')[0] ?? 'Usuário')
       } catch (e) {
@@ -136,12 +141,7 @@ function LoadingScreen() {
 }
 
 function AppIndex() {
-  const { authed, loading, activeRole, roles } = useCurrentUser()
-  if (loading) return <LoadingScreen />
-  if (!authed) return <Redirect to="/login" />
-  if (roles.length === 0) return <Redirect to="/forbidden" />
-  if (!activeRole) return <Redirect to="/select-role" />
-  return <Redirect to={homeForRole(activeRole)} />
+  return <Redirect to="/eventos" />
 }
 
 function ProtectedDashboard({ component: Component }: { component: React.ComponentType }) {
@@ -240,6 +240,12 @@ function Router() {
       <Route path="/admin/prompts">
         {() => <ProtectedAdmin component={AdminPromptsPage} />}
       </Route>
+
+      {/* Public */}
+      <Route path="/eventos" component={PublicEventsPage} />
+      <Route path="/organizadores" component={PublicOrganizersPage} />
+      <Route path="/o/:orgSlug/:eventSlug" component={PublicEventPage} />
+      <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
       {/* Portal */}
       <Route path="/portal" component={PortalPage} />

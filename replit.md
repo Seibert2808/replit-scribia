@@ -5,6 +5,7 @@ A Portuguese-language event and lecture management platform for organizers, spea
 ## Run & Operate
 
 - `pnpm --filter @workspace/scribia run dev` — run the Scribia web app (port 18777)
+- `pnpm --filter @workspace/scribia-site run dev` — run the public landing site (port 18778)
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
 - Required secrets: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
 
@@ -23,6 +24,7 @@ A Portuguese-language event and lecture management platform for organizers, spea
 - `artifacts/scribia/src/pages/` — all pages (auth, dashboard, admin, speaker, portal)
 - `artifacts/scribia/src/components/` — UI + layout components
 - `artifacts/scribia/src/index.css` — Tailwind v4 design tokens (colors, fonts)
+- `artifacts/scribia-site/` — public landing site (Vite + React 18 + react-router + Tailwind v3); deployed at scribia-site.vercel.app from github.com/Seibert2808/scribia-site
 
 ## Architecture decisions
 
@@ -48,6 +50,7 @@ A Portuguese-language event and lecture management platform for organizers, spea
 - Wouter v3: always use `useLocation()` not `useNavigate()` — the latter doesn't exist
 - Supabase env vars must be injected via Vite `define` — Replit secrets aren't auto-exposed as `import.meta.env.VITE_*`
 - The `VITE_SUPABASE_URL` must start with `https://` (e.g. `https://xxxx.supabase.co`)
+- `scribia-site` uses React 18 + @types/react@18; the workspace catalog is on React 19. The two coexist (each app has its own `react` resolved by pnpm), but `scribia-site` does NOT have a `typecheck` script because tsc gets confused by hoisted React 19 types from other workspace packages. Upgrading `scribia-site` to React 19 is a future task for the dev team.
 
 ## Pointers
 
