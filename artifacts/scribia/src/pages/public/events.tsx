@@ -93,39 +93,39 @@ export default function PublicEventsPage() {
   useEffect(() => {
     async function load() {
       try {
-      const { data: listData } = await supabase
-        .from('events')
-        .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
-        .eq('status', 'active')
-        .order('end_date', { ascending: false })
+        const { data: listData } = await supabase
+          .from('events')
+          .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
+          .eq('status', 'active')
+          .order('end_date', { ascending: false })
 
-      const list = (listData ?? []) as Array<{
-        id: string; name: string; start_date: string; end_date: string
-        location: string | null; cover_image_url: string | null; organizer_id: string
-      }>
+        const list = (listData ?? []) as Array<{
+          id: string; name: string; start_date: string; end_date: string
+          location: string | null; cover_image_url: string | null; organizer_id: string
+        }>
 
-      const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
-      let orgNameById: Record<string, string> = {}
-      if (orgIds.length > 0) {
-        const { data: usersData } = await supabase
-          .from('user_profiles')
-          .select('id, full_name')
-          .in('id', orgIds)
-        const users = (usersData ?? []) as Array<{ id: string; full_name: string }>
-        orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
-      }
+        const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
+        let orgNameById: Record<string, string> = {}
+        if (orgIds.length > 0) {
+          const { data: usersData } = await supabase
+            .from('user_profiles')
+            .select('id, full_name')
+            .in('id', orgIds)
+          const users = (usersData ?? []) as Array<{ id: string; full_name: string }>
+          orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
+        }
 
-      setEvents(
-        list.map((e) => ({
-          id: e.id,
-          name: e.name,
-          start_date: e.start_date,
-          end_date: e.end_date,
-          location: e.location,
-          cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
-          organizer_name: orgNameById[e.organizer_id] ?? '',
-        }))
-      )
+        setEvents(
+          list.map((e) => ({
+            id: e.id,
+            name: e.name,
+            start_date: e.start_date,
+            end_date: e.end_date,
+            location: e.location,
+            cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
+            organizer_name: orgNameById[e.organizer_id] ?? '',
+          }))
+        )
       } catch (_) {
         // silent
       } finally {
