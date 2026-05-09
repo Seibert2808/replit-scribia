@@ -8,6 +8,7 @@ import { homeForRole, pickPrimaryRole, getActiveRole, type UserRole } from '@/li
 const NAV_LINKS = [
   { href: '/eventos', label: 'Eventos' },
   { href: '/organizadores', label: 'Organizadores' },
+  { href: '/sobre', label: 'Saiba mais' },
 ] as const
 
 export function PublicHeader() {

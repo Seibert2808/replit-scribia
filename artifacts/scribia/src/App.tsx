@@ -42,6 +42,7 @@ import PublicEventsPage from '@/pages/public/events'
 import PublicOrganizersPage from '@/pages/public/organizers'
 import PublicOrganizerPage from '@/pages/public/organizer'
 import PublicEventPage from '@/pages/public/event'
+import SobrePage from '@/pages/sobre'
 
 import { Sidebar } from '@/components/layout/sidebar'
 import { AdminSidebar } from '@/components/layout/admin-sidebar'
@@ -243,9 +244,9 @@ function Router() {
 
       {/* Public */}
       <Route path="/eventos" component={PublicEventsPage} />
+      <Route path="/eventos/:id" component={PublicEventPage} />
+      <Route path="/sobre" component={SobrePage} />
       <Route path="/organizadores" component={PublicOrganizersPage} />
-      <Route path="/o/:orgSlug/:eventSlug" component={PublicEventPage} />
-      <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
       {/* Portal */}
       <Route path="/portal" component={PortalPage} />

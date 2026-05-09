@@ -2,26 +2,81 @@ import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
-import { Calendar } from 'lucide-react'
+import { Calendar, MapPin, ChevronRight } from 'lucide-react'
 
 interface PublicEvent {
   id: string
-  slug: string
   name: string
   start_date: string
   end_date: string
+  location: string | null
   cover_image_url: string | null
-  organizer_id: string
-  organizer_slug: string
   organizer_name: string
 }
 
-function formatDateRange(startISO: string, endISO: string): string {
-  const start = new Date(startISO)
-  const end = new Date(endISO)
-  const sameDay = start.toDateString() === end.toDateString()
-  const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-  return sameDay ? fmt(start) : `${fmt(start)} – ${fmt(end)}`
+function formatDateLong(iso: string): string {
+  const d = new Date(iso)
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function FeaturedCard({ ev, large }: { ev: PublicEvent; large?: boolean }) {
+  return (
+    <Link
+      href={`/eventos/${ev.id}`}
+      className={`group relative rounded-2xl overflow-hidden block bg-bg3 ${large ? 'aspect-[16/10]' : 'aspect-[4/3]'}`}
+    >
+      {ev.cover_image_url ? (
+        <img
+          src={ev.cover_image_url}
+          alt={ev.name}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-purple/70 via-purple-dark/50 to-purple-dim" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+        <p className="text-[10px] text-white/60 uppercase tracking-widest mb-1">{ev.organizer_name}</p>
+        <h3 className={`font-heading font-bold text-white leading-snug drop-shadow line-clamp-2 ${large ? 'text-[20px] sm:text-[22px]' : 'text-[16px] sm:text-[18px]'}`}>
+          {ev.name}
+        </h3>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5">
+          <span className="flex items-center gap-1 text-[11px] text-white/75">
+            <Calendar className="w-3 h-3" />
+            {formatDateLong(ev.start_date)}
+          </span>
+          {ev.location && (
+            <span className="flex items-center gap-1 text-[11px] text-white/65">
+              <MapPin className="w-3 h-3" />
+              {ev.location}
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function RowCard({ ev }: { ev: PublicEvent }) {
+  return (
+    <Link
+      href={`/eventos/${ev.id}`}
+      className="group flex items-center gap-4 bg-bg2 border border-border-subtle rounded-xl p-3 hover:border-border-purple hover:bg-bg3/40 transition-all"
+    >
+      <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-bg3">
+        {ev.cover_image_url ? (
+          <img src={ev.cover_image_url} alt={ev.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-purple/40 to-purple-dim" />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-[14px] text-text group-hover:text-purple-light transition-colors truncate">{ev.name}</p>
+        <p className="text-[11.5px] text-text3 mt-0.5">{formatDateLong(ev.start_date)}{ev.location ? ` · ${ev.location}` : ''}</p>
+      </div>
+      <ChevronRight className="w-4 h-4 text-text3 group-hover:text-purple-light group-hover:translate-x-0.5 transition-all shrink-0" />
+    </Link>
+  )
 }
 
 export default function PublicEventsPage() {
@@ -30,100 +85,95 @@ export default function PublicEventsPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: orgsData } = await supabase
-        .from('organizer_profiles')
-        .select('id, slug, display_name')
-
-      const orgs = (orgsData ?? []) as Array<{ id: string; slug: string; display_name: string }>
-      const orgById = Object.fromEntries(orgs.map((o) => [o.id, o]))
-      const orgIds = orgs.map((o) => o.id)
-
-      if (orgIds.length === 0) { setEvents([]); setLoading(false); return }
-
       const { data: listData } = await supabase
         .from('events')
-        .select('id, slug, name, start_date, end_date, cover_image_url, organizer_id')
-        .eq('status', 'completed')
-        .in('organizer_id', orgIds)
+        .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
+        .neq('status', 'draft')
         .order('end_date', { ascending: false })
 
       const list = (listData ?? []) as Array<{
-        id: string; slug: string; name: string; start_date: string; end_date: string;
-        cover_image_url: string | null; organizer_id: string
+        id: string; name: string; start_date: string; end_date: string
+        location: string | null; cover_image_url: string | null; organizer_id: string
       }>
 
-      const enriched: PublicEvent[] = list
-        .filter((e) => orgById[e.organizer_id])
-        .map((e) => ({
-          ...e,
-          organizer_slug: orgById[e.organizer_id].slug,
-          organizer_name: orgById[e.organizer_id].display_name,
-        }))
+      const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
+      let orgNameById: Record<string, string> = {}
+      if (orgIds.length > 0) {
+        const { data: usersData } = await supabase
+          .from('user_profiles')
+          .select('id, full_name')
+          .in('id', orgIds)
+        const users = (usersData ?? []) as Array<{ id: string; full_name: string }>
+        orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
+      }
 
-      setEvents(enriched)
+      setEvents(
+        list.map((e) => ({
+          id: e.id,
+          name: e.name,
+          start_date: e.start_date,
+          end_date: e.end_date,
+          location: e.location,
+          cover_image_url: e.cover_image_url,
+          organizer_name: orgNameById[e.organizer_id] ?? '',
+        }))
+      )
       setLoading(false)
     }
     load()
   }, [])
 
+  const featured = events.slice(0, 3)
+  const rest = events.slice(3)
+
   return (
     <div className="min-h-screen bg-bg">
       <PublicHeader />
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-10 md:pt-14 pb-4">
-        <h1 className="font-heading text-[28px] sm:text-[34px] md:text-[40px] font-extrabold text-text leading-tight tracking-tight animate-fade-up">
-          Eventos
-        </h1>
-        <p className="text-[13.5px] sm:text-[14.5px] text-text2 mt-2 max-w-2xl leading-relaxed animate-fade-up">
-          Palestras transformadas em áudio, transcrição, e-book e playbook — disponíveis para acessar quando quiser.
-        </p>
-      </section>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-8 md:pt-12 pb-20">
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pb-16">
+        {/* Section label */}
+        <p className="text-[11px] font-semibold text-purple-light uppercase tracking-widest mb-3 animate-fade-up">Em destaque</p>
+
+        {/* Featured grid — Netwoo style */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-48 bg-bg3 rounded-xl animate-pulse" />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
+            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
+            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
           </div>
-        ) : events.length === 0 ? (
-          <div className="text-center py-16 bg-bg2 border border-dashed border-border-subtle rounded-xl">
+        ) : featured.length === 0 ? (
+          <div className="text-center py-20 bg-bg2 border border-dashed border-border-subtle rounded-2xl mb-10">
             <Calendar className="w-8 h-8 text-text3 mx-auto mb-3" />
             <p className="text-[13px] text-text3">Nenhum evento publicado ainda.</p>
           </div>
+        ) : featured.length === 1 ? (
+          <div className="mb-10 animate-fade-up">
+            <FeaturedCard ev={featured[0]} large />
+          </div>
+        ) : featured.length === 2 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 stagger-children">
+            {featured.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
-            {events.map((ev) => (
-              <Link
-                key={ev.id}
-                href={`/o/${ev.organizer_slug}/${ev.slug}`}
-                className="group bg-bg2 border border-border-subtle rounded-xl overflow-hidden hover:border-border-purple transition-all animate-fade-up"
-              >
-                <div className="aspect-[16/9] bg-bg3 overflow-hidden relative">
-                  {ev.cover_image_url ? (
-                    <img src={ev.cover_image_url} alt={ev.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-purple/30 via-purple-dim to-bg3 flex items-center justify-center">
-                      <Calendar className="w-8 h-8 text-purple-light/60" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-4 sm:p-5">
-                  <div className="text-[11px] text-text3 mb-1.5">{ev.organizer_name}</div>
-                  <h3 className="font-heading font-bold text-[15px] text-text leading-snug line-clamp-2">{ev.name}</h3>
-                  <div className="flex items-center gap-1.5 mt-3 text-[11.5px] text-text3">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {formatDateRange(ev.start_date, ev.end_date)}
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 stagger-children">
+            {featured.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
           </div>
         )}
-      </section>
+
+        {/* Rest of events */}
+        {!loading && rest.length > 0 && (
+          <div className="animate-fade-up">
+            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest mb-3">Todos os eventos</p>
+            <div className="flex flex-col gap-2">
+              {rest.map((ev) => <RowCard key={ev.id} ev={ev} />)}
+            </div>
+          </div>
+        )}
+      </main>
 
       <footer className="border-t border-border-subtle py-8 text-center">
-        <div className="text-[11px] text-text3">© {new Date().getFullYear()} Scribia · Do palco ao material pronto em minutos</div>
+        <p className="text-[11px] text-text3">© {new Date().getFullYear()} Scribia · Do palco ao material pronto em minutos</p>
       </footer>
     </div>
   )
