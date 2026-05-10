@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'wouter'
-import { Sun, Moon } from 'lucide-react'
+import { Sun, Moon, Menu, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useTheme } from '@/components/theme-provider'
 import { homeForRole, pickPrimaryRole, getActiveRole, type UserRole } from '@/lib/active-role'
@@ -14,9 +14,14 @@ const NAV_LINKS = [
 export function PublicHeader() {
   const [authed, setAuthed] = useState(false)
   const [dashboardHref, setDashboardHref] = useState('/dashboard')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [location] = useLocation()
   const { theme, setTheme } = useTheme()
   const ThemeIcon = theme === 'light' ? Moon : Sun
+
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location])
 
   useEffect(() => {
     let mounted = true
@@ -92,13 +97,52 @@ export function PublicHeader() {
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center bg-purple text-white px-4 py-2 rounded-lg text-[13px] font-medium hover:bg-purple-light transition-all"
+              className="inline-flex items-center bg-purple text-white px-3 sm:px-4 py-2 rounded-lg text-[13px] font-medium hover:bg-purple-light transition-all"
             >
               Entrar
             </Link>
           </>
         )}
+        <button
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          className="sm:hidden w-9 h-9 inline-flex items-center justify-center rounded-md text-text2 hover:text-purple-light hover:bg-bg3 transition-colors"
+          aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="sm:hidden absolute top-14 left-0 right-0 bg-bg2 border-b border-border-subtle shadow-lg animate-fade-up">
+          <div className="flex flex-col py-2">
+            {NAV_LINKS.map((link) => {
+              const active = location === link.href || location.startsWith(`${link.href}/`)
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-5 py-3 text-[14px] font-bold uppercase tracking-wider transition-colors border-l-2 ${
+                    active
+                      ? 'text-purple-light bg-purple-dim/30 border-purple-light'
+                      : 'text-text2 hover:text-purple-light hover:bg-bg3 border-transparent'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
+            {!authed && (
+              <Link
+                href="/register"
+                className="px-5 py-3 mt-1 text-[13px] text-text2 hover:text-purple-light hover:bg-bg3 border-t border-border-subtle"
+              >
+                Criar conta
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
