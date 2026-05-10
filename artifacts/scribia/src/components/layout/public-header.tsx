@@ -95,12 +95,12 @@ export function PublicHeader() {
             >
               Criar conta
             </Link>
-            <Link
-              href="/login"
+            <a
+              href="https://scribia-web.vercel.app/login"
               className="inline-flex items-center bg-purple text-white px-3 sm:px-4 py-2 rounded-lg text-[13px] font-medium hover:bg-purple-light transition-all"
             >
               Entrar
-            </Link>
+            </a>
           </>
         )}
         <button
