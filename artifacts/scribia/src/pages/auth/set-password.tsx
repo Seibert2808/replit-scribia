@@ -1,6 +1,6 @@
 import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useLocation } from 'wouter'
-import { Lock, Check, AlertCircle } from 'lucide-react'
+import { Lock, Check, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 const inputClass = 'w-full bg-bg3 border border-border-subtle rounded-lg pl-10 pr-3.5 py-3 text-[14px] text-text placeholder:text-text3 outline-none transition-all focus:border-border-purple focus:ring-2 focus:ring-purple/20'
@@ -9,6 +9,7 @@ function SetPasswordContent() {
   const [, navigate] = useLocation()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -128,14 +129,20 @@ function SetPasswordContent() {
             <label htmlFor="password" className="block text-[12px] font-medium text-text2 mb-1.5">Nova senha</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" />
-              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className={inputClass} placeholder="Mínimo 6 caracteres" />
+              <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className={`${inputClass} pr-10`} placeholder="Mínimo 6 caracteres" />
+              <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text3 hover:text-purple-light transition-colors" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
           <div>
             <label htmlFor="confirmPassword" className="block text-[12px] font-medium text-text2 mb-1.5">Confirmar senha</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" />
-              <input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} className={inputClass} placeholder="Repita a senha" />
+              <input id="confirmPassword" type={showPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} className={`${inputClass} pr-10`} placeholder="Repita a senha" />
+              <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text3 hover:text-purple-light transition-colors" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
           {error && <div className="text-[12px] text-scribia-red bg-scribia-red/8 border border-scribia-red/20 rounded-lg px-3 py-2">{error}</div>}

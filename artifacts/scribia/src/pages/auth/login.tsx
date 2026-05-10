@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'wouter'
-import { Mail, Lock, Send } from 'lucide-react'
+import { Mail, Lock, Send, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { homeForRole, pickPrimaryRole, setActiveRole, type UserRole } from '@/lib/active-role'
 
@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [, navigate] = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
@@ -88,7 +89,10 @@ export default function LoginPage() {
             </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" />
-              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className={inputClass} placeholder="••••••••" />
+              <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required className={`${inputClass} pr-10`} placeholder="••••••••" />
+              <button type="button" onClick={() => setShowPassword((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-text3 hover:text-purple-light transition-colors" aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
