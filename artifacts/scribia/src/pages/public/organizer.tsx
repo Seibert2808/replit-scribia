@@ -39,27 +39,38 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    let mounted = true
+    const failsafe = setTimeout(() => { if (mounted) setLoading(false) }, 8000)
+
     async function load() {
-      const { data: org } = await supabase
-        .from('organizer_profiles')
-        .select('id, slug, display_name, description, logo_url, brand_color')
-        .eq('slug', params.orgSlug)
-        .maybeSingle()
+      try {
+        const { data: org } = await supabase
+          .from('organizer_profiles')
+          .select('id, slug, display_name, description, logo_url, brand_color')
+          .eq('slug', params.orgSlug)
+          .maybeSingle()
 
-      if (!org) { setNotFound(true); setLoading(false); return }
-      const o = org as OrganizerProfile
-      setOrganizer(o)
+        if (!mounted) return
+        if (!org) { setNotFound(true); setLoading(false); return }
+        const o = org as OrganizerProfile
+        setOrganizer(o)
 
-      const { data: evs } = await supabase
-        .from('events')
-        .select('id, slug, name, description, start_date, end_date, cover_image_url')
-        .in('status', ['active', 'completed'])
-        .eq('organizer_id', o.id)
-        .order('end_date', { ascending: false })
-      setEvents((evs ?? []) as OrganizerEvent[])
-      setLoading(false)
+        const { data: evs } = await supabase
+          .from('events')
+          .select('id, slug, name, description, start_date, end_date, cover_image_url')
+          .in('status', ['active', 'completed'])
+          .eq('organizer_id', o.id)
+          .order('end_date', { ascending: false })
+        if (!mounted) return
+        setEvents((evs ?? []) as OrganizerEvent[])
+      } catch (_) {
+        // silent
+      } finally {
+        if (mounted) setLoading(false)
+      }
     }
     load()
+    return () => { mounted = false; clearTimeout(failsafe) }
   }, [params.orgSlug])
 
   if (notFound) return (

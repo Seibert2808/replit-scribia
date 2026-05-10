@@ -66,33 +66,43 @@ export default function PublicOrganizersPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let mounted = true
+    const failsafe = setTimeout(() => { if (mounted) setLoading(false) }, 8000)
+
     async function load() {
-      const { data: orgsData } = await supabase
-        .from('organizer_profiles')
-        .select('id, slug, display_name, description, logo_url, brand_color, is_official')
-        .order('display_name', { ascending: true })
+      try {
+        const { data: orgsData } = await supabase
+          .from('organizer_profiles')
+          .select('id, slug, display_name, description, logo_url, brand_color, is_official')
+          .order('display_name', { ascending: true })
 
-      const orgs = (orgsData ?? []) as Array<Omit<Organizer, 'event_count'>>
-      const orgIds = orgs.map((o) => o.id)
+        const orgs = (orgsData ?? []) as Array<Omit<Organizer, 'event_count'>>
+        const orgIds = orgs.map((o) => o.id)
 
-      let counts: Record<string, number> = {}
-      if (orgIds.length > 0) {
-        const { data: countData } = await supabase
-          .from('events')
-          .select('organizer_id')
-          .in('status', ['active', 'completed'])
-          .in('organizer_id', orgIds)
-        counts = ((countData ?? []) as Array<{ organizer_id: string }>).reduce<Record<string, number>>((acc, e) => {
-          acc[e.organizer_id] = (acc[e.organizer_id] ?? 0) + 1
-          return acc
-        }, {})
+        let counts: Record<string, number> = {}
+        if (orgIds.length > 0) {
+          const { data: countData } = await supabase
+            .from('events')
+            .select('organizer_id')
+            .in('status', ['active', 'completed'])
+            .in('organizer_id', orgIds)
+          counts = ((countData ?? []) as Array<{ organizer_id: string }>).reduce<Record<string, number>>((acc, e) => {
+            acc[e.organizer_id] = (acc[e.organizer_id] ?? 0) + 1
+            return acc
+          }, {})
+        }
+
+        if (!mounted) return
+        const enriched: Organizer[] = orgs.map((o) => ({ ...o, event_count: counts[o.id] ?? 0 }))
+        setOrganizers(enriched)
+      } catch (_) {
+        // silent
+      } finally {
+        if (mounted) setLoading(false)
       }
-
-      const enriched: Organizer[] = orgs.map((o) => ({ ...o, event_count: counts[o.id] ?? 0 }))
-      setOrganizers(enriched)
-      setLoading(false)
     }
     load()
+    return () => { mounted = false; clearTimeout(failsafe) }
   }, [])
 
   const officials = organizers.filter((o) => o.is_official)

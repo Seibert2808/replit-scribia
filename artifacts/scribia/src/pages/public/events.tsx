@@ -92,6 +92,13 @@ export default function PublicEventsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let mounted = true
+    // Failsafe: se a query Supabase pendurar (cliente em refresh, conexão ruim
+    // ou bug após onAuthStateChange), libera a UI após 8s mostrando estado vazio.
+    const failsafe = setTimeout(() => {
+      if (mounted) setLoading(false)
+    }, 8000)
+
     async function load() {
       try {
         const { data: listData } = await supabase
@@ -116,6 +123,7 @@ export default function PublicEventsPage() {
           orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
         }
 
+        if (!mounted) return
         setEvents(
           list.map((e) => ({
             id: e.id,
@@ -130,10 +138,11 @@ export default function PublicEventsPage() {
       } catch (_) {
         // silent
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
     load()
+    return () => { mounted = false; clearTimeout(failsafe) }
   }, [])
 
   const featured = events.slice(0, 3)

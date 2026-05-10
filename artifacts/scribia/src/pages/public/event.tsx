@@ -61,61 +61,75 @@ export default function PublicEventPage() {
 
   useEffect(() => {
     if (!eventId) return
+    let mounted = true
+    const failsafe = setTimeout(() => { if (mounted) setLoading(false) }, 8000)
+
     async function load() {
-      const { data: ev } = await supabase
-        .from('events')
-        .select('id, name, description, start_date, end_date, location, cover_image_url, organizer_id')
-        .eq('id', eventId)
-        .neq('status', 'draft')
-        .maybeSingle()
-
-      if (!ev) { setNotFound(true); setLoading(false); return }
-      const e = ev as EventDetail
-      setEvent(e)
-
-      const { data: orgData } = await supabase
-        .from('user_profiles')
-        .select('id, full_name')
-        .eq('id', e.organizer_id)
-        .maybeSingle()
-      if (orgData) setOrganizer(orgData as OrganizerLite)
-
-      const { data: lecs } = await supabase
-        .from('lectures')
-        .select('id, title, status, duration_seconds, speaker_id, speakers(id, name, avatar_url, company)')
-        .eq('event_id', e.id)
-        .order('scheduled_at', { ascending: true })
-
-      type LecRow = {
-        id: string; title: string; status: string; duration_seconds: number | null; speaker_id: string | null
-        speakers: { id: string; name: string; avatar_url: string | null; company: string | null } | null
-      }
-      const rows = (lecs ?? []) as unknown as LecRow[]
-      setLectures(rows.map((l) => ({
-        id: l.id,
-        title: l.title,
-        status: l.status,
-        duration_seconds: l.duration_seconds,
-        speaker_id: l.speaker_id,
-        speaker_name: l.speakers?.name ?? null,
-        speaker_avatar: l.speakers?.avatar_url ?? null,
-        speaker_company: l.speakers?.company ?? null,
-      })))
-
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setAuthed(true)
-        const { data: enrollment } = await supabase
-          .from('event_participants')
-          .select('id')
-          .eq('event_id', e.id)
-          .eq('user_id', user.id)
+      try {
+        const { data: ev } = await supabase
+          .from('events')
+          .select('id, name, description, start_date, end_date, location, cover_image_url, organizer_id')
+          .eq('id', eventId)
+          .neq('status', 'draft')
           .maybeSingle()
-        setHasAccess(!!enrollment)
+
+        if (!mounted) return
+        if (!ev) { setNotFound(true); setLoading(false); return }
+        const e = ev as EventDetail
+        setEvent(e)
+
+        const { data: orgData } = await supabase
+          .from('user_profiles')
+          .select('id, full_name')
+          .eq('id', e.organizer_id)
+          .maybeSingle()
+        if (!mounted) return
+        if (orgData) setOrganizer(orgData as OrganizerLite)
+
+        const { data: lecs } = await supabase
+          .from('lectures')
+          .select('id, title, status, duration_seconds, speaker_id, speakers(id, name, avatar_url, company)')
+          .eq('event_id', e.id)
+          .order('scheduled_at', { ascending: true })
+
+        type LecRow = {
+          id: string; title: string; status: string; duration_seconds: number | null; speaker_id: string | null
+          speakers: { id: string; name: string; avatar_url: string | null; company: string | null } | null
+        }
+        const rows = (lecs ?? []) as unknown as LecRow[]
+        if (!mounted) return
+        setLectures(rows.map((l) => ({
+          id: l.id,
+          title: l.title,
+          status: l.status,
+          duration_seconds: l.duration_seconds,
+          speaker_id: l.speaker_id,
+          speaker_name: l.speakers?.name ?? null,
+          speaker_avatar: l.speakers?.avatar_url ?? null,
+          speaker_company: l.speakers?.company ?? null,
+        })))
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!mounted) return
+        if (user) {
+          setAuthed(true)
+          const { data: enrollment } = await supabase
+            .from('event_participants')
+            .select('id')
+            .eq('event_id', e.id)
+            .eq('user_id', user.id)
+            .maybeSingle()
+          if (!mounted) return
+          setHasAccess(!!enrollment)
+        }
+      } catch (_) {
+        // silent
+      } finally {
+        if (mounted) setLoading(false)
       }
-      setLoading(false)
     }
     load()
+    return () => { mounted = false; clearTimeout(failsafe) }
   }, [eventId])
 
   if (notFound) return (
