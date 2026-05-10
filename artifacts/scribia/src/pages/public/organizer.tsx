@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
+import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, ArrowRight } from 'lucide-react'
 
 interface OrganizerProfile {
@@ -52,7 +53,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
       const { data: evs } = await supabase
         .from('events')
         .select('id, slug, name, description, start_date, end_date, cover_image_url')
-        .eq('status', 'completed')
+        .in('status', ['active', 'completed'])
         .eq('organizer_id', o.id)
         .order('end_date', { ascending: false })
       setEvents((evs ?? []) as OrganizerEvent[])
@@ -81,7 +82,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
       {/* Organizer hero */}
       <section className="border-b border-border-subtle bg-bg2/40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 py-10 md:py-14">
-          <Link href="/" className="inline-flex items-center gap-1 text-[12px] text-text3 hover:text-purple-light transition-colors mb-5">
+          <Link href="/organizadores" className="inline-flex items-center gap-1 text-[12px] text-text3 hover:text-purple-light transition-colors mb-5">
             <ChevronLeft className="w-3.5 h-3.5" /> Todos os organizadores
           </Link>
           {loading || !organizer ? (
@@ -144,7 +145,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
             {events.map((ev) => (
               <Link
                 key={ev.id}
-                href={`/o/${params.orgSlug}/${ev.slug}`}
+                href={`/eventos/${ev.id}`}
                 className="group bg-bg2 border border-border-subtle rounded-xl overflow-hidden hover:border-border-purple transition-all animate-fade-up"
               >
                 <div className="aspect-[16/9] bg-bg3 overflow-hidden">
@@ -171,6 +172,8 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
           </div>
         )}
       </section>
+
+      <Footer />
     </div>
   )
 }

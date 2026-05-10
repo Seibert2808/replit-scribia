@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
+import Footer from '@/components/sections/Footer'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
 interface Organizer {
@@ -79,7 +80,7 @@ export default function PublicOrganizersPage() {
         const { data: countData } = await supabase
           .from('events')
           .select('organizer_id')
-          .eq('status', 'completed')
+          .in('status', ['active', 'completed'])
           .in('organizer_id', orgIds)
         counts = ((countData ?? []) as Array<{ organizer_id: string }>).reduce<Record<string, number>>((acc, e) => {
           acc[e.organizer_id] = (acc[e.organizer_id] ?? 0) + 1
@@ -171,9 +172,7 @@ export default function PublicOrganizersPage() {
         )}
       </section>
 
-      <footer className="border-t border-border-subtle py-8 text-center">
-        <div className="text-[11px] text-text3">© {new Date().getFullYear()} Scribia · Do palco ao material pronto em minutos</div>
-      </footer>
+      <Footer />
     </div>
   )
 }

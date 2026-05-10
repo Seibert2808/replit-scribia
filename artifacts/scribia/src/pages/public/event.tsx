@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useRoute } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
+import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock } from 'lucide-react'
 
 interface EventDetail {
@@ -144,7 +145,7 @@ export default function PublicEventPage() {
 
       {/* Cover */}
       <section className="border-b border-border-subtle">
-        <div className="aspect-[21/9] sm:aspect-[3/1] max-h-[340px] bg-bg3 overflow-hidden relative">
+        <div className="max-w-5xl mx-auto aspect-[16/9] sm:aspect-[21/9] bg-bg3 overflow-hidden relative">
           {event?.cover_image_url ? (
             <img src={event.cover_image_url} alt={event.name} className="w-full h-full object-cover" />
           ) : (
@@ -192,6 +193,28 @@ export default function PublicEventPage() {
           {!loading && <span className="text-[12px] text-text3">{lectures.length} no total</span>}
         </div>
 
+        {/* Single CTA above the list, only for users without access */}
+        {!loading && lectures.length > 0 && !hasAccess && (
+          <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-purple-dim/40 border border-border-purple rounded-xl px-4 sm:px-5 py-4">
+            <div className="flex items-start sm:items-center gap-2.5 text-[13px] text-text2">
+              <Lock className="w-4 h-4 text-purple-light shrink-0 mt-0.5 sm:mt-0" />
+              <span>
+                {authed
+                  ? 'Inscreva-se no evento para acessar o conteúdo completo das palestras.'
+                  : 'Entre na sua conta para acessar o conteúdo das palestras.'}
+              </span>
+            </div>
+            {!authed && (
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center bg-purple text-white px-4 py-2 rounded-lg text-[12.5px] font-medium hover:bg-purple-light transition-all shrink-0"
+              >
+                Entrar
+              </Link>
+            )}
+          </div>
+        )}
+
         {loading ? (
           <div className="space-y-2">
             {[...Array(4)].map((_, i) => <div key={i} className="h-16 bg-bg3 rounded-lg animate-pulse" />)}
@@ -204,7 +227,7 @@ export default function PublicEventPage() {
           <div className="bg-bg2 border border-border-subtle rounded-xl divide-y divide-border-subtle overflow-hidden">
             {lectures.map((l) => {
               const card = (
-                <div className="flex items-center gap-4 px-4 sm:px-5 py-4 hover:bg-bg3/40 transition-colors">
+                <div className={`flex items-center gap-4 px-4 sm:px-5 py-4 ${hasAccess ? 'hover:bg-bg3/40 transition-colors' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <div className="font-heading font-semibold text-[14px] text-text leading-snug truncate">{l.title}</div>
                     <div className="text-[11.5px] text-text3 mt-0.5 truncate">
@@ -212,19 +235,12 @@ export default function PublicEventPage() {
                       {l.duration_seconds ? ` · ${formatDuration(l.duration_seconds)}` : ''}
                     </div>
                   </div>
-                  {hasAccess ? (
+                  {hasAccess && (
                     <span className="text-[11px] text-purple-light font-medium shrink-0">Acessar →</span>
-                  ) : authed ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] text-text3 shrink-0">
-                      <Lock className="w-3 h-3" /> Restrito
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-text3 shrink-0">Entrar para acessar</span>
                   )}
                 </div>
               )
               if (hasAccess) return <Link key={l.id} href={`/portal/lectures/${l.id}`}>{card}</Link>
-              if (!authed) return <Link key={l.id} href="/login">{card}</Link>
               return <div key={l.id}>{card}</div>
             })}
           </div>
@@ -275,9 +291,7 @@ export default function PublicEventPage() {
         </section>
       )}
 
-      <footer className="border-t border-border-subtle py-8 text-center">
-        <p className="text-[11px] text-text3">© {new Date().getFullYear()} Scribia · Do palco ao material pronto em minutos</p>
-      </footer>
+      <Footer />
     </div>
   )
 }

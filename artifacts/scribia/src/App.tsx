@@ -247,6 +247,7 @@ function Router() {
       <Route path="/eventos/:id" component={PublicEventPage} />
       <Route path="/sobre" component={SobrePage} />
       <Route path="/organizadores" component={PublicOrganizersPage} />
+      <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
       {/* Portal */}
       <Route path="/portal" component={PortalPage} />

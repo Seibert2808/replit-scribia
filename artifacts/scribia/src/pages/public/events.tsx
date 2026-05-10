@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
+import Footer from '@/components/sections/Footer'
 import { Calendar, MapPin, ChevronRight } from 'lucide-react'
 
 interface PublicEvent {
@@ -144,6 +145,16 @@ export default function PublicEventsPage() {
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-8 md:pt-12 pb-20">
 
+        {/* Hero */}
+        <section className="mb-10 md:mb-14 animate-fade-up">
+          <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl">
+            Scribia: o ecossistema inteligente que mantém seus eventos vivos.
+          </h1>
+          <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
+            Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
+          </p>
+        </section>
+
         {/* Section label */}
         <p className="text-[11px] font-semibold text-purple-light uppercase tracking-widest mb-3 animate-fade-up">Em destaque</p>
 
@@ -184,9 +195,7 @@ export default function PublicEventsPage() {
         )}
       </main>
 
-      <footer className="border-t border-border-subtle py-8 text-center">
-        <p className="text-[11px] text-text3">© {new Date().getFullYear()} Scribia · Do palco ao material pronto em minutos</p>
-      </footer>
+      <Footer />
     </div>
   )
 }

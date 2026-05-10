@@ -46,17 +46,17 @@ export function PublicHeader() {
   return (
     <nav className="bg-bg2/80 backdrop-blur border-b border-border-subtle px-4 sm:px-6 md:px-10 flex items-center justify-between gap-3 h-14 sticky top-0 z-10">
       <div className="flex items-center gap-5 sm:gap-7 min-w-0">
-        <Link href="/eventos" className="font-heading font-extrabold text-lg sm:text-xl text-purple-light tracking-tight shrink-0 hover:opacity-80 transition-opacity">
-          SCRIBIA
+        <Link href="/eventos" className="shrink-0 hover:opacity-80 transition-opacity flex items-center">
+          <img src="/logo-scribia.png" alt="Scribia" className="h-7 sm:h-8 w-auto" />
         </Link>
-        <div className="hidden sm:flex items-center gap-1">
+        <div className="hidden sm:flex items-center gap-2">
           {NAV_LINKS.map((link) => {
             const active = location === link.href || location.startsWith(`${link.href}/`)
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors ${
+                className={`px-3 py-1.5 rounded-md text-[15px] font-bold uppercase tracking-wider transition-colors ${
                   active ? 'text-purple-light bg-purple-dim/50' : 'text-text2 hover:text-purple-light'
                 }`}
               >
