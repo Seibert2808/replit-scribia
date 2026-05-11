@@ -157,7 +157,7 @@ export default function PublicEventsPage() {
         {/* Hero */}
         <section className="mb-10 md:mb-14 animate-fade-up">
           <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl">
-            Scribia: o ecossistema inteligente que mantém seus eventos vivos.
+            Scribia: o ecossistema inteligente que mantém seus eventos <span className="text-purple-light">vivos</span>.
           </h1>
           <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
             Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
