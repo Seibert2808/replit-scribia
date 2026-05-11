@@ -1,9 +1,10 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { PublicHeader } from "@/components/layout/public-header"
 import Footer from "@/components/sections/Footer"
+import { LeadWizardDialog } from "@/components/lead-wizard-dialog"
 import heroBg from "@/assets/images/organizadores-hero-bg.jpg"
 import sectionImage from "@/assets/images/organizadores-section-image.png"
 import {
@@ -20,8 +21,6 @@ import {
   Heart,
   ChevronRight,
 } from "lucide-react"
-
-const CTA_HREF = "/sobre#contato"
 
 const benefitsData = [
   { icon: Repeat, title: "Engajamento contínuo entre uma edição e outra", description: "Cada palestra vira um Livebook interativo, que circula, gera conversa e mantém o público em contato com o evento através da Bia - Tutora de Eventos. Seu evento deixa de ser pontual, vira recorrente na vida das pessoas." },
@@ -60,9 +59,13 @@ const itemVariants = {
 }
 
 export default function QueroNoMeuEventoPage() {
+  const [wizardOpen, setWizardOpen] = useState(false)
+
   useEffect(() => {
     document.title = "Scribia — Para organizadores de eventos"
   }, [])
+
+  const openWizard = () => setWizardOpen(true)
 
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -93,11 +96,11 @@ export default function QueroNoMeuEventoPage() {
                 Você já percebeu que o verdadeiro desafio de um evento não é só realizá-lo com perfeição, mas manter as pessoas aquecidas, engajadas e conectadas depois que ele termina?
               </p>
 
-              <Button size="lg" asChild className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                <a href={CTA_HREF} className="flex items-center gap-2">
+              <Button size="lg" onClick={openWizard} className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                <span className="flex items-center gap-2">
                   Quero manter meu público engajado com o ScribIA
                   <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
+                </span>
               </Button>
             </motion.div>
           </div>
@@ -154,8 +157,8 @@ export default function QueroNoMeuEventoPage() {
                     Transforma seu evento em um ecossistema vivo, onde a sua marca continua conversando com o público muito depois do encerramento.
                   </p>
                   <div>
-                    <Button size="lg" asChild className="mt-2 text-base shadow-lg">
-                      <a href={CTA_HREF}>Agende sua sessão estratégica e tire suas dúvidas</a>
+                    <Button size="lg" onClick={openWizard} className="mt-2 text-base shadow-lg">
+                      Agende sua sessão estratégica e tire suas dúvidas
                     </Button>
                   </div>
                 </motion.div>
@@ -267,11 +270,11 @@ export default function QueroNoMeuEventoPage() {
                 ✨ Leve o ScribIA para o seu próximo evento. Transforme cada palestra em um ativo vivo da sua marca.
               </p>
 
-              <Button size="lg" asChild className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                <a href={CTA_HREF} className="flex items-center gap-2">
+              <Button size="lg" onClick={openWizard} className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                <span className="flex items-center gap-2">
                   Quero manter meu público engajado com o ScribIA
                   <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </a>
+                </span>
               </Button>
             </motion.div>
           </div>
@@ -279,6 +282,8 @@ export default function QueroNoMeuEventoPage() {
       </main>
 
       <Footer />
+
+      <LeadWizardDialog open={wizardOpen} onOpenChange={setWizardOpen} />
     </div>
   )
 }
