@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { href: '/eventos', label: 'Eventos' },
   { href: '/organizadores', label: 'Organizadores' },
   { href: '/sobre', label: 'Saiba mais' },
+  { href: '/quero-no-meu-evento', label: 'Quero no meu evento' },
 ] as const
 
 export function PublicHeader() {
