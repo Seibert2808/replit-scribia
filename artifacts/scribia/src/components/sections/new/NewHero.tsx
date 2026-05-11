@@ -60,7 +60,7 @@ const NewHero = () => {
               <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
             </div>
           </a>
-          <a href="#como-funciona" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-xl p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
+          <a href="/quero-no-meu-evento" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-xl p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
             <Calendar className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
             <h4 className="font-semibold text-sm mb-2 text-center">Sou Organizador</h4>
             <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
