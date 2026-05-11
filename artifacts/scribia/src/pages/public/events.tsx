@@ -1,9 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
-import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { Calendar, MapPin, ChevronRight } from 'lucide-react'
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+
+async function publicGet<T>(path: string): Promise<T[]> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+  })
+  if (!res.ok) throw new Error(`Supabase REST ${res.status}`)
+  return res.json() as Promise<T[]>
+}
 
 interface PublicEvent {
   id: string
@@ -93,33 +106,20 @@ export default function PublicEventsPage() {
 
   useEffect(() => {
     let mounted = true
-    // Failsafe: se a query Supabase pendurar (cliente em refresh, conexão ruim
-    // ou bug após onAuthStateChange), libera a UI após 8s mostrando estado vazio.
-    const failsafe = setTimeout(() => {
-      if (mounted) setLoading(false)
-    }, 8000)
+    const failsafe = setTimeout(() => { if (mounted) setLoading(false) }, 8000)
 
     async function load() {
       try {
-        const { data: listData } = await supabase
-          .from('events')
-          .select('id, name, start_date, end_date, location, cover_image_url, organizer_id')
-          .eq('status', 'active')
-          .order('end_date', { ascending: false })
-
-        const list = (listData ?? []) as Array<{
+        const list = await publicGet<{
           id: string; name: string; start_date: string; end_date: string
           location: string | null; cover_image_url: string | null; organizer_id: string
-        }>
+        }>('events?status=eq.active&select=id,name,start_date,end_date,location,cover_image_url,organizer_id&order=end_date.desc')
 
         const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
         let orgNameById: Record<string, string> = {}
         if (orgIds.length > 0) {
-          const { data: usersData } = await supabase
-            .from('user_profiles')
-            .select('id, full_name')
-            .in('id', orgIds)
-          const users = (usersData ?? []) as Array<{ id: string; full_name: string }>
+          const ids = orgIds.map(encodeURIComponent).join(',')
+          const users = await publicGet<{ id: string; full_name: string }>(`user_profiles?id=in.(${ids})&select=id,full_name`)
           orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
         }
 
