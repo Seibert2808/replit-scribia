@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
-import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
+import { publicGet, publicGetOne } from '@/lib/public-fetch'
 import { Calendar, ChevronLeft, ArrowRight } from 'lucide-react'
 
 interface OrganizerProfile {
@@ -44,25 +44,20 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
 
     async function load() {
       try {
-        const { data: org } = await supabase
-          .from('organizer_profiles')
-          .select('id, slug, display_name, description, logo_url, brand_color')
-          .eq('slug', params.orgSlug)
-          .maybeSingle()
+        const slug = encodeURIComponent(params.orgSlug)
+        const o = await publicGetOne<OrganizerProfile>(
+          `organizer_profiles?slug=eq.${slug}&select=id,slug,display_name,description,logo_url,brand_color`
+        )
 
         if (!mounted) return
-        if (!org) { setNotFound(true); setLoading(false); return }
-        const o = org as OrganizerProfile
+        if (!o) { setNotFound(true); setLoading(false); return }
         setOrganizer(o)
 
-        const { data: evs } = await supabase
-          .from('events')
-          .select('id, slug, name, description, start_date, end_date, cover_image_url')
-          .in('status', ['active', 'completed'])
-          .eq('organizer_id', o.id)
-          .order('end_date', { ascending: false })
+        const evs = await publicGet<OrganizerEvent>(
+          `events?organizer_id=eq.${encodeURIComponent(o.id)}&status=in.(active,completed)&select=id,slug,name,description,start_date,end_date,cover_image_url&order=end_date.desc`
+        )
         if (!mounted) return
-        setEvents((evs ?? []) as OrganizerEvent[])
+        setEvents(evs)
       } catch (_) {
         // silent
       } finally {

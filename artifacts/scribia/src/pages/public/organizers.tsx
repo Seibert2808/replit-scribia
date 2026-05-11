@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'wouter'
-import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
+import { publicGet } from '@/lib/public-fetch'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
 interface Organizer {
@@ -71,22 +71,18 @@ export default function PublicOrganizersPage() {
 
     async function load() {
       try {
-        const { data: orgsData } = await supabase
-          .from('organizer_profiles')
-          .select('id, slug, display_name, description, logo_url, brand_color, is_official')
-          .order('display_name', { ascending: true })
-
-        const orgs = (orgsData ?? []) as Array<Omit<Organizer, 'event_count'>>
+        const orgs = await publicGet<Omit<Organizer, 'event_count'>>(
+          'organizer_profiles?select=id,slug,display_name,description,logo_url,brand_color,is_official&order=display_name.asc'
+        )
         const orgIds = orgs.map((o) => o.id)
 
         let counts: Record<string, number> = {}
         if (orgIds.length > 0) {
-          const { data: countData } = await supabase
-            .from('events')
-            .select('organizer_id')
-            .in('status', ['active', 'completed'])
-            .in('organizer_id', orgIds)
-          counts = ((countData ?? []) as Array<{ organizer_id: string }>).reduce<Record<string, number>>((acc, e) => {
+          const ids = orgIds.map(encodeURIComponent).join(',')
+          const countRows = await publicGet<{ organizer_id: string }>(
+            `events?select=organizer_id&status=in.(active,completed)&organizer_id=in.(${ids})`
+          )
+          counts = countRows.reduce<Record<string, number>>((acc, e) => {
             acc[e.organizer_id] = (acc[e.organizer_id] ?? 0) + 1
             return acc
           }, {})
