@@ -109,10 +109,10 @@ export default function PublicOrganizersPage() {
       <PublicHeader />
 
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-10 md:pt-14 pb-4">
-        <h1 className="font-heading text-[28px] sm:text-[34px] md:text-[40px] font-extrabold text-text leading-tight tracking-tight animate-fade-up">
+        <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl animate-fade-up">
           Organizadores
         </h1>
-        <p className="text-[13.5px] sm:text-[14.5px] text-text2 mt-2 max-w-2xl leading-relaxed animate-fade-up">
+        <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl animate-fade-up">
           Quem publica eventos e palestras no Scribia.
         </p>
       </section>
@@ -121,7 +121,7 @@ export default function PublicOrganizersPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-6 md:pt-8 pb-2">
         <div className="flex items-end justify-between mb-5">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.8px] text-purple-light font-semibold">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-purple-light uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5" />
               Organizadores oficiais do ScribIA
             </div>
@@ -152,8 +152,8 @@ export default function PublicOrganizersPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-10 md:pt-14 pb-16">
         <div className="flex items-end justify-between mb-5">
           <div>
-            <h2 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Todos os organizadores</h2>
-            <p className="text-[12.5px] text-text3 mt-0.5">
+            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest">Todos os organizadores</p>
+            <p className="text-[12.5px] text-text3 mt-1">
               {others.length > 0
                 ? `${others.length} ${others.length === 1 ? 'organizador' : 'organizadores'} com eventos publicados`
                 : 'Nenhum outro organizador com eventos ainda'}
