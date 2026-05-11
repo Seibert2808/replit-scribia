@@ -22,7 +22,7 @@ export default function ParticipantesLandingPage() {
     <div className="min-h-screen bg-bg text-text">
       <PublicHeader />
 
-      <main>
+      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
         <Hero />
         <ProblemSolution />
         <HowItWorks />

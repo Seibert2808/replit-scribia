@@ -12,7 +12,7 @@ export default function PatrocinadoresLandingPage() {
     <div className="min-h-screen bg-bg text-text">
       <PublicHeader />
 
-      <main>
+      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
         <section className="container mx-auto px-4 py-10">
           <h1 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
             Conecte sua marca às ideias, temas e especialistas que realmente importam para o público.

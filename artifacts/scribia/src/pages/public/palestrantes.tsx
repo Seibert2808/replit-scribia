@@ -69,7 +69,7 @@ export default function PalestrantesLandingPage() {
     <div className="min-h-screen bg-bg text-text">
       <PublicHeader />
 
-      <main>
+      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
         {/* Hero */}
         <section className="relative py-12 md:py-16 overflow-hidden" style={{ backgroundColor: "#b9b4d4" }}>
           <div className="container mx-auto px-4">

@@ -71,7 +71,7 @@ export default function QueroNoMeuEventoPage() {
     <div className="min-h-screen bg-bg text-text">
       <PublicHeader />
 
-      <main>
+      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
         {/* Hero */}
         <section className="relative overflow-hidden py-20 md:py-32">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${heroBg})` }} />
