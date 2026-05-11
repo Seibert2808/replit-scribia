@@ -8,8 +8,8 @@ const scribiaIcon = "/lovable-uploads/scribia-logo-new.png";
 const NewHero = () => {
   return (
     <section id="hero" className="relative overflow-hidden pt-20 pb-16 md:pt-28 md:pb-20">
-      <div className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden" style={{backgroundImage: `url(${heroBackground})`}} />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/40 to-transparent dark:hidden" />
+      <img src={heroBackground} alt="" aria-hidden="true" className="absolute inset-0 -z-10 w-full h-full object-cover dark:hidden" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/30 to-transparent dark:hidden" />
       
       <div className="container mx-auto px-4 text-center">
         <div className="inline-flex items-center gap-2 bg-primary/20 backdrop-blur-md border border-primary/30 px-4 py-2 rounded-full text-sm mb-6">
