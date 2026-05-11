@@ -44,6 +44,9 @@ import PublicOrganizerPage from '@/pages/public/organizer'
 import PublicEventPage from '@/pages/public/event'
 import SobrePage from '@/pages/sobre'
 import QueroNoMeuEventoPage from '@/pages/public/quero-no-meu-evento'
+import PalestrantesLandingPage from '@/pages/public/palestrantes'
+import ParticipantesLandingPage from '@/pages/public/participantes'
+import PatrocinadoresLandingPage from '@/pages/public/patrocinadores'
 
 import { Sidebar } from '@/components/layout/sidebar'
 import { AdminSidebar } from '@/components/layout/admin-sidebar'
@@ -248,6 +251,10 @@ function Router() {
       <Route path="/eventos/:id" component={PublicEventPage} />
       <Route path="/sobre" component={SobrePage} />
       <Route path="/quero-no-meu-evento" component={QueroNoMeuEventoPage} />
+      <Route path="/palestrantes" component={PalestrantesLandingPage} />
+      <Route path="/influenciadores" component={PalestrantesLandingPage} />
+      <Route path="/participantes" component={ParticipantesLandingPage} />
+      <Route path="/patrocinadores" component={PatrocinadoresLandingPage} />
       <Route path="/organizadores" component={PublicOrganizersPage} />
       <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
