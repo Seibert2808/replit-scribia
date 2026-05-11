@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const WHATSAPP_NUMBER = "5521979269311";
+const WHATSAPP_NUMBER = "5521997478748";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({

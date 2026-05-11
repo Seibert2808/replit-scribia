@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, ArrowRight, Send, CheckCircle2 } from "lucide-react"
 
-const WHATSAPP_NUMBER = "5521979269311"
+const WHATSAPP_NUMBER = "5521997478748"
 
 interface FormData {
   eventName: string

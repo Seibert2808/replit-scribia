@@ -32,13 +32,13 @@ const Footer = () => {
             <span>{SITE.contactEmail}</span>
           </a>
           <a
-            href="https://wa.me/5521979269311"
+            href="https://wa.me/5521997478748"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 text-[12.5px] text-text2 hover:text-purple-light transition-colors"
           >
             <WhatsAppIcon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span>(21) 97926-9311</span>
+            <span>(21) 99747-8748</span>
           </a>
           <a
             href="https://www.instagram.com/scribia_livebooks/"
