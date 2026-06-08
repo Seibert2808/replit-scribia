@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useRoute } from 'wouter'
 import { supabase } from '@/lib/supabase'
+import { publicGet, publicGetOne } from '@/lib/public-fetch'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock, ArrowUpRight } from 'lucide-react'
@@ -83,6 +84,9 @@ export default function PublicEventPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
+  // Conteúdo público — via REST (publicGet). O cliente supabase-js pendura
+  // queries após navegação client-side, então o conteúdo visível NÃO depende
+  // dele (mesmo motivo das demais páginas públicas).
   useEffect(() => {
     if (!eventId) return
     let mounted = true
@@ -90,37 +94,26 @@ export default function PublicEventPage() {
 
     async function load() {
       try {
-        const { data: ev } = await supabase
-          .from('events')
-          .select('id, name, description, start_date, end_date, location, cover_image_url, organizer_id')
-          .eq('id', eventId)
-          .neq('status', 'draft')
-          .maybeSingle()
-
+        const ev = await publicGetOne<EventDetail>(
+          `events?id=eq.${eventId}&status=neq.draft&select=id,name,description,start_date,end_date,location,cover_image_url,organizer_id`
+        )
         if (!mounted) return
         if (!ev) { setNotFound(true); setLoading(false); return }
-        const e = ev as EventDetail
-        setEvent(e)
+        setEvent(ev)
 
-        const { data: orgData } = await supabase
-          .from('user_profiles')
-          .select('id, full_name')
-          .eq('id', e.organizer_id)
-          .maybeSingle()
+        const org = await publicGetOne<OrganizerLite>(
+          `user_profiles?id=eq.${ev.organizer_id}&select=id,full_name`
+        )
         if (!mounted) return
-        if (orgData) setOrganizer(orgData as OrganizerLite)
-
-        const { data: lecs } = await supabase
-          .from('lectures')
-          .select('id, title, status, duration_seconds, speaker_id, speakers(id, name, avatar_url, company)')
-          .eq('event_id', e.id)
-          .order('scheduled_at', { ascending: true })
+        if (org) setOrganizer(org)
 
         type LecRow = {
           id: string; title: string; status: string; duration_seconds: number | null; speaker_id: string | null
           speakers: { id: string; name: string; avatar_url: string | null; company: string | null } | null
         }
-        const rows = (lecs ?? []) as unknown as LecRow[]
+        const rows = await publicGet<LecRow>(
+          `lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speakers(id,name,avatar_url,company)&order=scheduled_at.asc`
+        )
         if (!mounted) return
         setLectures(rows.map((l) => ({
           id: l.id,
@@ -132,20 +125,6 @@ export default function PublicEventPage() {
           speaker_avatar: l.speakers?.avatar_url ?? null,
           speaker_company: l.speakers?.company ?? null,
         })))
-
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!mounted) return
-        if (user) {
-          setAuthed(true)
-          const { data: enrollment } = await supabase
-            .from('event_participants')
-            .select('id')
-            .eq('event_id', e.id)
-            .eq('user_id', user.id)
-            .maybeSingle()
-          if (!mounted) return
-          setHasAccess(!!enrollment)
-        }
       } catch (_) {
         // silent
       } finally {
@@ -155,6 +134,35 @@ export default function PublicEventPage() {
     load()
     return () => { mounted = false; clearTimeout(failsafe) }
   }, [eventId])
+
+  // Login/inscrição — via supabase-js (precisa da sessão). Isolado em um effect
+  // próprio para que um eventual travamento do cliente não impeça o conteúdo
+  // público de renderizar.
+  useEffect(() => {
+    const id = event?.id
+    if (!id) return
+    let mounted = true
+
+    async function checkAccess() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!mounted || !user) return
+        setAuthed(true)
+        const { data: enrollment } = await supabase
+          .from('event_participants')
+          .select('id')
+          .eq('event_id', id)
+          .eq('user_id', user.id)
+          .maybeSingle()
+        if (!mounted) return
+        setHasAccess(!!enrollment)
+      } catch (_) {
+        // silent
+      }
+    }
+    checkAccess()
+    return () => { mounted = false }
+  }, [event?.id])
 
   if (notFound) return (
     <div className="min-h-screen bg-bg">
