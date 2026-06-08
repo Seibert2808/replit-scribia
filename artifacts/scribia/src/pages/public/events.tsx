@@ -95,7 +95,9 @@ function getLocalCoverImage(name: string): string | null {
 // Foto da frente P\u00daBLICA (horizontal). Tem prioridade sobre a capa do banco
 // (cover_image_url), que \u00e9 vertical e usada pelos cards do app/dashboard.
 function getLocalSiteImage(name: string): string | null {
-  if (name.toLowerCase().includes('siaparto')) return '/images/siaparto-2025.png'
+  const n = name.toLowerCase()
+  if (n.includes('siaparto')) return '/images/siaparto-2025.png'
+  if (n.includes('eneon')) return '/images/eneon-2026.png'
   return null
 }
 

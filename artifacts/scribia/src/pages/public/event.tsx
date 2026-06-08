@@ -3,7 +3,7 @@ import { Link, useRoute } from 'wouter'
 import { supabase } from '@/lib/supabase'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
-import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock } from 'lucide-react'
+import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock, ArrowUpRight } from 'lucide-react'
 
 interface EventDetail {
   id: string
@@ -52,7 +52,23 @@ function formatDuration(seconds: number | null): string {
 function getLocalHeroImage(name: string): string | null {
   const n = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
   if (n.includes('siaparto')) return '/images/siaparto-2025.png'
+  if (n.includes('eneon')) return '/images/eneon-2026.png'
   return null
+}
+
+// Link de inscrição externo por evento. O botão só aparece enquanto o evento
+// não terminou (ver isRegistrationOpen).
+function getRegistrationUrl(name: string): string | null {
+  if (name.toLowerCase().includes('eneon')) return 'https://abenforj.org.br/eventos'
+  return null
+}
+
+// Verdadeiro durante todo o dia do término; passa a falso a partir do dia
+// seguinte ao end_date (ex.: evento até 17/07 → some em 18/07).
+function isRegistrationOpen(endIso: string): boolean {
+  const end = new Date(endIso)
+  const cutoff = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1, 0, 0, 0)
+  return new Date() < cutoff
 }
 
 export default function PublicEventPage() {
@@ -200,6 +216,16 @@ export default function PublicEventPage() {
               </div>
               {event.description && (
                 <p className="text-[13.5px] text-text2 mt-4 max-w-3xl leading-relaxed">{event.description}</p>
+              )}
+              {getRegistrationUrl(event.name) && isRegistrationOpen(event.end_date) && (
+                <a
+                  href={getRegistrationUrl(event.name)!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-5 bg-purple text-white px-6 py-2.5 rounded-lg text-[14px] font-semibold hover:bg-purple-light transition-all"
+                >
+                  Inscreva-se <ArrowUpRight className="w-4 h-4" />
+                </a>
               )}
             </div>
           )}
