@@ -91,6 +91,13 @@ function getLocalCoverImage(name: string): string | null {
   return null
 }
 
+// Foto da frente P\u00daBLICA (horizontal). Tem prioridade sobre a capa do banco
+// (cover_image_url), que \u00e9 vertical e usada pelos cards do app/dashboard.
+function getLocalSiteImage(name: string): string | null {
+  if (name.toLowerCase().includes('siaparto')) return '/images/siaparto-2025.png'
+  return null
+}
+
 export default function PublicEventsPage() {
   const [events, setEvents] = useState<PublicEvent[]>([])
   const [loading, setLoading] = useState(true)
@@ -122,7 +129,7 @@ export default function PublicEventsPage() {
             start_date: e.start_date,
             end_date: e.end_date,
             location: e.location,
-            cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
+            cover_image_url: getLocalSiteImage(e.name) ?? e.cover_image_url ?? getLocalCoverImage(e.name),
             organizer_name: orgNameById[e.organizer_id] ?? '',
           }))
         )
