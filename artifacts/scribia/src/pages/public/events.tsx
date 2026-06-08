@@ -80,6 +80,10 @@ function RowCard({ ev }: { ev: PublicEvent }) {
   )
 }
 
+// Evento de demonstração interno do Scribia: acessível por link direto
+// (participantes cadastrados entram nele), mas NÃO listado na vitrine pública.
+const DEMO_EVENT_ID = 'ea692433-bfa8-483e-b9da-82dda6fc13d1'
+
 function getLocalCoverImage(name: string): string | null {
   const n = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   if (n.includes('siaparto')) return '/images/siaparto-2025.jpg'
@@ -100,7 +104,7 @@ export default function PublicEventsPage() {
         const list = await publicGet<{
           id: string; name: string; start_date: string; end_date: string
           location: string | null; cover_image_url: string | null; organizer_id: string
-        }>('events?status=eq.active&select=id,name,start_date,end_date,location,cover_image_url,organizer_id&order=end_date.desc')
+        }>(`events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,organizer_id&order=end_date.desc`)
 
         const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
         let orgNameById: Record<string, string> = {}

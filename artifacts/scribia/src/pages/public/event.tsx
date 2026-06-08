@@ -47,6 +47,14 @@ function formatDuration(seconds: number | null): string {
   return h > 0 ? `${h}h ${m.toString().padStart(2, '0')}min` : `${m}min`
 }
 
+// Banner (formato horizontal) da página do evento. Difere da capa do banco
+// (`cover_image_url`), que é vertical e usada nos cards da listagem.
+function getLocalHeroImage(name: string): string | null {
+  const n = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  if (n.includes('siaparto')) return '/images/siaparto-2025.png'
+  return null
+}
+
 export default function PublicEventPage() {
   const [, params] = useRoute('/eventos/:id')
   const eventId = params?.id
@@ -160,8 +168,8 @@ export default function PublicEventPage() {
       {/* Cover */}
       <section className="border-b border-border-subtle">
         <div className="max-w-5xl mx-auto aspect-[16/9] sm:aspect-[21/9] bg-bg3 overflow-hidden relative">
-          {event?.cover_image_url ? (
-            <img src={event.cover_image_url} alt={event.name} className="w-full h-full object-cover" />
+          {event && (getLocalHeroImage(event.name) ?? event.cover_image_url) ? (
+            <img src={getLocalHeroImage(event!.name) ?? event!.cover_image_url!} alt={event!.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-purple/60 via-purple-dark/40 to-purple-dim" />
           )}
