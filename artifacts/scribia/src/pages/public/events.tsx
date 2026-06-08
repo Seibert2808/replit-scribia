@@ -3,7 +3,8 @@ import { Link } from 'wouter'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { publicGet } from '@/lib/public-fetch'
-import { Calendar, MapPin, ChevronRight } from 'lucide-react'
+import { DemoRequestDialog } from '@/components/demo-request-dialog'
+import { Calendar, MapPin, ChevronRight, PlayCircle } from 'lucide-react'
 
 interface PublicEvent {
   id: string
@@ -101,6 +102,7 @@ function getLocalSiteImage(name: string): string | null {
 export default function PublicEventsPage() {
   const [events, setEvents] = useState<PublicEvent[]>([])
   const [loading, setLoading] = useState(true)
+  const [demoOpen, setDemoOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -160,6 +162,16 @@ export default function PublicEventsPage() {
           <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
             Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
           </p>
+          <div className="mt-6 sm:mt-7">
+            <button
+              type="button"
+              onClick={() => setDemoOpen(true)}
+              className="inline-flex items-center gap-2 bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all"
+            >
+              <PlayCircle className="w-4 h-4" />
+              Quero ver uma demonstração
+            </button>
+          </div>
         </section>
 
         {/* Section label */}
@@ -201,6 +213,8 @@ export default function PublicEventsPage() {
           </div>
         )}
       </main>
+
+      <DemoRequestDialog open={demoOpen} onOpenChange={setDemoOpen} />
 
       <Footer />
     </div>
