@@ -8,11 +8,15 @@ const WHATSAPP_NUMBER = "5521997478748"
 
 function buildWhatsappMessage(name: string, email: string): string {
   return [
-    "Olá Scribia! Gostaria de ver uma demonstração do Scribia.",
+    "Olá, Scribia! 👋",
+    "",
+    "Gostaria de ver uma demonstração de como a plataforma funciona no meu evento.",
     "",
     "*Meus dados:*",
     `• Nome: ${name.trim()}`,
     `• E-mail: ${email.trim()}`,
+    "",
+    "Podem me explicar os próximos passos?",
   ].join("\n")
 }
 
@@ -25,13 +29,17 @@ export function DemoRequestDialog({ open, onOpenChange }: DemoRequestDialogProps
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [sent, setSent] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
 
-  const nameOk = name.trim().split(/\s+/).length >= 2
+  const nameOk = name.trim().length >= 2
   const emailOk = /\S+@\S+\.\S+/.test(email)
   const canSend = nameOk && emailOk
 
   function handleSend() {
-    if (!canSend) return
+    if (!canSend) {
+      setShowErrors(true)
+      return
+    }
     const text = encodeURIComponent(buildWhatsappMessage(name, email))
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank", "noopener,noreferrer")
     setSent(true)
@@ -44,6 +52,7 @@ export function DemoRequestDialog({ open, onOpenChange }: DemoRequestDialogProps
         setName("")
         setEmail("")
         setSent(false)
+        setShowErrors(false)
       }, 200)
     }
   }
@@ -73,22 +82,32 @@ export function DemoRequestDialog({ open, onOpenChange }: DemoRequestDialogProps
             </p>
 
             <div className="space-y-3 mb-6">
-              <Input
-                autoFocus
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Nome completo"
-              />
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="voce@email.com"
-                onKeyDown={(e) => { if (e.key === "Enter" && canSend) handleSend() }}
-              />
+              <div className="space-y-1">
+                <Input
+                  autoFocus
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Seu nome"
+                />
+                {showErrors && !nameOk && (
+                  <p className="text-[12px] text-destructive">Digite seu nome.</p>
+                )}
+              </div>
+              <div className="space-y-1">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="voce@email.com"
+                  onKeyDown={(e) => { if (e.key === "Enter") handleSend() }}
+                />
+                {showErrors && !emailOk && (
+                  <p className="text-[12px] text-destructive">Digite um e-mail válido.</p>
+                )}
+              </div>
             </div>
 
-            <Button onClick={handleSend} disabled={!canSend} size="lg" className="w-full gap-1.5">
+            <Button onClick={handleSend} size="lg" className="w-full gap-1.5">
               Continuar no WhatsApp <Send className="w-4 h-4" />
             </Button>
           </div>
