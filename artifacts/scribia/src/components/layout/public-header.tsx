@@ -6,7 +6,7 @@ import { useTheme } from '@/components/theme-provider'
 import { homeForRole, pickPrimaryRole, getActiveRole, type UserRole } from '@/lib/active-role'
 
 const NAV_LINKS = [
-  { href: '/', label: 'Saiba mais' },
+  { href: '/', label: 'Home' },
   { href: '/quero-no-meu-evento', label: 'Quero no meu evento' },
   { href: '/eventos', label: 'Eventos' },
   { href: '/organizadores', label: 'Organizadores' },
