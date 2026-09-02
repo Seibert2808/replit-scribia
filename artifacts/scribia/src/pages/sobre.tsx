@@ -15,7 +15,7 @@ import Footer from '@/components/sections/Footer'
 
 export default function SobrePage() {
   useEffect(() => {
-    document.title = 'Scribia — Sistema de processamento inteligente de áudio e texto'
+    document.title = 'ScribIA: o ecossistema que mantém seus eventos vivos'
   }, [])
 
   return (

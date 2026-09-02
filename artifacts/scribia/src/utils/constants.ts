@@ -1,7 +1,7 @@
 export const SITE = {
   name: "Scribia",
-  url: "https://www.scribia.app.br/",
-  appUrl: import.meta.env.VITE_APP_URL ?? "https://scribia-web.vercel.app",
+  url: "https://www.scribia.com.br/",
+  appUrl: import.meta.env.VITE_APP_URL ?? "https://app.scribia.io",
   contactEmail: "suporte@scribia.com.br",
   twitter: "@scribia_ai",
 };

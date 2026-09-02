@@ -6,11 +6,18 @@ import { useTheme } from '@/components/theme-provider'
 import { homeForRole, pickPrimaryRole, getActiveRole, type UserRole } from '@/lib/active-role'
 
 const NAV_LINKS = [
+  { href: '/', label: 'Saiba mais' },
+  { href: '/quero-no-meu-evento', label: 'Quero no meu evento' },
   { href: '/eventos', label: 'Eventos' },
   { href: '/organizadores', label: 'Organizadores' },
-  { href: '/sobre', label: 'Saiba mais' },
-  { href: '/quero-no-meu-evento', label: 'Quero no meu evento' },
 ] as const
+
+// A home tambem responde em /sobre, e '/' e prefixo de toda rota, entao o
+// destaque do menu precisa ser por igualdade exata nesses dois casos.
+function isNavActive(location: string, href: string): boolean {
+  if (href === '/') return location === '/' || location === '/sobre'
+  return location === href || location.startsWith(`${href}/`)
+}
 
 export function PublicHeader() {
   const [authed, setAuthed] = useState(false)
@@ -52,12 +59,12 @@ export function PublicHeader() {
   return (
     <nav className="bg-bg2/80 backdrop-blur border-b border-border-subtle px-4 sm:px-6 md:px-10 flex items-center justify-between gap-3 h-14 sticky top-0 z-10">
       <div className="flex items-center gap-5 sm:gap-7 min-w-0">
-        <Link href="/eventos" className="shrink-0 hover:opacity-80 transition-opacity flex items-center">
+        <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity flex items-center">
           <img src="/logo-scribia.png" alt="Scribia" className="h-7 sm:h-8 w-auto" />
         </Link>
         <div className="hidden sm:flex items-center gap-2">
           {NAV_LINKS.map((link) => {
-            const active = location === link.href || location.startsWith(`${link.href}/`)
+            const active = isNavActive(location, link.href)
             return (
               <Link
                 key={link.href}
@@ -97,7 +104,7 @@ export function PublicHeader() {
               Criar conta
             </Link>
             <a
-              href="https://scribia-web.vercel.app/login"
+              href="https://app.scribia.io/login"
               className="inline-flex items-center bg-purple text-white px-3 sm:px-4 py-2 rounded-lg text-[13px] font-medium hover:bg-purple-light transition-all"
             >
               Entrar
@@ -118,7 +125,7 @@ export function PublicHeader() {
         <div className="sm:hidden absolute top-14 left-0 right-0 bg-bg2 border-b border-border-subtle shadow-lg animate-fade-up">
           <div className="flex flex-col py-2">
             {NAV_LINKS.map((link) => {
-              const active = location === link.href || location.startsWith(`${link.href}/`)
+              const active = isNavActive(location, link.href)
               return (
                 <Link
                   key={link.href}

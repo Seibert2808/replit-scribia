@@ -145,10 +145,6 @@ function LoadingScreen() {
   )
 }
 
-function AppIndex() {
-  return <Redirect to="/eventos" />
-}
-
 function ProtectedDashboard({ component: Component }: { component: React.ComponentType }) {
   const { authed, loading, activeRole, userName, roles } = useCurrentUser()
   if (loading) return <LoadingScreen />
@@ -181,7 +177,8 @@ function ProtectedAdmin({ component: Component }: { component: React.ComponentTy
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={AppIndex} />
+      {/* Home institucional: a mesma pagina servida em /sobre */}
+      <Route path="/" component={SobrePage} />
 
       {/* Auth */}
       <Route path="/login" component={LoginPage} />
