@@ -24,6 +24,34 @@ interface OrganizerEvent {
   cover_image_url: string | null
 }
 
+// Eventos que a casa SEDIOU mas nao organizou no sistema. O RIW foi montado
+// no palco do Arca Hub, e quem consta como organizadora no banco e a Sabrina.
+//
+// Isto e CREDITO DE PALCO e so aparece na pagina. Nao concede acesso nenhum:
+// nao muda organizer_id, nao cria co-organizador, e a conta do parceiro
+// continua sem ouvir o audio nem ver relatorio. Decisao dela em 03/09/2026.
+//
+// Se um dia a casa virar organizadora de verdade no sistema, e so tirar o id
+// daqui: o evento passa a vir pela consulta normal e nao duplica.
+const EVENTOS_SEDIADOS: Record<string, string[]> = {
+  'arca-hub': ['1c54b7ed-4866-4426-86a8-e4427d9fa135'], // RIW Rio Innovation Week, Palco 25
+}
+
+// Convite do parceiro, com o codigo de indicacao do ScribIA.
+const CONVITE_PARCEIRO: Record<
+  string,
+  { titulo: string; texto: string; url: string; rotulo: string; observacao: string }
+> = {
+  'arca-hub': {
+    titulo: 'Quer desenvolver seu projeto no Arca Hub?',
+    texto:
+      'O Arca Hub é o hub de inovação onde o ScribIA foi pensado e desenvolvido. É um dos organizadores do Rio Innovation Week. Quem chega pela indicação do ScribIA entra com condição especial.',
+    url: 'https://arcahub.com.br/cadastro?indicacao=SCRIBIA-F7F4',
+    rotulo: 'Conhecer o Arca Hub',
+    observacao: 'Indicados pelo ScribIA ganham a primeira mensalidade gratuitamente.',
+  },
+}
+
 function formatDateRange(startISO: string, endISO: string): string {
   const start = new Date(startISO)
   const end = new Date(endISO)
@@ -53,11 +81,30 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
         if (!o) { setNotFound(true); setLoading(false); return }
         setOrganizer(o)
 
-        const evs = await publicGet<OrganizerEvent>(
-          `events?organizer_id=eq.${encodeURIComponent(o.id)}&status=in.(active,completed)&select=id,slug,name,description,start_date,end_date,cover_image_url&order=end_date.desc`
+        const campos = 'id,slug,name,description,start_date,end_date,cover_image_url'
+        const proprios = await publicGet<OrganizerEvent>(
+          `events?organizer_id=eq.${encodeURIComponent(o.id)}&status=in.(active,completed)&select=${campos}&order=end_date.desc`
         )
+
+        // Os sediados vem numa consulta separada, e nao dentro de um "or" com a
+        // dos proprios: assim uma falha aqui nao derruba a lista principal.
+        const idsSediados = (EVENTOS_SEDIADOS[params.orgSlug] ?? [])
+          .filter((id) => !proprios.some((e) => e.id === id))
+        let sediados: OrganizerEvent[] = []
+        if (idsSediados.length > 0) {
+          try {
+            sediados = await publicGet<OrganizerEvent>(
+              `events?id=in.(${idsSediados.join(',')})&status=in.(active,completed)&select=${campos}`
+            )
+          } catch (_) { /* sem credito de palco, a pagina segue */ }
+        }
+
         if (!mounted) return
-        setEvents(evs)
+        setEvents(
+          [...proprios, ...sediados].sort(
+            (a, b) => new Date(b.end_date).getTime() - new Date(a.end_date).getTime(),
+          ),
+        )
       } catch (_) {
         // silent
       } finally {
@@ -129,7 +176,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
             <h2 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Eventos</h2>
             <p className="text-[12.5px] text-text3 mt-0.5">
               {events.length > 0
-                ? `${events.length} ${events.length === 1 ? 'evento' : 'eventos'} publicados`
+                ? `${events.length} ${events.length === 1 ? 'evento' : 'eventos'} no ScribIA`
                 : 'Sem eventos publicados ainda'}
             </p>
           </div>
@@ -178,6 +225,31 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
           </div>
         )}
       </section>
+
+      {CONVITE_PARCEIRO[params.orgSlug] && (
+        <section className="border-t border-border-subtle bg-bg2/40">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 py-12 md:py-16 text-center">
+            <h2 className="font-heading text-[22px] sm:text-[26px] font-bold text-text leading-snug">
+              {CONVITE_PARCEIRO[params.orgSlug].titulo}
+            </h2>
+            <p className="text-[14px] text-text2 mt-3 max-w-xl mx-auto leading-relaxed">
+              {CONVITE_PARCEIRO[params.orgSlug].texto}
+            </p>
+            <a
+              href={CONVITE_PARCEIRO[params.orgSlug].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-6 bg-purple text-white px-6 py-3 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all shadow-elegant"
+            >
+              {CONVITE_PARCEIRO[params.orgSlug].rotulo}
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <p className="text-[12.5px] text-text3 mt-4">
+              {CONVITE_PARCEIRO[params.orgSlug].observacao}
+            </p>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

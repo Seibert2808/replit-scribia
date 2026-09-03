@@ -5,6 +5,7 @@ import { publicGet, publicGetOne } from '@/lib/public-fetch'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock, ArrowUpRight } from 'lucide-react'
+import { SITE } from '@/utils/constants'
 
 interface EventDetail {
   id: string
@@ -256,8 +257,8 @@ export default function PublicEventPage() {
               <Lock className="w-4 h-4 text-purple-light shrink-0 mt-0.5 sm:mt-0" />
               <span>
                 {authed
-                  ? 'Inscreva-se no evento para acessar o conteúdo completo das palestras.'
-                  : 'Entre na sua conta para acessar o conteúdo das palestras.'}
+                  ? 'O conteúdo completo é liberado para quem se cadastrou neste evento.'
+                  : 'Participou deste evento? Entre com o e-mail que você usou no cadastro.'}
               </span>
             </div>
             {!authed && (
@@ -331,18 +332,23 @@ export default function PublicEventPage() {
       {!authed && lectures.length > 0 && (
         <section className="border-t border-border-subtle bg-bg2/40">
           <div className="max-w-3xl mx-auto px-4 py-10 md:py-12 text-center">
-            <h3 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Acesse os materiais deste evento</h3>
+            <h3 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Você participou deste evento?</h3>
             <p className="text-[13px] text-text2 mt-2 max-w-xl mx-auto">
-              Áudios, transcrições, e-books e playbooks ficam disponíveis para participantes inscritos.
+              Áudios, resumos, livebooks, playbooks e cards ficam disponíveis para quem se
+              cadastrou neste evento. Entre com o e-mail que você usou no cadastro.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
               <Link href="/login" className="inline-flex items-center bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all shadow-elegant">
                 Entrar
               </Link>
-              <Link href="/register" className="inline-flex items-center text-[14px] text-text2 hover:text-purple-light transition-colors px-3 py-2.5">
-                Criar conta
-              </Link>
             </div>
+            <p className="text-[12px] text-text3 mt-5 max-w-lg mx-auto leading-relaxed">
+              Participou e está sem acesso? Escreva para{' '}
+              <a href={`mailto:${SITE.supportEmail}`} className="text-purple-light hover:underline">
+                {SITE.supportEmail}
+              </a>
+              . Criar uma conta por conta própria não libera o conteúdo do evento.
+            </p>
           </div>
         </section>
       )}
