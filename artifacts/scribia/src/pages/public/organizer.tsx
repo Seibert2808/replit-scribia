@@ -16,7 +16,6 @@ interface OrganizerProfile {
 
 interface OrganizerEvent {
   id: string
-  slug: string
   name: string
   description: string | null
   start_date: string
@@ -81,9 +80,12 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
         if (!o) { setNotFound(true); setLoading(false); return }
         setOrganizer(o)
 
-        const campos = 'id,slug,name,description,start_date,end_date,cover_image_url'
+        // Sem 'slug': a visao publica nao tem essa coluna, e o card sempre
+        // aponta por id. Pedir campo inexistente faz o PostgREST recusar a
+        // consulta INTEIRA, e a pagina fica vazia sem dizer por que.
+        const campos = 'id,name,description,start_date,end_date,cover_image_url'
         const proprios = await publicGet<OrganizerEvent>(
-          `events?organizer_id=eq.${encodeURIComponent(o.id)}&status=in.(active,completed)&select=${campos}&order=end_date.desc`
+          `public_events?organizer_id=eq.${encodeURIComponent(o.id)}&select=${campos}&order=end_date.desc`
         )
 
         // Os sediados vem numa consulta separada, e nao dentro de um "or" com a
@@ -94,7 +96,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
         if (idsSediados.length > 0) {
           try {
             sediados = await publicGet<OrganizerEvent>(
-              `events?id=in.(${idsSediados.join(',')})&status=in.(active,completed)&select=${campos}`
+              `public_events?id=in.(${idsSediados.join(',')})&select=${campos}`
             )
           } catch (_) { /* sem credito de palco, a pagina segue */ }
         }

@@ -80,7 +80,7 @@ export default function PublicOrganizersPage() {
         if (orgIds.length > 0) {
           const ids = orgIds.map(encodeURIComponent).join(',')
           const countRows = await publicGet<{ organizer_id: string }>(
-            `events?select=organizer_id&status=in.(active,completed)&organizer_id=in.(${ids})`
+            `public_events?select=organizer_id&organizer_id=in.(${ids})`
           )
           counts = countRows.reduce<Record<string, number>>((acc, e) => {
             acc[e.organizer_id] = (acc[e.organizer_id] ?? 0) + 1

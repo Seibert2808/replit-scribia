@@ -16,6 +16,7 @@ interface EventDetail {
   location: string | null
   cover_image_url: string | null
   organizer_id: string
+  organizer_name: string | null
 }
 
 interface OrganizerLite {
@@ -96,24 +97,28 @@ export default function PublicEventPage() {
     async function load() {
       try {
         const ev = await publicGetOne<EventDetail>(
-          `events?id=eq.${eventId}&status=neq.draft&select=id,name,description,start_date,end_date,location,cover_image_url,organizer_id`
+          `public_events?id=eq.${eventId}&select=id,name,description,start_date,end_date,location,cover_image_url,organizer_id,organizer_name`
         )
         if (!mounted) return
         if (!ev) { setNotFound(true); setLoading(false); return }
         setEvent(ev)
 
-        const org = await publicGetOne<OrganizerLite>(
-          `user_profiles?id=eq.${ev.organizer_id}&select=id,full_name`
-        )
+        // O nome do organizador ja vem embutido em public_events, entao
+        // nao ha mais nenhuma consulta a user_profiles nesta pagina.
         if (!mounted) return
-        if (org) setOrganizer(org)
+        if (ev.organizer_name) setOrganizer({ id: ev.organizer_id, full_name: ev.organizer_name })
 
+        // public_lectures traz os campos do palestrante achatados, em vez de
+        // um relacionamento embutido: assim o site nao depende do PostgREST
+        // inferir ligacao entre visoes, que e fragil. E o e-mail do palestrante
+        // fica de fora por construcao, porque a coluna nao existe la.
         type LecRow = {
-          id: string; title: string; status: string; duration_seconds: number | null; speaker_id: string | null
-          speakers: { id: string; name: string; avatar_url: string | null; company: string | null } | null
+          id: string; title: string; status: string; duration_seconds: number | null
+          speaker_id: string | null; speaker_name: string | null
+          speaker_avatar_url: string | null; speaker_company: string | null
         }
         const rows = await publicGet<LecRow>(
-          `lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speakers(id,name,avatar_url,company)&order=scheduled_at.asc`
+          `public_lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speaker_name,speaker_avatar_url,speaker_company&order=scheduled_at.asc`
         )
         if (!mounted) return
         setLectures(rows.map((l) => ({
@@ -122,9 +127,9 @@ export default function PublicEventPage() {
           status: l.status,
           duration_seconds: l.duration_seconds,
           speaker_id: l.speaker_id,
-          speaker_name: l.speakers?.name ?? null,
-          speaker_avatar: l.speakers?.avatar_url ?? null,
-          speaker_company: l.speakers?.company ?? null,
+          speaker_name: l.speaker_name,
+          speaker_avatar: l.speaker_avatar_url,
+          speaker_company: l.speaker_company,
         })))
       } catch (_) {
         // silent

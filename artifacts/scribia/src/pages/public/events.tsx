@@ -112,18 +112,15 @@ export default function PublicEventsPage() {
 
     async function load() {
       try {
+        // public_events e a visao de leitura publica: so eventos active e
+        // completed, e so colunas divulgaveis. O nome do organizador vem
+        // embutido, entao some a segunda consulta em user_profiles, que era
+        // justamente a tabela com os 1.074 cadastros.
         const list = await publicGet<{
           id: string; name: string; start_date: string; end_date: string
-          location: string | null; cover_image_url: string | null; organizer_id: string
-        }>(`events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,organizer_id&order=end_date.desc`)
-
-        const orgIds = Array.from(new Set(list.map((e) => e.organizer_id)))
-        let orgNameById: Record<string, string> = {}
-        if (orgIds.length > 0) {
-          const ids = orgIds.map(encodeURIComponent).join(',')
-          const users = await publicGet<{ id: string; full_name: string }>(`user_profiles?id=in.(${ids})&select=id,full_name`)
-          orgNameById = Object.fromEntries(users.map((u) => [u.id, u.full_name]))
-        }
+          location: string | null; cover_image_url: string | null
+          organizer_id: string; organizer_name: string | null
+        }>(`public_events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,organizer_id,organizer_name&order=end_date.desc`)
 
         if (!mounted) return
         setEvents(
@@ -134,7 +131,7 @@ export default function PublicEventsPage() {
             end_date: e.end_date,
             location: e.location,
             cover_image_url: getLocalSiteImage(e.name) ?? e.cover_image_url ?? getLocalCoverImage(e.name),
-            organizer_name: orgNameById[e.organizer_id] ?? '',
+            organizer_name: e.organizer_name ?? '',
           }))
         )
       } catch (_) {
