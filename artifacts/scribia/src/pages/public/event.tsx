@@ -5,7 +5,7 @@ import { publicGet, publicGetOne } from '@/lib/public-fetch'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock, ArrowUpRight } from 'lucide-react'
-import { SITE } from '@/utils/constants'
+import { SITE, LOGIN_URL } from '@/utils/constants'
 
 interface EventDetail {
   id: string
@@ -262,12 +262,12 @@ export default function PublicEventPage() {
               </span>
             </div>
             {!authed && (
-              <Link
-                href="/login"
+              <a
+                href={LOGIN_URL}
                 className="inline-flex items-center justify-center bg-purple text-white px-4 py-2 rounded-lg text-[12.5px] font-medium hover:bg-purple-light transition-all shrink-0"
               >
                 Entrar
-              </Link>
+              </a>
             )}
           </div>
         )}
@@ -297,7 +297,10 @@ export default function PublicEventPage() {
                   )}
                 </div>
               )
-              if (hasAccess) return <Link key={l.id} href={`/portal/lectures/${l.id}`}>{card}</Link>
+              // Precisa apontar para o mesmo app do botao Entrar. Se apontasse para
+              // o portal deste site, a pessoa logaria no app.scribia.io e cairia aqui
+              // sem sessao, voltando para o login num laco.
+              if (hasAccess) return <a key={l.id} href={`${SITE.appUrl}/portal/lectures/${l.id}`}>{card}</a>
               return <div key={l.id}>{card}</div>
             })}
           </div>
@@ -338,9 +341,9 @@ export default function PublicEventPage() {
               cadastrou neste evento. Entre com o e-mail que você usou no cadastro.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
-              <Link href="/login" className="inline-flex items-center bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all shadow-elegant">
+              <a href={LOGIN_URL} className="inline-flex items-center bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all shadow-elegant">
                 Entrar
-              </Link>
+              </a>
             </div>
             <p className="text-[12px] text-text3 mt-5 max-w-lg mx-auto leading-relaxed">
               Participou e está sem acesso? Escreva para{' '}
