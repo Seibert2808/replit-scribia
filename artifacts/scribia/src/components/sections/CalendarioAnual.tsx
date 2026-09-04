@@ -155,15 +155,21 @@ export default function CalendarioAnual() {
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 bg-bg2 border border-border-subtle rounded-xl p-3.5 hover:border-border-purple hover:-translate-y-0.5 hover:shadow-elegant transition-all duration-300 animate-fade-up"
               >
-                <div className="w-12 h-12 rounded-lg bg-bg3 overflow-hidden shrink-0 flex items-center justify-center">
+                {/* Fundo CLARO na caixa do logo, e nao a cor do card. Logo de
+                    evento costuma ser escuro sobre fundo branco ou transparente,
+                    e sobre o indigo da pagina ele simplesmente sumiria. Fundo
+                    claro faz qualquer logo aparecer, venha de quem vier. */}
+                <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 flex items-center justify-center" style={{ background: ev.logo_path ? '#FFFFFF' : undefined }}>
                   {ev.logo_path ? (
                     <img
                       src={enderecoDoLogo(ev.logo_path)}
                       alt={ev.name}
-                      className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-contain p-1 transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
-                    <CalendarDays className="w-5 h-5 text-text3" />
+                    <div className="w-full h-full bg-bg3 flex items-center justify-center">
+                      <CalendarDays className="w-5 h-5 text-text3" />
+                    </div>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
