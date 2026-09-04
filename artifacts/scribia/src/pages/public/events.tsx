@@ -203,16 +203,19 @@ export default function PublicEventsPage() {
           </div>
         )}
 
-        {/* Rest of events */}
+        <CalendarioAnual />
+
+        {/* A lista completa vai por ultimo: e referencia para quem ja
+            conhece, enquanto o Calendario acima e o que traz visita nova.
+            Mesma separacao visual da secao anterior, senao as duas colam. */}
         {!loading && rest.length > 0 && (
-          <div className="animate-fade-up">
+          <div className="animate-fade-up mt-14 md:mt-20 pt-10 md:pt-14 border-t border-border-subtle">
             <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest mb-3">Todos os eventos com o ScribIA</p>
             <div className="flex flex-col gap-2">
               {rest.map((ev) => <RowCard key={ev.id} ev={ev} />)}
             </div>
           </div>
         )}
-        <CalendarioAnual />
       </main>
 
       <DemoRequestDialog open={demoOpen} onOpenChange={setDemoOpen} />
