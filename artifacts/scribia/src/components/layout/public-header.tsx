@@ -4,17 +4,23 @@ import { Sun, Moon, Menu, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useTheme } from '@/components/theme-provider'
 import { homeForRole, pickPrimaryRole, getActiveRole, type UserRole } from '@/lib/active-role'
+import { SITE } from '@/utils/constants'
 
+// A Vitrine mora no app, nao no site: e uma galeria so, para as duas nao
+// divergirem com o tempo. Por isso o item tem `externo`, e o cabecalho
+// precisa desenhar <a> em vez do Link do roteador nesse caso.
 const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/quero-no-meu-evento', label: 'Quero no meu evento' },
-  { href: '/eventos', label: 'Eventos' },
-  { href: '/organizadores', label: 'Organizadores' },
+  { href: '/', label: 'Home', externo: false },
+  { href: '/quero-no-meu-evento', label: 'Quero no meu evento', externo: false },
+  { href: '/eventos', label: 'Eventos', externo: false },
+  { href: `${SITE.appUrl}/vitrine`, label: 'Vitrine', externo: true },
+  { href: '/organizadores', label: 'Organizadores', externo: false },
 ] as const
 
 // A home tambem responde em /sobre, e '/' e prefixo de toda rota, entao o
 // destaque do menu precisa ser por igualdade exata nesses dois casos.
-function isNavActive(location: string, href: string): boolean {
+function isNavActive(location: string, href: string, externo: boolean): boolean {
+  if (externo) return false
   if (href === '/') return location === '/' || location === '/sobre'
   return location === href || location.startsWith(`${href}/`)
 }
@@ -64,17 +70,14 @@ export function PublicHeader() {
         </Link>
         <div className="hidden sm:flex items-center gap-2">
           {NAV_LINKS.map((link) => {
-            const active = isNavActive(location, link.href)
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3 py-1.5 rounded-md text-[15px] font-bold uppercase tracking-wider transition-colors ${
-                  active ? 'text-purple-light bg-purple-dim/50' : 'text-text2 hover:text-purple-light'
-                }`}
-              >
-                {link.label}
-              </Link>
+            const active = isNavActive(location, link.href, link.externo)
+            const classe = `px-3 py-1.5 rounded-md text-[15px] font-bold uppercase tracking-wider transition-colors ${
+              active ? 'text-purple-light bg-purple-dim/50' : 'text-text2 hover:text-purple-light'
+            }`
+            return link.externo ? (
+              <a key={link.href} href={link.href} className={classe}>{link.label}</a>
+            ) : (
+              <Link key={link.href} href={link.href} className={classe}>{link.label}</Link>
             )
           })}
         </div>
@@ -125,19 +128,16 @@ export function PublicHeader() {
         <div className="sm:hidden absolute top-14 left-0 right-0 bg-bg2 border-b border-border-subtle shadow-lg animate-fade-up">
           <div className="flex flex-col py-2">
             {NAV_LINKS.map((link) => {
-              const active = isNavActive(location, link.href)
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-5 py-3 text-[14px] font-bold uppercase tracking-wider transition-colors border-l-2 ${
-                    active
-                      ? 'text-purple-light bg-purple-dim/30 border-purple-light'
-                      : 'text-text2 hover:text-purple-light hover:bg-bg3 border-transparent'
-                  }`}
-                >
-                  {link.label}
-                </Link>
+              const active = isNavActive(location, link.href, link.externo)
+              const classe = `px-5 py-3 text-[14px] font-bold uppercase tracking-wider transition-colors border-l-2 ${
+                active
+                  ? 'text-purple-light bg-purple-dim/30 border-purple-light'
+                  : 'text-text2 hover:text-purple-light hover:bg-bg3 border-transparent'
+              }`
+              return link.externo ? (
+                <a key={link.href} href={link.href} className={classe}>{link.label}</a>
+              ) : (
+                <Link key={link.href} href={link.href} className={classe}>{link.label}</Link>
               )
             })}
             {!authed && (
