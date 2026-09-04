@@ -4,6 +4,7 @@ import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { publicGet } from '@/lib/public-fetch'
 import { DemoRequestDialog } from '@/components/demo-request-dialog'
+import CalendarioAnual from '@/components/sections/CalendarioAnual'
 import { Calendar, MapPin, ChevronRight, PlayCircle } from 'lucide-react'
 
 interface PublicEvent {
@@ -205,12 +206,13 @@ export default function PublicEventsPage() {
         {/* Rest of events */}
         {!loading && rest.length > 0 && (
           <div className="animate-fade-up">
-            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest mb-3">Todos os eventos</p>
+            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest mb-3">Todos os eventos com o ScribIA</p>
             <div className="flex flex-col gap-2">
               {rest.map((ev) => <RowCard key={ev.id} ev={ev} />)}
             </div>
           </div>
         )}
+        <CalendarioAnual />
       </main>
 
       <DemoRequestDialog open={demoOpen} onOpenChange={setDemoOpen} />
