@@ -26,7 +26,7 @@ function FeaturedCard({ ev, large }: { ev: PublicEvent; large?: boolean }) {
   return (
     <Link
       href={`/eventos/${ev.id}`}
-      className={`group relative rounded-2xl overflow-hidden block bg-bg3 ${large ? 'aspect-[16/10]' : 'aspect-[4/3]'}`}
+      className={`group relative rounded-2xl overflow-hidden block bg-bg3 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant ${large ? 'aspect-[16/10]' : 'aspect-[4/3]'}`}
     >
       {ev.cover_image_url ? (
         <img
@@ -40,7 +40,7 @@ function FeaturedCard({ ev, large }: { ev: PublicEvent; large?: boolean }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
         <p className="text-[10px] text-white/60 uppercase tracking-widest mb-1">{ev.organizer_name}</p>
-        <h3 className={`font-heading font-bold text-white leading-snug drop-shadow line-clamp-2 ${large ? 'text-[20px] sm:text-[22px]' : 'text-[16px] sm:text-[18px]'}`}>
+        <h3 className={`font-heading font-bold text-white leading-snug drop-shadow line-clamp-2 transition-transform duration-300 group-hover:-translate-y-0.5 ${large ? 'text-[20px] sm:text-[22px]' : 'text-[16px] sm:text-[18px]'}`}>
           {ev.name}
         </h3>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5">
@@ -64,7 +64,7 @@ function RowCard({ ev }: { ev: PublicEvent }) {
   return (
     <Link
       href={`/eventos/${ev.id}`}
-      className="group flex items-center gap-4 bg-bg2 border border-border-subtle rounded-xl p-3 hover:border-border-purple hover:bg-bg3/40 transition-all"
+      className="group flex items-center gap-4 bg-bg2 border border-border-subtle rounded-xl p-3 hover:border-border-purple hover:bg-bg3/40 hover:-translate-y-0.5 transition-all duration-300"
     >
       <div className="w-16 h-14 rounded-lg overflow-hidden shrink-0 bg-bg3">
         {ev.cover_image_url ? (
@@ -101,6 +101,36 @@ function getLocalSiteImage(name: string): string | null {
   if (n.includes('eneon')) return '/images/eneon-2026.png'
   return null
 }
+
+// Fundo do portfolio do ScribIA: o indigo escuro, mais elegante que o
+// fundo padrao do site. Escolha dela.
+//
+// Trocamos SO AS SUPERFICIES e o texto. O roxo da marca fica intacto em
+// botoes, links e destaques: e isso que faz a pagina parecer o portfolio,
+// que e azul escuro COM a cor do ScribIA por cima, e nao a pagina de outra
+// empresa.
+//
+// ARMADILHA QUE ME PEGOU NA PRIMEIRA TENTATIVA:
+// o index.css usa "@theme inline", entao o Tailwind SUBSTITUI o valor no
+// build. Trocar --color-bg em tempo de execucao nao faz nada, porque a
+// classe bg-bg ja compilou para var(--background). Os nomes abaixo sao os
+// que a classe realmente le, conferidos no CSS gerado.
+//
+// Consequencia: o que estiver declarado como valor literal no @theme nao
+// da para trocar assim. E o caso do --color-text3, que fica no cinza
+// original. Contraste conferido, continua legivel sobre o indigo.
+//
+// O CABECALHO FICA DE FORA de proposito: a barra de navegacao tem que ser
+// igual em todo o site, senao a pessoa estranha ao trocar de pagina. Foi a
+// propria Sabrina que apontou isso na Vitrine.
+const FUNDO_PORTFOLIO = {
+  '--background': '#1B1930',
+  '--card': '#232041',
+  '--muted': '#2C2950',
+  '--foreground': '#F2F3F9',
+  '--muted-foreground': '#C7CAD8',
+  '--border': '#332F5A',
+} as React.CSSProperties
 
 export default function PublicEventsPage() {
   const [events, setEvents] = useState<PublicEvent[]>([])
@@ -149,15 +179,30 @@ export default function PublicEventsPage() {
   const rest = events.slice(3)
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg relative overflow-x-hidden">
+      {/* Brilho decorativo com o gradiente da marca. aria-hidden porque e
+          enfeite: leitor de tela nao deve anunciar. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[520px] opacity-[0.18] blur-[110px]"
+        style={{ background: 'radial-gradient(ellipse at center, #725EA8 0%, #698DC5 45%, transparent 70%)' }}
+      />
       <PublicHeader />
 
+      <div style={FUNDO_PORTFOLIO} className="bg-bg">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-8 md:pt-12 pb-20">
 
         {/* Hero */}
         <section className="mb-10 md:mb-14 animate-fade-up">
           <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl">
-            Scribia: o ecossistema inteligente que mantém seus eventos <span className="text-purple-light">vivos</span>.
+            Scribia: o ecossistema inteligente que mantém seus eventos{' '}
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
+            >
+              vivos
+            </span>
+            .
           </h1>
           <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
             Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
@@ -221,6 +266,7 @@ export default function PublicEventsPage() {
       <DemoRequestDialog open={demoOpen} onOpenChange={setDemoOpen} />
 
       <Footer />
+      </div>
     </div>
   )
 }

@@ -87,11 +87,21 @@ export default function CalendarioAnual() {
   }, [eventos, busca])
 
   return (
-    <section className="mt-14 md:mt-20 pt-10 md:pt-14 border-t border-border-subtle">
+    <section className="relative mt-14 md:mt-20 pt-10 md:pt-14 border-t border-border-subtle">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 right-0 w-[520px] h-[320px] opacity-[0.10] blur-[100px]"
+        style={{ background: 'radial-gradient(ellipse at center, #698DC5 0%, transparent 70%)' }}
+      />
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-2">
         <div>
-          <h2 className="font-heading font-extrabold text-text leading-tight tracking-tight text-2xl sm:text-3xl">
-            Calendário Anual de Eventos
+          <h2 className="font-heading font-extrabold leading-tight tracking-tight text-2xl sm:text-3xl">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
+            >
+              Calendário Anual de Eventos
+            </span>
           </h2>
           <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
             Eventos acadêmicos, científicos e educacionais de todo o país, inclusive os que não
@@ -143,14 +153,14 @@ export default function CalendarioAnual() {
                 href={ev.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3 bg-bg2 border border-border-subtle rounded-xl p-3.5 hover:border-border-purple transition-colors"
+                className="group flex items-center gap-3 bg-bg2 border border-border-subtle rounded-xl p-3.5 hover:border-border-purple hover:-translate-y-0.5 hover:shadow-elegant transition-all duration-300 animate-fade-up"
               >
                 <div className="w-12 h-12 rounded-lg bg-bg3 overflow-hidden shrink-0 flex items-center justify-center">
                   {ev.logo_path ? (
                     <img
                       src={enderecoDoLogo(ev.logo_path)}
                       alt={ev.name}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
                     />
                   ) : (
                     <CalendarDays className="w-5 h-5 text-text3" />
