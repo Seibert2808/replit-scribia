@@ -104,8 +104,9 @@ export default function CalendarioAnual() {
             </span>
           </h2>
           <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
-            Eventos acadêmicos, científicos e educacionais de todo o país, inclusive os que não
-            passam pelo ScribIA. Se você organiza um, cadastre aqui.
+            O ScribIA te ajuda a encontrar eventos acadêmicos, científicos e educacionais de
+            todo o país, assim você consegue se programar e avançar na sua carreira. Se você
+            organiza um, cadastre aqui.
           </p>
         </div>
         <button
