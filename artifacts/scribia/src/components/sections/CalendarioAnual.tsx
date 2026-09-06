@@ -104,9 +104,9 @@ export default function CalendarioAnual() {
             </span>
           </h2>
           <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
-            O ScribIA te ajuda a encontrar eventos acadêmicos, científicos e educacionais de
-            todo o país, assim você consegue se programar e avançar na sua carreira. Se você
-            organiza um, cadastre aqui.
+            O ScribIA te ajuda a encontrar eventos acadêmicos, científicos, educacionais e
+            profissionais de todo o país, assim você consegue se programar e avançar na sua
+            carreira. Se você organiza um, cadastre aqui.
           </p>
         </div>
         <button
@@ -302,8 +302,9 @@ function FormularioCadastro({ aoFechar }: { aoFechar: () => void }) {
     <div className="mt-5 bg-bg2 border border-border-subtle rounded-xl p-5 sm:p-6">
       <p className="text-[14px] font-medium text-text">Cadastre seu evento</p>
       <p className="text-[12.5px] text-text3 mt-1.5 leading-relaxed max-w-2xl">
-        O calendário é destinado a eventos de cunho acadêmico, científico e educacional. Não são
-        aceitos eventos de entretenimento fora desse escopo. Todo cadastro passa por conferência
+        O calendário é destinado a eventos de cunho acadêmico, científico, educacional ou
+        profissional, com programação de palestras. Não são aceitos eventos de entretenimento nem
+        feiras exclusivamente comerciais. Todo cadastro passa por conferência
         antes de aparecer aqui.
       </p>
 
