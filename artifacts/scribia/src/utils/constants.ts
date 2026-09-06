@@ -13,7 +13,7 @@ export const SITE = {
   // botao leva ao formulario de contato: antes ele abria cal.com, a pagina
   // inicial do servico, e a pessoa caia num site de terceiros sem nada
   // marcado. Botao que nao agenda nada e pior que botao que nao existe.
-  agendaUrl: "",
+  agendaUrl: "https://calendar.app.google/tUKFyvhYCdLse3SJ6",
   twitter: "@scribia_ai",
 };
 
