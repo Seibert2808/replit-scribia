@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Info, Users, Calendar, Mic, Handshake, ArrowRight, Megaphone } from "lucide-react";
+import { Info, Users, Calendar, Mic, Handshake, ArrowRight, Megaphone, MessageCircle } from "lucide-react";
 import heroImage from "@/assets/images/hero-scribia-stage.png";
 
 const NewHero = () => {
@@ -24,7 +24,19 @@ const NewHero = () => {
             </p>
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <Button variant="outline" size="lg" asChild>
+              {/* O heroi so tinha o botao secundario. Sem um principal, a
+                  pagina nao pedia nada a quem chega. */}
+              <Button size="lg" asChild>
+                <a href="#contato" className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" /> Fale conosco
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                asChild
+                className="border-[#698DC5] text-[#4F79B8] hover:bg-[#698DC5]/10 hover:text-[#3566CF] transition-colors"
+              >
                 <a href="#como-funciona" className="flex items-center gap-2">
                   <Info className="h-5 w-5" /> Ver como funciona
                 </a>

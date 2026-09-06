@@ -5,6 +5,7 @@ import Footer from '@/components/sections/Footer'
 import { publicGet } from '@/lib/public-fetch'
 import { DemoRequestDialog } from '@/components/demo-request-dialog'
 import CalendarioAnual from '@/components/sections/CalendarioAnual'
+import { FUNDO_PORTFOLIO } from '@/utils/paleta'
 import { Calendar, MapPin, ChevronRight, PlayCircle } from 'lucide-react'
 
 interface PublicEvent {
@@ -102,36 +103,6 @@ function getLocalSiteImage(name: string): string | null {
   return null
 }
 
-// Fundo do portfolio do ScribIA: o indigo escuro, mais elegante que o
-// fundo padrao do site. Escolha dela.
-//
-// Trocamos SO AS SUPERFICIES e o texto. O roxo da marca fica intacto em
-// botoes, links e destaques: e isso que faz a pagina parecer o portfolio,
-// que e azul escuro COM a cor do ScribIA por cima, e nao a pagina de outra
-// empresa.
-//
-// ARMADILHA QUE ME PEGOU NA PRIMEIRA TENTATIVA:
-// o index.css usa "@theme inline", entao o Tailwind SUBSTITUI o valor no
-// build. Trocar --color-bg em tempo de execucao nao faz nada, porque a
-// classe bg-bg ja compilou para var(--background). Os nomes abaixo sao os
-// que a classe realmente le, conferidos no CSS gerado.
-//
-// Consequencia: o que estiver declarado como valor literal no @theme nao
-// da para trocar assim. E o caso do --color-text3, que fica no cinza
-// original. Contraste conferido, continua legivel sobre o indigo.
-//
-// O CABECALHO FICA DE FORA de proposito: a barra de navegacao tem que ser
-// igual em todo o site, senao a pessoa estranha ao trocar de pagina. Foi a
-// propria Sabrina que apontou isso na Vitrine.
-const FUNDO_PORTFOLIO = {
-  '--background': '#1B1930',
-  '--card': '#232041',
-  '--muted': '#2C2950',
-  '--foreground': '#F2F3F9',
-  '--muted-foreground': '#C7CAD8',
-  '--border': '#332F5A',
-} as React.CSSProperties
-
 export default function PublicEventsPage() {
   const [events, setEvents] = useState<PublicEvent[]>([])
   const [loading, setLoading] = useState(true)
@@ -189,7 +160,7 @@ export default function PublicEventsPage() {
       />
       <PublicHeader />
 
-      <div style={FUNDO_PORTFOLIO} className="bg-bg">
+      <div style={FUNDO_PORTFOLIO} className="bg-bg text-text">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-8 md:pt-12 pb-20">
 
         {/* Hero */}

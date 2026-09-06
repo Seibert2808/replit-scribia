@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import { SITE } from "@/utils/constants";
 
 const DemoSection = () => {
+  // Com agenda configurada, abre a agenda em aba nova. Sem ela, rola ate
+  // o formulario de contato, que funciona. O antigo abria cal.com, a
+  // pagina inicial do servico, e nao agendava nada.
   const handleDemoClick = () => {
-    window.open("https://cal.com/", "_blank");
+    if (SITE.agendaUrl) {
+      window.open(SITE.agendaUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    document.getElementById("contato")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -18,7 +26,9 @@ const DemoSection = () => {
             <p className="text-muted-foreground mb-6">
               Assista a uma demonstração do ScribIA em funcionamento e entenda como os Livebooks são gerados e distribuídos em poucos minutos.
             </p>
-            <Button onClick={handleDemoClick} size="lg">Agendar demo</Button>
+            <Button onClick={handleDemoClick} size="lg">
+              {SITE.agendaUrl ? "Agendar demonstração" : "Falar com a gente"}
+            </Button>
           </div>
           <div className="rounded-xl aspect-video overflow-hidden shadow-lg">
             <iframe

@@ -1,14 +1,12 @@
+import { Link } from "wouter";
+import { GRADIENTE_MARCA } from "@/utils/paleta";
 import { Upload, Brain, BookOpen, Share2, Settings } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 const HowItWorksNew = () => {
-  const handleScrollToPlans = () => {
-    const contactSection = document.getElementById('contato');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  // Leva a pagina de venda, e nao mais ao formulario do fim da home.
+  // Quem clica aqui ja decidiu que quer saber como contratar.
 
   const steps = [
     {
@@ -47,7 +45,7 @@ const HowItWorksNew = () => {
           <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
             <Settings className="h-4 w-4" /> Processo Simples
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
             Como o ScribIA Funciona
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -76,12 +74,12 @@ const HowItWorksNew = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button 
-            onClick={handleScrollToPlans}
+          <Button
+            asChild
             size="lg"
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 text-lg shadow-xl hover-scale"
           >
-            QUERO CONTRATAR O SCRIBIA!
+            <Link href="/quero-no-meu-evento">QUERO O SCRIBIA NO MEU EVENTO!</Link>
           </Button>
         </div>
       </div>

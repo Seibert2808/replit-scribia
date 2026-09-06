@@ -9,6 +9,11 @@ export const SITE = {
   //              JA e usuaria e esta com dificuldade, como no acesso ao evento.
   contactEmail: "contato@scribia.com.br",
   supportEmail: "suporte@scribia.com.br",
+  // Agenda do Google para marcar demonstracao. Enquanto estiver vazio, o
+  // botao leva ao formulario de contato: antes ele abria cal.com, a pagina
+  // inicial do servico, e a pessoa caia num site de terceiros sem nada
+  // marcado. Botao que nao agenda nada e pior que botao que nao existe.
+  agendaUrl: "",
   twitter: "@scribia_ai",
 };
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { FUNDO_PORTFOLIO, GRADIENTE_MARCA_CLARO } from "@/utils/paleta";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,10 +51,17 @@ ${formData.message.trim()}`;
   };
 
   return (
-    <section id="contato" className="py-16 md:py-24 bg-muted/30">
+    // Fecha a pagina num bloco escuro. O formulario e os textos dentro
+    // adotam a paleta sozinhos, porque a troca e das variaveis de cor.
+    <section id="contato" style={FUNDO_PORTFOLIO} className="py-16 md:py-24 bg-background text-foreground">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-extrabold">Fale com a gente</h2>
+          <h2
+            className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent"
+            style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+          >
+            Fale com a gente
+          </h2>
           <p className="text-muted-foreground">Nos conte sobre seu evento e como podemos ajudar.</p>
         </div>
 

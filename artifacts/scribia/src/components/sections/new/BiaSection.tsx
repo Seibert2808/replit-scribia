@@ -1,3 +1,4 @@
+import { GRADIENTE_MARCA } from "@/utils/paleta";
 import { Bot, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -59,7 +60,7 @@ const BiaSection = () => {
             <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
               <MessageCircle className="h-4 w-4" /> Tutor IA
             </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
               Conheça a BIA: a assistente de IA do ScribIA
             </h2>
             <h3 className="text-xl font-bold mb-4 text-primary">Aprendizado Contínuo e Personalizado</h3>

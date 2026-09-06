@@ -1,15 +1,18 @@
+import { FUNDO_PORTFOLIO, GRADIENTE_MARCA_CLARO } from "@/utils/paleta";
 import { AlertTriangle, Users, TrendingUp, Megaphone, Mic } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const ProblemSection = () => {
   return (
-    <section id="problema" className="py-16 md:py-24 bg-gradient-to-b from-background to-secondary/10">
+    // Fundo do portfolio, o mesmo da pagina de eventos e da Vitrine.
+    // Escolha dela, para o branding ficar coerente entre as paginas.
+    <section id="problema" style={FUNDO_PORTFOLIO} className="py-16 md:py-24 bg-background text-foreground">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
             <AlertTriangle className="h-4 w-4" /> O Desafio
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}>
             95% do Conteúdo de Eventos se Perde
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

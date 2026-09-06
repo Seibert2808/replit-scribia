@@ -1,17 +1,14 @@
+import { Link } from "wouter";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import livebookImage from "@/assets/images/livebook-tablet-home.png";
 
 const LivebookSection = () => {
-  const handleScrollToPlans = () => {
-    const contactSection = document.getElementById('contato');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  // Leva a pagina de venda, e nao mais ao formulario do fim da home.
+  // Quem clica aqui ja decidiu que quer saber como contratar.
 
   return (
-    <section className="py-16 md:py-24 text-white relative overflow-hidden" style={{ backgroundColor: '#928bdd' }}>
+    <section className="py-16 md:py-24 text-white relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #1B1930 0%, #232041 100%)' }}>
       <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}} />
       
@@ -39,12 +36,12 @@ const LivebookSection = () => {
                 </li>
               ))}
             </ul>
-            <Button 
-              onClick={handleScrollToPlans}
+            <Button
+              asChild
               size="lg"
               className="bg-white text-primary hover:bg-white/90 font-bold px-8 py-6 text-lg shadow-2xl hover-scale"
             >
-              QUERO CONTRATAR!
+              <Link href="/quero-no-meu-evento">QUERO O SCRIBIA NO MEU EVENTO!</Link>
             </Button>
           </div>
           

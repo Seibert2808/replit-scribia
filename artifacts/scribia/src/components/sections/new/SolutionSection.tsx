@@ -1,3 +1,4 @@
+import { GRADIENTE_MARCA } from "@/utils/paleta";
 import { Lightbulb } from "lucide-react";
 import ecosystemDiagram from "@/assets/images/ecosystem-diagram-home.png";
 
@@ -9,7 +10,7 @@ const SolutionSection = () => {
           <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
             <Lightbulb className="h-4 w-4" /> A Solução
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
             Um Ecossistema Inteligente e Conectado
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-12">
