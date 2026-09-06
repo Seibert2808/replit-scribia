@@ -39,42 +39,56 @@ interface Destaque {
   externo: boolean
 }
 
-function FeaturedCard({ ev, large }: { ev: Destaque; large?: boolean }) {
-  const classe = `group relative rounded-2xl overflow-hidden block bg-bg3 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant ${large ? 'aspect-[16/10]' : 'aspect-[4/3]'}`
+function FeaturedCard({ ev }: { ev: Destaque }) {
+  const classe =
+    'group block rounded-2xl overflow-hidden bg-bg2 border border-border-subtle hover:border-border-purple hover:-translate-y-1 hover:shadow-elegant transition-all duration-300'
 
   const conteudo = (
     <>
-      {ev.cover_image_url ? (
-        <img
-          src={ev.cover_image_url}
-          alt={ev.name}
-          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-purple/70 via-purple-dark/50 to-purple-dim" />
-      )}
-      {/* Sem capa mas com logo: mostra o logo numa caixa clara no centro.
-          Logo de evento costuma ser escuro e sumiria sobre o roxo. */}
-      {!ev.cover_image_url && ev.logo_url && (
-        <div className="absolute inset-0 flex items-center justify-center p-8">
-          <div className="bg-white rounded-xl p-3 max-w-[62%] max-h-[52%] flex items-center justify-center shadow-lg">
-            <img src={ev.logo_url} alt={ev.name} className="max-w-full max-h-full object-contain" />
-          </div>
-        </div>
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-        <p className="text-[10px] text-white/60 uppercase tracking-widest mb-1">{ev.organizer_name}</p>
-        <h3 className={`font-heading font-bold text-white leading-snug drop-shadow line-clamp-2 transition-transform duration-300 group-hover:-translate-y-0.5 ${large ? 'text-[20px] sm:text-[22px]' : 'text-[16px] sm:text-[18px]'}`}>
+      {/* Faixa de altura FIXA. Foto de capa preenche; logo aparece pequeno
+          e centrado. Antes o logo era esticado para ocupar o cartao
+          inteiro, e logo ampliado nao fica elegante em tamanho nenhum. */}
+      <div className="relative h-40 sm:h-44 overflow-hidden">
+        {ev.cover_image_url ? (
+          <img
+            src={ev.cover_image_url}
+            alt={ev.name}
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-purple/45 via-purple-dark/35 to-[#698DC5]/25" />
+            {ev.logo_url && (
+              <div className="absolute inset-0 flex items-center justify-center p-5">
+                <div className="bg-white rounded-xl px-4 py-3 shadow-md">
+                  <img
+                    src={ev.logo_url}
+                    alt={ev.name}
+                    className="max-h-[84px] max-w-[190px] object-contain transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="p-4 sm:p-5">
+        {ev.organizer_name && (
+          <p className="text-[10px] text-text3 uppercase tracking-widest mb-1 truncate">
+            {ev.organizer_name}
+          </p>
+        )}
+        <h3 className="font-heading font-bold text-text text-[15px] sm:text-[16px] leading-snug line-clamp-2 group-hover:text-purple-light transition-colors">
           {ev.name}
         </h3>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5">
-          <span className="flex items-center gap-1 text-[11px] text-white/75">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+          <span className="flex items-center gap-1 text-[11.5px] text-text2">
             <Calendar className="w-3 h-3" />
             {formatDateLong(ev.start_date)}
           </span>
           {ev.location && (
-            <span className="flex items-center gap-1 text-[11px] text-white/65">
+            <span className="flex items-center gap-1 text-[11.5px] text-text3">
               <MapPin className="w-3 h-3" />
               {ev.location}
             </span>
@@ -367,8 +381,8 @@ export default function PublicEventsPage() {
             </p>
           </div>
         ) : destaques.length === 1 ? (
-          <div className="mb-10 animate-fade-up">
-            <FeaturedCard ev={destaques[0]} large />
+          <div className="mb-10 animate-fade-up max-w-sm">
+            <FeaturedCard ev={destaques[0]} />
           </div>
         ) : destaques.length === 2 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 stagger-children">
