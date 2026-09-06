@@ -48,7 +48,7 @@ function FeaturedCard({ ev }: { ev: Destaque }) {
       {/* Faixa de altura FIXA. Foto de capa preenche; logo aparece pequeno
           e centrado. Antes o logo era esticado para ocupar o cartao
           inteiro, e logo ampliado nao fica elegante em tamanho nenhum. */}
-      <div className="relative h-40 sm:h-44 overflow-hidden">
+      <div className="relative aspect-[2/1] overflow-hidden">
         {ev.cover_image_url ? (
           <img
             src={ev.cover_image_url}
@@ -179,6 +179,7 @@ interface EventoDoCalendario {
   location: string | null
   url: string
   logo_path: string | null
+  cover_path: string | null
   with_scribia: boolean
 }
 
@@ -234,7 +235,7 @@ export default function PublicEventsPage() {
         // Serve para duas coisas nesta pagina: os marcados viram destaque, e
         // a lista inteira alimenta o Calendario logo abaixo.
         const calendario = await publicGet<EventoDoCalendario>(
-          'public_community_events?select=id,name,event_date,event_end_date,location,url,logo_path,with_scribia',
+          'public_community_events?select=id,name,event_date,event_end_date,location,url,logo_path,cover_path,with_scribia',
         )
         if (!mounted) return
         setDoCalendario(calendario)
@@ -273,7 +274,9 @@ export default function PublicEventsPage() {
         name: c.name,
         start_date: c.event_date,
         location: c.location,
-        cover_image_url: null,
+        // A capa vem de graca quando existe. Sem ela o cartao cai no
+        // logo sobre o gradiente, que continua funcionando.
+        cover_image_url: c.cover_path ? enderecoDoLogo(c.cover_path) : null,
         logo_url: c.logo_path ? enderecoDoLogo(c.logo_path) : null,
         organizer_name: '',
         href: c.url,
@@ -295,6 +298,7 @@ export default function PublicEventsPage() {
       location: e.location,
       url: `/eventos/${e.id}`,
       logo_path: null,
+      cover_path: null,
       with_scribia: true,
       interno: true,
     }))

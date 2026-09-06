@@ -30,6 +30,8 @@ export interface EventoCalendario {
   logo_path: string | null
   // Evento que tem o ScribIA contratado. Ganha etiqueta no cartao.
   with_scribia?: boolean
+  // Foto do destaque, 2:1. So os marcados com ScribIA tem.
+  cover_path?: string | null
   // true quando o destino e uma pagina do proprio ScribIA, e nao o site
   // do organizador. Muda o link e o icone.
   interno?: boolean
