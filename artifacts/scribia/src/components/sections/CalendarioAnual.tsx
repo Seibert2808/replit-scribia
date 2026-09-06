@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import { publicGet } from '@/lib/public-fetch'
+import { useMemo, useState } from 'react'
+import { Link } from 'wouter'
 import { SITE } from '@/utils/constants'
-import { Search, CalendarDays, ExternalLink, Send, Check, Loader2, Upload } from 'lucide-react'
+import { Search, CalendarDays, ExternalLink, ChevronRight, Send, Check, Loader2, Upload } from 'lucide-react'
 
 // O texto que a pessoa marca para autorizar contato. Fica numa constante
 // SO para ser exibido; o que e ENVIADO ao servidor e lido do elemento na
@@ -20,7 +20,7 @@ function enderecoDoLogo(caminho: string): string {
   return caminho.startsWith('http') ? caminho : `${URL_BUCKET}/${caminho}`
 }
 
-interface EventoCalendario {
+export interface EventoCalendario {
   id: string
   name: string
   event_date: string
@@ -28,6 +28,11 @@ interface EventoCalendario {
   location: string | null
   url: string
   logo_path: string | null
+  // Evento que tem o ScribIA contratado. Ganha etiqueta no cartao.
+  with_scribia?: boolean
+  // true quando o destino e uma pagina do proprio ScribIA, e nao o site
+  // do organizador. Muda o link e o icone.
+  interno?: boolean
 }
 
 function formatarData(iso: string): string {
@@ -55,30 +60,15 @@ function semAcento(v: string): string {
   return v.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
 }
 
-export default function CalendarioAnual() {
-  const [eventos, setEventos] = useState<EventoCalendario[]>([])
-  const [carregando, setCarregando] = useState(true)
+export default function CalendarioAnual({
+  eventos,
+  carregando,
+}: {
+  eventos: EventoCalendario[]
+  carregando: boolean
+}) {
   const [busca, setBusca] = useState('')
   const [formAberto, setFormAberto] = useState(false)
-
-  useEffect(() => {
-    let montado = true
-    const desistir = setTimeout(() => { if (montado) setCarregando(false) }, 8000)
-    async function carregar() {
-      try {
-        const lista = await publicGet<EventoCalendario>(
-          'public_community_events?select=id,name,event_date,event_end_date,location,url,logo_path&order=event_date.asc',
-        )
-        if (montado) setEventos(lista)
-      } catch (_) {
-        // silencioso: a secao some, o resto da pagina continua
-      } finally {
-        if (montado) setCarregando(false)
-      }
-    }
-    carregar()
-    return () => { montado = false; clearTimeout(desistir) }
-  }, [])
 
   const filtrados = useMemo(() => {
     const termo = semAcento(busca.trim())
@@ -149,41 +139,7 @@ export default function CalendarioAnual() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filtrados.map((ev) => (
-              <a
-                key={ev.id}
-                href={ev.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 bg-bg2 border border-border-subtle rounded-xl p-3.5 hover:border-border-purple hover:-translate-y-0.5 hover:shadow-elegant transition-all duration-300 animate-fade-up"
-              >
-                {/* Fundo CLARO na caixa do logo, e nao a cor do card. Logo de
-                    evento costuma ser escuro sobre fundo branco ou transparente,
-                    e sobre o indigo da pagina ele simplesmente sumiria. Fundo
-                    claro faz qualquer logo aparecer, venha de quem vier. */}
-                <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 flex items-center justify-center" style={{ background: ev.logo_path ? '#FFFFFF' : undefined }}>
-                  {ev.logo_path ? (
-                    <img
-                      src={enderecoDoLogo(ev.logo_path)}
-                      alt={ev.name}
-                      className="w-full h-full object-contain p-1 transition-transform duration-500 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-bg3 flex items-center justify-center">
-                      <CalendarDays className="w-5 h-5 text-text3" />
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13.5px] font-medium text-text leading-snug line-clamp-2 group-hover:text-purple-light transition-colors">
-                    {ev.name}
-                  </p>
-                  <p className="text-[11.5px] text-text3 mt-1">
-                    {periodo(ev.event_date, ev.event_end_date)}
-                    {ev.location ? ` · ${ev.location}` : ''}
-                  </p>
-                </div>
-                <ExternalLink className="w-3.5 h-3.5 text-text3 group-hover:text-purple-light transition-colors shrink-0" />
-              </a>
+              <CartaoEvento key={ev.id} ev={ev} />
             ))}
           </div>
           <p className="text-[11.5px] text-text3 mt-4">
@@ -194,6 +150,73 @@ export default function CalendarioAnual() {
         </>
       )}
     </section>
+  )
+}
+
+// O cartao do calendario. Dois destinos possiveis: o site do organizador,
+// que abre em aba nova, ou a pagina do evento aqui no ScribIA, quando o
+// evento e nosso. Quem procura evento com ScribIA quer chegar no material,
+// e nao no site institucional de quem organizou.
+function CartaoEvento({ ev }: { ev: EventoCalendario }) {
+  const classe =
+    'group flex items-center gap-3 bg-bg2 border rounded-xl p-3.5 hover:border-border-purple hover:-translate-y-0.5 hover:shadow-elegant transition-all duration-300 animate-fade-up ' +
+    (ev.with_scribia ? 'border-purple/40' : 'border-border-subtle')
+
+  const conteudo = (
+    <>
+      {/* Fundo CLARO na caixa do logo, e nao a cor do card. Logo de
+          evento costuma ser escuro sobre fundo branco ou transparente,
+          e sobre o indigo da pagina ele simplesmente sumiria. Fundo
+          claro faz qualquer logo aparecer, venha de quem vier. */}
+      <div
+        className="w-14 h-14 rounded-lg overflow-hidden shrink-0 flex items-center justify-center"
+        style={{ background: ev.logo_path ? '#FFFFFF' : undefined }}
+      >
+        {ev.logo_path ? (
+          <img
+            src={enderecoDoLogo(ev.logo_path)}
+            alt={ev.name}
+            className="w-full h-full object-contain p-1 transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full bg-bg3 flex items-center justify-center">
+            <CalendarDays className="w-5 h-5 text-text3" />
+          </div>
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[13.5px] font-medium text-text leading-snug line-clamp-2 group-hover:text-purple-light transition-colors">
+          {ev.name}
+        </p>
+        <p className="text-[11.5px] text-text3 mt-1">
+          {periodo(ev.event_date, ev.event_end_date)}
+          {ev.location ? ` · ${ev.location}` : ''}
+        </p>
+        {ev.with_scribia && (
+          <span className="inline-block text-[10.5px] font-semibold text-purple-light bg-purple-dim/50 rounded px-2 py-0.5 mt-1.5">
+            com ScribIA
+          </span>
+        )}
+      </div>
+      {ev.interno ? (
+        <ChevronRight className="w-3.5 h-3.5 text-text3 group-hover:text-purple-light transition-colors shrink-0" />
+      ) : (
+        <ExternalLink className="w-3.5 h-3.5 text-text3 group-hover:text-purple-light transition-colors shrink-0" />
+      )}
+    </>
+  )
+
+  if (ev.interno) {
+    return (
+      <Link href={ev.url} className={classe}>
+        {conteudo}
+      </Link>
+    )
+  }
+  return (
+    <a href={ev.url} target="_blank" rel="noopener noreferrer" className={classe}>
+      {conteudo}
+    </a>
   )
 }
 
