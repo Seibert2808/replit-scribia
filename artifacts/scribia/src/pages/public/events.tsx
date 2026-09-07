@@ -338,7 +338,7 @@ export default function PublicEventsPage() {
         {/* Hero */}
         <section className="mb-10 md:mb-14 animate-fade-up">
           <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl">
-            Scribia: o ecossistema inteligente que mantém seus eventos{' '}
+            Scribia: o ecossistema inteligente que mantém eventos{' '}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
