@@ -346,11 +346,11 @@ export default function PublicEventsPage() {
       <PublicHeader />
 
       <div style={FUNDO_PORTFOLIO} className="bg-bg text-text">
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 pt-8 md:pt-12 pb-20">
+      <main className="container mx-auto px-4 pt-8 md:pt-12 pb-20">
 
         {/* Hero */}
-        <section className="mb-10 md:mb-14 animate-fade-up">
-          <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl">
+        <section className="mb-10 md:mb-14 animate-fade-up text-center">
+          <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl mx-auto">
             Scribia: o ecossistema inteligente que mantém eventos{' '}
             <span
               className="bg-clip-text text-transparent"
@@ -360,13 +360,13 @@ export default function PublicEventsPage() {
             </span>
             .
           </h1>
-          <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
+          <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
             Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
           </p>
           {/* Tres publicos, tres botoes. O primeiro e cheio porque esta
               pagina existe primeiro para quem PROCURA evento; os outros
               dois falam com quem organiza. */}
-          <div className="mt-6 sm:mt-7 flex flex-wrap gap-3">
+          <div className="mt-6 sm:mt-7 flex flex-wrap justify-center gap-3">
             <button
               type="button"
               onClick={irParaOCalendario}
