@@ -65,12 +65,18 @@ function semAcento(v: string): string {
 export default function CalendarioAnual({
   eventos,
   carregando,
+  formAberto,
+  aoAlternarForm,
 }: {
   eventos: EventoCalendario[]
   carregando: boolean
+  // O formulario e controlado pela PAGINA porque o botao "Divulgue seu
+  // evento", la em cima no topo, precisa abrir este mesmo formulario.
+  // Dois estados para a mesma caixa dariam duas verdades.
+  formAberto: boolean
+  aoAlternarForm: (aberto: boolean) => void
 }) {
   const [busca, setBusca] = useState('')
-  const [formAberto, setFormAberto] = useState(false)
 
   const filtrados = useMemo(() => {
     const termo = semAcento(busca.trim())
@@ -79,7 +85,7 @@ export default function CalendarioAnual({
   }, [eventos, busca])
 
   return (
-    <section className="relative mt-14 md:mt-20 pt-10 md:pt-14 border-t border-border-subtle">
+    <section id="calendario" className="relative mt-14 md:mt-20 pt-10 md:pt-14 border-t border-border-subtle scroll-mt-24">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 right-0 w-[520px] h-[320px] opacity-[0.10] blur-[100px]"
@@ -103,14 +109,14 @@ export default function CalendarioAnual({
         </div>
         <button
           type="button"
-          onClick={() => setFormAberto((v) => !v)}
+          onClick={() => aoAlternarForm(!formAberto)}
           className="inline-flex items-center justify-center gap-2 bg-purple text-white px-4 py-2.5 rounded-lg text-[13.5px] font-medium hover:bg-purple-light transition-all shrink-0"
         >
           {formAberto ? 'Fechar' : 'Cadastre seu evento'}
         </button>
       </div>
 
-      {formAberto && <FormularioCadastro aoFechar={() => setFormAberto(false)} />}
+      {formAberto && <FormularioCadastro aoFechar={() => aoAlternarForm(false)} />}
 
       <div className="relative mt-6 mb-4 max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" />

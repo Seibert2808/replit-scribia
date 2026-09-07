@@ -6,7 +6,7 @@ import { publicGet } from '@/lib/public-fetch'
 import { DemoRequestDialog } from '@/components/demo-request-dialog'
 import CalendarioAnual, { type EventoCalendario } from '@/components/sections/CalendarioAnual'
 import { FUNDO_PORTFOLIO } from '@/utils/paleta'
-import { Calendar, MapPin, ChevronRight, PlayCircle } from 'lucide-react'
+import { Calendar, MapPin, ChevronRight, PlayCircle, Search, Megaphone } from 'lucide-react'
 
 interface PublicEvent {
   id: string
@@ -201,6 +201,19 @@ export default function PublicEventsPage() {
   const [doCalendario, setDoCalendario] = useState<EventoDoCalendario[]>([])
   const [loading, setLoading] = useState(true)
   const [demoOpen, setDemoOpen] = useState(false)
+  const [formCadastro, setFormCadastro] = useState(false)
+
+  function irParaOCalendario() {
+    document.getElementById('calendario')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Abre o formulario que fica DENTRO da secao do calendario e leva a
+  // pessoa ate la. Abrir sem rolar deixaria a caixa aberta fora da tela,
+  // e daria a impressao de que o botao nao fez nada.
+  function divulgarEvento() {
+    setFormCadastro(true)
+    setTimeout(irParaOCalendario, 50)
+  }
 
   useEffect(() => {
     let mounted = true
@@ -350,14 +363,33 @@ export default function PublicEventsPage() {
           <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl">
             Programação, conteúdos, materiais e insights organizados em uma experiência contínua para participantes, palestrantes e organizadores.
           </p>
-          <div className="mt-6 sm:mt-7">
+          {/* Tres publicos, tres botoes. O primeiro e cheio porque esta
+              pagina existe primeiro para quem PROCURA evento; os outros
+              dois falam com quem organiza. */}
+          <div className="mt-6 sm:mt-7 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={irParaOCalendario}
+              className="inline-flex items-center gap-2 bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all"
+            >
+              <Search className="w-4 h-4" />
+              Encontre eventos da sua área
+            </button>
             <button
               type="button"
               onClick={() => setDemoOpen(true)}
-              className="inline-flex items-center gap-2 bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all"
+              className="inline-flex items-center gap-2 border border-border-purple text-text px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple/10 transition-all"
             >
               <PlayCircle className="w-4 h-4" />
-              Quero ver uma demonstração
+              Demonstração do ScribIA para Eventos
+            </button>
+            <button
+              type="button"
+              onClick={divulgarEvento}
+              className="inline-flex items-center gap-2 border border-border-subtle text-text2 px-5 py-2.5 rounded-lg text-[14px] font-medium hover:border-border-purple hover:text-text transition-all"
+            >
+              <Megaphone className="w-4 h-4" />
+              Divulgue seu evento
             </button>
           </div>
         </section>
@@ -398,7 +430,12 @@ export default function PublicEventsPage() {
           </div>
         )}
 
-        <CalendarioAnual eventos={listaCalendario} carregando={loading} />
+        <CalendarioAnual
+          eventos={listaCalendario}
+          carregando={loading}
+          formAberto={formCadastro}
+          aoAlternarForm={setFormCadastro}
+        />
 
         {/* A lista completa vai por ultimo: e referencia para quem ja
             conhece, enquanto o Calendario acima e o que traz visita nova.
