@@ -14,7 +14,12 @@ interface PublicEvent {
   start_date: string
   end_date: string
   location: string | null
+  // Duas imagens, e nao uma. A vertical alimenta a miniatura da lista de
+  // eventos passados; a horizontal alimenta o destaque 2:1 la em cima.
+  // Antes existia so um campo, e a horizontal era enfiada nele: por isso
+  // a miniatura da lista acabava mostrando a imagem do site.
   cover_image_url: string | null
+  site_image_url: string | null
   organizer_name: string
 }
 
@@ -39,63 +44,90 @@ interface Destaque {
   externo: boolean
 }
 
-function FeaturedCard({ ev }: { ev: Destaque }) {
+// O destaque NAO e um cartao: e a imagem do evento, com o texto por cima
+// dela. O formato antigo tinha duas coisas que pesavam na tela indigo: uma
+// moldura cheia (borda + bloco solido de texto embaixo da foto) e, quando o
+// evento so tinha logo, uma CAIXA BRANCA em volta do logo. Aqui a foto
+// sangra ate a borda, o texto vive sobre um veu escuro e o que sobra de
+// moldura e um fio de 1px.
+function FeaturedCard({ ev, grande = false }: { ev: Destaque; grande?: boolean }) {
   const classe =
-    'group block rounded-2xl overflow-hidden bg-bg2 border border-border-subtle hover:border-border-purple hover:-translate-y-1 hover:shadow-elegant transition-all duration-300'
+    'group relative block rounded-2xl overflow-hidden ring-1 ring-white/10 hover:ring-purple-light/50 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300'
 
   const conteudo = (
-    <>
-      {/* Faixa de altura FIXA. Foto de capa preenche; logo aparece pequeno
-          e centrado. Antes o logo era esticado para ocupar o cartao
-          inteiro, e logo ampliado nao fica elegante em tamanho nenhum. */}
-      <div className="relative aspect-[2/1] overflow-hidden">
-        {ev.cover_image_url ? (
-          <img
-            src={ev.cover_image_url}
-            alt={ev.name}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+    // Proporcao 2:1 em todas as larguras, que e a mesma da capa pedida no
+    // painel (1200 x 600). Mudar a proporcao no mobile cortaria a arte que
+    // o organizador mandou.
+    <div className="relative aspect-[2/1] overflow-hidden">
+      {ev.cover_image_url ? (
+        <img
+          src={ev.cover_image_url}
+          alt={ev.name}
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+        />
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-purple/60 via-purple-dark/45 to-[#698DC5]/35" />
+          {/* No lugar da caixa branca, um halo sem borda. Resolve o mesmo
+              problema que ela resolvia (logo de tinta escura sumir no
+              fundo) sem desenhar um retangulo no meio da pagina. */}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse 58% 46% at 50% 36%, rgba(255,255,255,0.32), transparent 72%)',
+            }}
           />
-        ) : (
-          <>
-            <div className="absolute inset-0 bg-gradient-to-br from-purple/45 via-purple-dark/35 to-[#698DC5]/25" />
-            {ev.logo_url && (
-              <div className="absolute inset-0 flex items-center justify-center p-5">
-                <div className="bg-white rounded-xl px-4 py-3 shadow-md">
-                  <img
-                    src={ev.logo_url}
-                    alt={ev.name}
-                    className="max-h-[84px] max-w-[190px] object-contain transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          {ev.logo_url && (
+            // Fica na metade de cima: a de baixo pertence ao texto.
+            <div className="absolute inset-x-0 top-0 bottom-[42%] flex items-center justify-center p-5">
+              <img
+                src={ev.logo_url}
+                alt={ev.name}
+                className="max-h-full max-w-[72%] object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.28)] transition-transform duration-500 group-hover:scale-[1.04]"
+              />
+            </div>
+          )}
+        </>
+      )}
 
-      <div className="p-4 sm:p-5">
+      {/* Veu. O texto passa a ficar sobre imagem de cor desconhecida, entao
+          a legibilidade nao pode depender da arte que subiram. */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/90 via-black/55 to-transparent"
+      />
+
+      {/* Cores fixas, e nao as variaveis de tema: aqui embaixo o fundo e
+          sempre escuro por causa do veu. */}
+      <div className={`absolute inset-x-0 bottom-0 ${grande ? 'p-5 sm:p-7' : 'p-4 sm:p-5'}`}>
         {ev.organizer_name && (
-          <p className="text-[10px] text-text3 uppercase tracking-widest mb-1 truncate">
+          <p className="text-[10px] text-white/70 uppercase tracking-widest mb-1 truncate">
             {ev.organizer_name}
           </p>
         )}
-        <h3 className="font-heading font-bold text-text text-[15px] sm:text-[16px] leading-snug line-clamp-2 group-hover:text-purple-light transition-colors">
+        <h3
+          className={`font-heading font-bold text-white leading-snug line-clamp-2 drop-shadow-sm ${
+            grande ? 'text-[19px] sm:text-[26px]' : 'text-[15px] sm:text-[17px]'
+          }`}
+        >
           {ev.name}
         </h3>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
-          <span className="flex items-center gap-1 text-[11.5px] text-text2">
-            <Calendar className="w-3 h-3" />
+          <span className={`flex items-center gap-1 text-white/85 ${grande ? 'text-[12.5px] sm:text-[13.5px]' : 'text-[11.5px]'}`}>
+            <Calendar className="w-3 h-3 shrink-0" />
             {formatDateLong(ev.start_date)}
           </span>
           {ev.location && (
-            <span className="flex items-center gap-1 text-[11.5px] text-text3">
-              <MapPin className="w-3 h-3" />
-              {ev.location}
+            <span className={`flex items-center gap-1 text-white/70 min-w-0 ${grande ? 'text-[12.5px] sm:text-[13.5px]' : 'text-[11.5px]'}`}>
+              <MapPin className="w-3 h-3 shrink-0" />
+              <span className="truncate">{ev.location}</span>
             </span>
           )}
         </div>
       </div>
-    </>
+    </div>
   )
 
   if (ev.externo) {
@@ -145,8 +177,17 @@ function getLocalCoverImage(name: string): string | null {
   return null
 }
 
-// Foto da frente P\u00daBLICA (horizontal). Tem prioridade sobre a capa do banco
-// (cover_image_url), que \u00e9 vertical e usada pelos cards do app/dashboard.
+// REMENDO EM VIAS DE SAIR. Arquivo horizontal fixo, por nome de evento.
+//
+// Existia porque o banco so guardava uma imagem por evento, e ela e
+// vertical: serve ao card de Stories, nao ao destaque 2:1 daqui. Sem
+// esses dois arquivos o destaque do SIAPARTO e do ENEON ficava com a
+// arte cortada no meio.
+//
+// Agora o evento tem campo proprio para isso, "Imagem para o site" no
+// painel, e ele tem PRIORIDADE sobre esta lista. Quando os dois eventos
+// abaixo tiverem a imagem enviada, esta funcao e os dois PNG em
+// public/images podem ser apagados.
 function getLocalSiteImage(name: string): string | null {
   const n = name.toLowerCase()
   if (n.includes('siaparto')) return '/images/siaparto-2025.png'
@@ -228,8 +269,9 @@ export default function PublicEventsPage() {
         const list = await publicGet<{
           id: string; name: string; start_date: string; end_date: string
           location: string | null; cover_image_url: string | null
+          site_image_url: string | null
           organizer_id: string; organizer_name: string | null
-        }>(`public_events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,organizer_id,organizer_name&order=end_date.desc`)
+        }>(`public_events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,site_image_url,organizer_id,organizer_name&order=end_date.desc`)
 
         if (!mounted) return
         setEvents(
@@ -239,7 +281,11 @@ export default function PublicEventsPage() {
             start_date: e.start_date,
             end_date: e.end_date,
             location: e.location,
-            cover_image_url: getLocalSiteImage(e.name) ?? e.cover_image_url ?? getLocalCoverImage(e.name),
+            // Cada imagem no seu lugar. O que vem do banco vence o arquivo
+            // fixo: assim, no dia em que a imagem for enviada pelo painel,
+            // o site passa a mostrar ela sem precisar de deploy nenhum.
+            cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
+            site_image_url: e.site_image_url ?? getLocalSiteImage(e.name),
             organizer_name: e.organizer_name ?? '',
           }))
         )
@@ -274,7 +320,9 @@ export default function PublicEventsPage() {
         name: e.name,
         start_date: soODia(e.start_date),
         location: e.location,
-        cover_image_url: e.cover_image_url,
+        // A HORIZONTAL, e nao a do card. A vertical entrando aqui seria
+        // recortada no meio pelo 2:1 e comeria o titulo da arte.
+        cover_image_url: e.site_image_url,
         logo_url: null,
         organizer_name: e.organizer_name,
         href: `/eventos/${e.id}`,
@@ -405,9 +453,9 @@ export default function PublicEventsPage() {
         {/* Featured grid — Netwoo style */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
-            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
-            <div className="sm:col-span-1 aspect-[4/3] bg-bg3 rounded-2xl animate-pulse" />
+            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
+            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
+            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
           </div>
         ) : destaques.length === 0 ? (
           <div className="text-center py-16 bg-bg2 border border-dashed border-border-subtle rounded-2xl mb-10">
@@ -417,8 +465,11 @@ export default function PublicEventsPage() {
             </p>
           </div>
         ) : destaques.length === 1 ? (
-          <div className="mb-10 animate-fade-up max-w-sm">
-            <FeaturedCard ev={destaques[0]} />
+          // Um destaque sozinho ganha largura de verdade, em vez de virar um
+          // selo perdido na esquerda. O teto existe porque 2:1 na largura
+          // inteira da pagina passaria de 500px de altura no desktop.
+          <div className="mb-10 animate-fade-up max-w-2xl">
+            <FeaturedCard ev={destaques[0]} grande />
           </div>
         ) : destaques.length === 2 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 stagger-children">
