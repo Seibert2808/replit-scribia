@@ -177,23 +177,17 @@ function getLocalCoverImage(name: string): string | null {
   return null
 }
 
-// REMENDO EM VIAS DE SAIR. Arquivo horizontal fixo, por nome de evento.
+// REMENDO REMOVIDO em 16/09/2026. Aqui existia getLocalSiteImage(), que
+// devolvia um arquivo horizontal fixo procurando "siaparto" ou "eneon" no
+// NOME do evento. Era o jeito de ter imagem horizontal enquanto o banco so
+// guardava a vertical.
 //
-// Existia porque o banco so guardava uma imagem por evento, e ela e
-// vertical: serve ao card de Stories, nao ao destaque 2:1 daqui. Sem
-// esses dois arquivos o destaque do SIAPARTO e do ENEON ficava com a
-// arte cortada no meio.
+// Saiu por ser uma armadilha, nao so por ter virado superfluo: casando por
+// nome, o SIAPARTO 2026 - que ja existe em rascunho - herdaria em silencio
+// a arte de 2025 no dia em que fosse ativado.
 //
-// Agora o evento tem campo proprio para isso, "Imagem para o site" no
-// painel, e ele tem PRIORIDADE sobre esta lista. Quando os dois eventos
-// abaixo tiverem a imagem enviada, esta funcao e os dois PNG em
-// public/images podem ser apagados.
-function getLocalSiteImage(name: string): string | null {
-  const n = name.toLowerCase()
-  if (n.includes('siaparto')) return '/images/siaparto-2025.png'
-  if (n.includes('eneon')) return '/images/eneon-2026.png'
-  return null
-}
+// Quem responde por isso agora e events.site_image_url, enviada em
+// "Imagem para o site" no painel de Identidade Visual do evento.
 
 // Data pura AAAA-MM-DD. As datas de public_events vem com hora e fuso, e
 // as do Calendario vem sem, entao tudo e cortado no dia para as duas
@@ -281,11 +275,10 @@ export default function PublicEventsPage() {
             start_date: e.start_date,
             end_date: e.end_date,
             location: e.location,
-            // Cada imagem no seu lugar. O que vem do banco vence o arquivo
-            // fixo: assim, no dia em que a imagem for enviada pelo painel,
-            // o site passa a mostrar ela sem precisar de deploy nenhum.
+            // Cada imagem no seu lugar: a vertical na miniatura da lista,
+            // a horizontal no destaque. As duas vem do banco.
             cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
-            site_image_url: e.site_image_url ?? getLocalSiteImage(e.name),
+            site_image_url: e.site_image_url,
             organizer_name: e.organizer_name ?? '',
           }))
         )

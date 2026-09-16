@@ -14,7 +14,10 @@ interface EventDetail {
   start_date: string
   end_date: string
   location: string | null
+  // Vertical (9:16). Ultimo recurso do banner, quando nao ha a horizontal.
   cover_image_url: string | null
+  // Horizontal (2:1). E esta que o banner quer.
+  site_image_url: string | null
   organizer_id: string
   organizer_name: string | null
 }
@@ -50,14 +53,14 @@ function formatDuration(seconds: number | null): string {
   return h > 0 ? `${h}h ${m.toString().padStart(2, '0')}min` : `${m}min`
 }
 
-// Banner (formato horizontal) da página do evento. Difere da capa do banco
-// (`cover_image_url`), que é vertical e usada nos cards da listagem.
-function getLocalHeroImage(name: string): string | null {
-  const n = name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-  if (n.includes('siaparto')) return '/images/siaparto-2025.png'
-  if (n.includes('eneon')) return '/images/eneon-2026.png'
-  return null
-}
+// REMENDO REMOVIDO em 16/09/2026. Aqui existia getLocalHeroImage(), gemea
+// da que estava em events.tsx: devolvia um arquivo horizontal fixo
+// procurando "siaparto" ou "eneon" no NOME do evento.
+//
+// O banner desta pagina e horizontal (21:9 no desktop) e vinha caindo na
+// cover_image_url, que e VERTICAL: por isso o remendo existia. Agora quem
+// responde e events.site_image_url, enviada em "Imagem para o site" no
+// painel de Identidade Visual.
 
 // Link de inscrição externo por evento. O botão só aparece enquanto o evento
 // não terminou (ver isRegistrationOpen).
@@ -97,7 +100,7 @@ export default function PublicEventPage() {
     async function load() {
       try {
         const ev = await publicGetOne<EventDetail>(
-          `public_events?id=eq.${eventId}&select=id,name,description,start_date,end_date,location,cover_image_url,organizer_id,organizer_name`
+          `public_events?id=eq.${eventId}&select=id,name,description,start_date,end_date,location,cover_image_url,site_image_url,organizer_id,organizer_name`
         )
         if (!mounted) return
         if (!ev) { setNotFound(true); setLoading(false); return }
@@ -198,8 +201,11 @@ export default function PublicEventPage() {
       {/* Cover */}
       <section className="border-b border-border-subtle">
         <div className="max-w-5xl mx-auto aspect-[16/9] sm:aspect-[21/9] bg-bg3 overflow-hidden relative">
-          {event && (getLocalHeroImage(event.name) ?? event.cover_image_url) ? (
-            <img src={getLocalHeroImage(event!.name) ?? event!.cover_image_url!} alt={event!.name} className="w-full h-full object-cover" />
+          {/* A horizontal primeiro. A vertical fica como ultimo recurso:
+              recortada num 21:9 ela perde muito, mas ainda e melhor que o
+              gradiente vazio. */}
+          {event && (event.site_image_url ?? event.cover_image_url) ? (
+            <img src={(event.site_image_url ?? event.cover_image_url)!} alt={event.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-purple/60 via-purple-dark/40 to-purple-dim" />
           )}
