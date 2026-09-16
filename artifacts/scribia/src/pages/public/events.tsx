@@ -170,12 +170,16 @@ function RowCard({ ev }: { ev: PublicEvent }) {
 // (participantes cadastrados entram nele), mas NÃO listado na vitrine pública.
 const DEMO_EVENT_ID = 'ea692433-bfa8-483e-b9da-82dda6fc13d1'
 
-function getLocalCoverImage(name: string): string | null {
-  const n = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-  if (n.includes('siaparto')) return '/images/siaparto-2025.jpg'
-  if (n.includes('pericia') || n.includes('imersa') || n.includes('imersao')) return '/images/imerso-pericia-pratica-2026.jpg'
-  return null
-}
+// REMENDO REMOVIDO em 16/09/2026. Aqui existia tambem getLocalCoverImage(),
+// irma da funcao descrita abaixo: devolvia um arquivo VERTICAL fixo para a
+// miniatura da lista, procurando "siaparto", "pericia" ou "imersao" no nome
+// do evento.
+//
+// Saiu pelo mesmo motivo, e nao porque incomodava: casar por NOME faz um
+// evento novo herdar em silencio a imagem de um antigo so por se chamar
+// parecido. Na hora da remocao os 6 eventos tinham imagem no banco, entao
+// ela nao cobria mais nada. Quem responde e events.cover_image_url, a
+// "Imagem do card"; sem ela, a miniatura cai no gradiente da marca.
 
 // REMENDO REMOVIDO em 16/09/2026. Aqui existia getLocalSiteImage(), que
 // devolvia um arquivo horizontal fixo procurando "siaparto" ou "eneon" no
@@ -277,7 +281,7 @@ export default function PublicEventsPage() {
             location: e.location,
             // Cada imagem no seu lugar: a vertical na miniatura da lista,
             // a horizontal no destaque. As duas vem do banco.
-            cover_image_url: e.cover_image_url ?? getLocalCoverImage(e.name),
+            cover_image_url: e.cover_image_url,
             site_image_url: e.site_image_url,
             organizer_name: e.organizer_name ?? '',
           }))
