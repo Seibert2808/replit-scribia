@@ -65,12 +65,13 @@ function formatDuration(seconds: number | null): string {
 // responde e events.site_image_url, enviada em "Imagem para o site" no
 // painel de Identidade Visual.
 
-// Link de inscrição externo por evento. O botão só aparece enquanto o evento
-// não terminou (ver isRegistrationOpen).
-function getRegistrationUrl(name: string): string | null {
-  if (name.toLowerCase().includes('eneon')) return 'https://abenforj.org.br/eventos'
-  return null
-}
+// O link de inscrição NÃO é mais escrito à mão aqui.
+//
+// Antes esta função casava pelo NOME do evento e só conhecia o ENEON, o mesmo
+// remendo que foi removido das imagens em 16/09. Agora o endereço vem da
+// entrada do Calendário ligada a este evento (`community_events.event_id`,
+// migration 71), que é onde o organizador já cadastra o site de inscrição.
+// Evento sem entrada ligada simplesmente não mostra botão.
 
 // Verdadeiro durante todo o dia do término; passa a falso a partir do dia
 // seguinte ao end_date (ex.: evento até 17/07 → some em 18/07).
@@ -91,6 +92,8 @@ export default function PublicEventPage() {
   const [authed, setAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  // Endereço de inscrição, vindo da entrada do Calendário ligada a este evento.
+  const [linkInscricao, setLinkInscricao] = useState<string | null>(null)
 
   // Conteúdo público — via REST (publicGet). O cliente supabase-js pendura
   // queries após navegação client-side, então o conteúdo visível NÃO depende
@@ -113,6 +116,19 @@ export default function PublicEventPage() {
         // nao ha mais nenhuma consulta a user_profiles nesta pagina.
         if (!mounted) return
         if (ev.organizer_name) setOrganizer({ id: ev.organizer_id, full_name: ev.organizer_name })
+
+        // Endereco de inscricao: vem da entrada do Calendario ligada a este
+        // evento. E o mesmo campo que o organizador ja preenche no painel,
+        // entao nao ha cadastro novo para ninguem fazer. Silencioso de
+        // proposito: sem entrada ligada, a pagina segue sem botao.
+        try {
+          const doCalendario = await publicGet<{ url: string }>(
+            `public_community_events?event_id=eq.${eventId}&select=url&limit=1`,
+          )
+          if (mounted && doCalendario[0]?.url) setLinkInscricao(doCalendario[0].url)
+        } catch (_) {
+          /* sem link, sem botao */
+        }
 
         // public_lectures traz os campos do palestrante achatados, em vez de
         // um relacionamento embutido: assim o site nao depende do PostgREST
@@ -251,9 +267,9 @@ export default function PublicEventPage() {
               {event.description && (
                 <p className="text-[13.5px] text-text2 mt-4 max-w-3xl leading-relaxed">{event.description}</p>
               )}
-              {getRegistrationUrl(event.name) && isRegistrationOpen(event.end_date) && (
+              {linkInscricao && isRegistrationOpen(event.end_date) && (
                 <a
-                  href={getRegistrationUrl(event.name)!}
+                  href={linkInscricao}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 mt-5 bg-purple text-white px-6 py-2.5 rounded-lg text-[14px] font-semibold hover:bg-purple-light transition-all"
@@ -368,8 +384,47 @@ export default function PublicEventPage() {
         </section>
       )}
 
-      {/* CTA */}
-      {!authed && lectures.length > 0 && (
+      {/* ------------------------------------------------------------------
+          O convite do rodapé muda com a data do evento.
+
+          Evento que AINDA VAI ACONTECER: "Participe", com o endereço de
+          inscrição do organizador. Perguntar "você participou?" antes do
+          evento é convite para a pessoa fechar a página, porque a resposta
+          é não e não há o que fazer ali.
+
+          Evento que JÁ ACONTECEU: o texto de sempre, para quem esteve lá
+          entrar e pegar o material.
+          ------------------------------------------------------------------ */}
+      {!authed && event && isRegistrationOpen(event.end_date) ? (
+        <section className="border-t border-border-subtle bg-bg2/40">
+          <div className="max-w-3xl mx-auto px-4 py-10 md:py-12 text-center">
+            <h3 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Participe deste evento</h3>
+            <p className="text-[13px] text-text2 mt-2 max-w-xl mx-auto">
+              A inscrição é feita pela organização do evento. Depois dele, áudios, resumos,
+              livebooks, playbooks e cards ficam aqui, para quem participou.
+            </p>
+            {linkInscricao && (
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
+                <a
+                  href={linkInscricao}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-purple text-white px-5 py-2.5 rounded-lg text-[14px] font-medium hover:bg-purple-light transition-all shadow-elegant"
+                >
+                  Inscrever-se no evento <ArrowUpRight className="w-4 h-4" />
+                </a>
+              </div>
+            )}
+            <p className="text-[12px] text-text3 mt-5 max-w-lg mx-auto leading-relaxed">
+              Já se inscreveu?{' '}
+              <a href={LOGIN_URL} className="text-purple-light hover:underline">
+                Entre no ScribIA
+              </a>{' '}
+              com o mesmo e-mail do cadastro para acompanhar o material assim que sair.
+            </p>
+          </div>
+        </section>
+      ) : !authed && lectures.length > 0 ? (
         <section className="border-t border-border-subtle bg-bg2/40">
           <div className="max-w-3xl mx-auto px-4 py-10 md:py-12 text-center">
             <h3 className="font-heading text-[20px] sm:text-[22px] font-bold text-text">Você participou deste evento?</h3>
@@ -391,7 +446,7 @@ export default function PublicEventPage() {
             </p>
           </div>
         </section>
-      )}
+      ) : null}
 
       <Footer />
     </div>

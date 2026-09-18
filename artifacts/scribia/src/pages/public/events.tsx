@@ -413,7 +413,14 @@ export default function PublicEventsPage() {
       <PublicHeader />
 
       <div style={FUNDO_PORTFOLIO} className="bg-bg text-text">
-      <main className="container mx-auto px-4 pt-8 md:pt-12 pb-20">
+      {/* Largura própria em vez de `container`.
+          O `container` do Tailwind sobe de degrau em degrau e trava em
+          1536px: numa janela de exatamente esse tamanho, ou com zoom que
+          chegue nele, a margem lateral vira só o px-4 e os cartões encostam
+          na borda. Era o que ela via, e por isso destoava do resto do site.
+          Com max-width e padding próprios, o respiro existe em qualquer
+          largura. */}
+      <main className="mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12 pt-8 md:pt-12 pb-20">
 
         {/* Hero */}
         <section className="mb-10 md:mb-14 animate-fade-up text-center">
@@ -461,13 +468,22 @@ export default function PublicEventsPage() {
           </div>
         </section>
 
-        {/* Section label */}
-        <p className="text-[11px] font-semibold text-purple-light uppercase tracking-widest mb-1 animate-fade-up">
-          Em destaque: eventos com o ScribIA
-        </p>
-        <p className="text-[13px] text-text3 mb-4 animate-fade-up">
-          Os próximos eventos que contam com a plataforma, na ordem em que vão acontecer.
-        </p>
+        {/* Mesma hierarquia da seção do Calendário, logo abaixo: as duas são
+            seções de primeiro nível da página e estavam em corpos diferentes,
+            o que fazia esta parecer uma legenda perdida em cima dos cartões. */}
+        <div className="mb-4 animate-fade-up">
+          <h2 className="font-heading font-extrabold leading-tight tracking-tight text-2xl sm:text-3xl">
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
+            >
+              Em destaque: eventos com o ScribIA
+            </span>
+          </h2>
+          <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
+            Os próximos eventos que contam com a plataforma, na ordem em que vão acontecer.
+          </p>
+        </div>
 
         {/* Featured grid — Netwoo style */}
         {loading ? (
