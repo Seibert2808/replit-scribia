@@ -220,6 +220,9 @@ interface EventoDoCalendario {
   logo_path: string | null
   cover_path: string | null
   with_scribia: boolean
+  // Evento correspondente na plataforma, quando o painel ligou os dois.
+  // E por ele, e nao pelo nome, que as duas origens se reconhecem.
+  event_id: string | null
 }
 
 // Para casar o mesmo evento vindo das duas origens. Sem acento e sem
@@ -291,7 +294,7 @@ export default function PublicEventsPage() {
         // Serve para duas coisas nesta pagina: os marcados viram destaque, e
         // a lista inteira alimenta o Calendario logo abaixo.
         const calendario = await publicGet<EventoDoCalendario>(
-          'public_community_events?select=id,name,event_date,event_end_date,location,url,logo_path,cover_path,with_scribia',
+          'public_community_events?select=id,name,event_date,event_end_date,location,url,logo_path,cover_path,with_scribia,event_id',
         )
         if (!mounted) return
         setDoCalendario(calendario)
@@ -304,6 +307,14 @@ export default function PublicEventsPage() {
     load()
     return () => { mounted = false; clearTimeout(failsafe) }
   }, [])
+
+  // Eventos da plataforma que ja estao no destaque. A entrada do
+  // Calendario ligada a um deles NAO entra de novo: seria o mesmo evento
+  // duas vezes, lado a lado, hoje ate com a mesma arte, ja que a capa do
+  // cartao vem justamente do evento ligado.
+  const noDestaquePelaPlataforma = new Set(
+    events.filter((e) => soODia(e.end_date || e.start_date) >= HOJE).map((e) => e.id),
+  )
 
   // O destaque e so o que ainda vai acontecer, das duas origens. Evento
   // da plataforma tem pagina propria; evento do Calendario marcado com
@@ -326,7 +337,7 @@ export default function PublicEventsPage() {
         externo: false,
       })),
     ...doCalendario
-      .filter((c) => c.with_scribia)
+      .filter((c) => c.with_scribia && !(c.event_id && noDestaquePelaPlataforma.has(c.event_id)))
       .map((c) => ({
         id: c.id,
         name: c.name,
@@ -361,13 +372,24 @@ export default function PublicEventsPage() {
       interno: true,
     }))
 
-  // Quando o mesmo evento existe nas duas origens, fica o da plataforma:
-  // ele tem pagina propria. E o que vai acontecer com o SIAPARTO 2026 no
-  // dia em que ele for cadastrado como evento.
-  const jaNaPlataforma = new Set(daPlataforma.map((e) => chaveDoNome(e.name)))
+  // Quando o mesmo evento existe nas duas origens, aqui embaixo fica o do
+  // CALENDARIO, e nao o da plataforma. Parece o contrario do esperado e
+  // nao e: o evento com ScribIA ja aparece no destaque logo acima, com a
+  // arte grande e o caminho para a pagina dele aqui. O que falta na tela,
+  // e so o Calendario tem, e o endereco de INSCRICAO do organizador.
+  // Mantendo a linha da plataforma, esse link sumiria do site inteiro.
+  const vinculados = new Set(
+    doCalendario.map((c) => c.event_id).filter((id): id is string => Boolean(id)),
+  )
+  // O nome continua valendo como segunda rede, para o caso de alguem
+  // cadastrar no Calendario um evento que ja existe na plataforma e nao
+  // ligar os dois no painel.
+  const nomesDoCalendario = new Set(doCalendario.map((c) => chaveDoNome(c.name)))
   const listaCalendario: EventoCalendario[] = [
-    ...daPlataforma,
-    ...doCalendario.filter((c) => !jaNaPlataforma.has(chaveDoNome(c.name))),
+    ...daPlataforma.filter(
+      (e) => !vinculados.has(e.id) && !nomesDoCalendario.has(chaveDoNome(e.name)),
+    ),
+    ...doCalendario,
   ].sort((a, b) => {
     if (a.event_date !== b.event_date) return a.event_date < b.event_date ? -1 : 1
     return a.name.localeCompare(b.name, 'pt-BR')
