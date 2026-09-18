@@ -35,6 +35,9 @@ interface LectureItem {
   speaker_name: string | null
   speaker_avatar: string | null
   speaker_company: string | null
+  // Cargo que o palestrante preenche no perfil. Vai embaixo do nome,
+  // junto da empresa, do mesmo jeito que no card da palestra.
+  speaker_role: string | null
   speaker_id: string | null
 }
 
@@ -119,9 +122,10 @@ export default function PublicEventPage() {
           id: string; title: string; status: string; duration_seconds: number | null
           speaker_id: string | null; speaker_name: string | null
           speaker_avatar_url: string | null; speaker_company: string | null
+          speaker_role: string | null
         }
         const rows = await publicGet<LecRow>(
-          `public_lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speaker_name,speaker_avatar_url,speaker_company&order=scheduled_at.asc`
+          `public_lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speaker_name,speaker_avatar_url,speaker_company,speaker_role&order=scheduled_at.asc`
         )
         if (!mounted) return
         setLectures(rows.map((l) => ({
@@ -133,6 +137,7 @@ export default function PublicEventPage() {
           speaker_name: l.speaker_name,
           speaker_avatar: l.speaker_avatar_url,
           speaker_company: l.speaker_company,
+          speaker_role: l.speaker_role,
         })))
       } catch (_) {
         // silent
@@ -190,7 +195,16 @@ export default function PublicEventPage() {
     new Map(
       lectures
         .filter((l) => l.speaker_id && l.speaker_name)
-        .map((l) => [l.speaker_id, { id: l.speaker_id!, name: l.speaker_name!, avatar: l.speaker_avatar, company: l.speaker_company }]),
+        .map((l) => [
+          l.speaker_id,
+          {
+            id: l.speaker_id!,
+            name: l.speaker_name!,
+            avatar: l.speaker_avatar,
+            company: l.speaker_company,
+            role: l.speaker_role,
+          },
+        ]),
     ).values(),
   )
 
@@ -327,15 +341,27 @@ export default function PublicEventPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 stagger-children">
             {uniqueSpeakers.map((sp) => (
               <div key={sp.id} className="bg-bg2 border border-border-subtle rounded-xl p-4 text-center animate-fade-up">
-                <div className="w-12 h-12 mx-auto rounded-full bg-purple-dim border border-border-purple overflow-hidden flex items-center justify-center font-heading font-bold text-purple-light mb-2">
+                {/* 64px e nao 48px: agora que a foto aparece de verdade, ela
+                    e o que identifica a pessoa. Quem nao preencheu o perfil
+                    continua na inicial, e o circulo do mesmo tamanho mantem
+                    a grade alinhada. */}
+                <div className="w-16 h-16 mx-auto rounded-full bg-purple-dim border border-border-purple overflow-hidden flex items-center justify-center font-heading font-bold text-purple-light mb-2">
                   {sp.avatar ? (
                     <img src={sp.avatar} alt={sp.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-sm">{sp.name.charAt(0).toUpperCase()}</span>
+                    <span className="text-base">{sp.name.charAt(0).toUpperCase()}</span>
                   )}
                 </div>
                 <div className="font-heading font-semibold text-[12.5px] text-text leading-snug line-clamp-2">{sp.name}</div>
-                {sp.company && <div className="text-[10.5px] text-text3 mt-0.5 truncate">{sp.company}</div>}
+                {/* "Cargo · Empresa", a mesma linha do card da palestra. Um
+                    dos dois pode faltar, entao o filtro evita deixar o
+                    separador solto. `break-words` porque cargo aqui chega a
+                    ter 40 caracteres e a coluna e estreita no celular. */}
+                {(sp.role || sp.company) && (
+                  <div className="text-[10.5px] text-text3 mt-0.5 leading-snug line-clamp-2 break-words">
+                    {[sp.role, sp.company].filter(Boolean).join(' · ')}
+                  </div>
+                )}
               </div>
             ))}
           </div>
