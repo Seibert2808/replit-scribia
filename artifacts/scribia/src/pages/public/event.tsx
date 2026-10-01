@@ -38,6 +38,12 @@ interface LectureItem {
   // Cargo que o palestrante preenche no perfil. Vai embaixo do nome,
   // junto da empresa, do mesmo jeito que no card da palestra.
   speaker_role: string | null
+  // ⚠️ A bio CURTA (~280 caracteres), da coluna `speakers.bio`. Nao
+  // confundir com `speaker_mini_bio`, que a visao tambem entrega e que,
+  // apesar do nome, e a biografia LONGA (limite 800, e passa de 800 na
+  // pratica). A longa nao cabe num cartao de grade, entao nao e pedida
+  // aqui de proposito.
+  speaker_short_bio: string | null
   speaker_id: string | null
 }
 
@@ -139,9 +145,10 @@ export default function PublicEventPage() {
           speaker_id: string | null; speaker_name: string | null
           speaker_avatar_url: string | null; speaker_company: string | null
           speaker_role: string | null
+          speaker_short_bio: string | null
         }
         const rows = await publicGet<LecRow>(
-          `public_lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speaker_name,speaker_avatar_url,speaker_company,speaker_role&order=scheduled_at.asc`
+          `public_lectures?event_id=eq.${ev.id}&select=id,title,status,duration_seconds,speaker_id,speaker_name,speaker_avatar_url,speaker_company,speaker_role,speaker_short_bio&order=scheduled_at.asc`
         )
         if (!mounted) return
         setLectures(rows.map((l) => ({
@@ -154,6 +161,7 @@ export default function PublicEventPage() {
           speaker_avatar: l.speaker_avatar_url,
           speaker_company: l.speaker_company,
           speaker_role: l.speaker_role,
+          speaker_short_bio: l.speaker_short_bio,
         })))
       } catch (_) {
         // silent
@@ -219,6 +227,7 @@ export default function PublicEventPage() {
             avatar: l.speaker_avatar,
             company: l.speaker_company,
             role: l.speaker_role,
+            shortBio: l.speaker_short_bio,
           },
         ]),
     ).values(),
@@ -377,6 +386,27 @@ export default function PublicEventPage() {
                   <div className="text-[10.5px] text-text3 mt-0.5 leading-snug line-clamp-2 break-words">
                     {[sp.role, sp.company].filter(Boolean).join(' · ')}
                   </div>
+                )}
+                {/* A bio CURTA, quando existe. Quem nao tem continua como
+                    antes: foto, nome e cargo, e nenhum espaco sobrando.
+
+                    `line-clamp-3` porque a coluna e estreita (sao quatro no
+                    desktop e duas no celular) e o resumo gerado pela IA mira
+                    ~280 caracteres, que nao cabem inteiros aqui. O corte fica
+                    no fim da primeira ou segunda frase, que e onde o resumo
+                    diz quem a pessoa e. O `title` deixa o texto completo no
+                    hover do desktop, sem custo de layout.
+
+                    NAO ha reserva com a biografia longa de proposito: cortada
+                    em tres linhas ela viraria um paragrafo picado no meio de
+                    uma frase, pior do que nao ter bio. */}
+                {sp.shortBio && (
+                  <p
+                    title={sp.shortBio}
+                    className="text-[10.5px] text-text2 mt-1.5 leading-relaxed line-clamp-3 break-words"
+                  >
+                    {sp.shortBio}
+                  </p>
                 )}
               </div>
             ))}
