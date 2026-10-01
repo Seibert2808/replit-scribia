@@ -215,6 +215,18 @@ export default function PublicEventPage() {
     </div>
   )
 
+  // ⚠️ A coluna "Bio Curta" (`speakers.bio`) nasceu muito antes do botao
+  // "Criar com IA", e a maioria do que esta lah NAO e curta: medido em
+  // 30/09/2026, de 22 palestrantes preenchidos, 14 passavam de 280
+  // caracteres e o maior tinha 1094.
+  //
+  // Por isso o cartao exige que o texto seja curto DE VERDADE. Cortar 1094
+  // caracteres em tres linhas devolve um paragrafo picado no meio da frase,
+  // que e pior do que o cartao sem bio. Quem estiver acima do limite
+  // aparece como hoje, e volta a ter bio quando o resumo for refeito pelo
+  // botao de IA, que mira ~280.
+  const MAX_BIO_CARTAO = 320
+
   const uniqueSpeakers = Array.from(
     new Map(
       lectures
@@ -227,7 +239,10 @@ export default function PublicEventPage() {
             avatar: l.speaker_avatar,
             company: l.speaker_company,
             role: l.speaker_role,
-            shortBio: l.speaker_short_bio,
+            shortBio:
+              l.speaker_short_bio && l.speaker_short_bio.trim().length <= MAX_BIO_CARTAO
+                ? l.speaker_short_bio.trim()
+                : null,
           },
         ]),
     ).values(),
@@ -390,12 +405,12 @@ export default function PublicEventPage() {
                 {/* A bio CURTA, quando existe. Quem nao tem continua como
                     antes: foto, nome e cargo, e nenhum espaco sobrando.
 
-                    `line-clamp-3` porque a coluna e estreita (sao quatro no
-                    desktop e duas no celular) e o resumo gerado pela IA mira
-                    ~280 caracteres, que nao cabem inteiros aqui. O corte fica
-                    no fim da primeira ou segunda frase, que e onde o resumo
-                    diz quem a pessoa e. O `title` deixa o texto completo no
-                    hover do desktop, sem custo de layout.
+                    Quem chega aqui ja passou pelo limite de MAX_BIO_CARTAO,
+                    entao o texto e curto. O `line-clamp-3` fica como rede: a
+                    coluna e estreita (quatro no desktop, duas no celular) e
+                    320 caracteres podem passar de tres linhas no celular. O
+                    `title` deixa o texto completo no hover do desktop, sem
+                    custo de layout.
 
                     NAO ha reserva com a biografia longa de proposito: cortada
                     em tres linhas ela viraria um paragrafo picado no meio de
