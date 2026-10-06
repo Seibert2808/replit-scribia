@@ -41,7 +41,7 @@ function OrganizerCard({ org, featured = false }: { org: Organizer; featured?: b
           <div className="flex items-center gap-1.5">
             <div className="font-heading font-bold text-[15px] text-text truncate">{org.display_name}</div>
             {org.is_official && (
-              <span title="Organizador oficial do ScribIA">
+              <span title="Parceiro oficial do ScribIA">
                 <Sparkles className="w-3.5 h-3.5 text-purple-light shrink-0" />
               </span>
             )}
@@ -110,7 +110,7 @@ export default function PublicOrganizersPage() {
 
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-10 md:pt-14 pb-4">
         <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl animate-fade-up">
-          Organizadores
+          Parceiros
         </h1>
         <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl animate-fade-up">
           Quem publica eventos e palestras no Scribia.
@@ -123,9 +123,9 @@ export default function PublicOrganizersPage() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-purple-light uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5" />
-              Organizadores oficiais do ScribIA
+              Parceiros oficiais do ScribIA
             </div>
-            <p className="text-[12.5px] text-text3 mt-1">Parceiros que estão sempre conosco</p>
+            <p className="text-[12.5px] text-text3 mt-1">Quem está sempre conosco</p>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ export default function PublicOrganizersPage() {
           </div>
         ) : officials.length === 0 ? (
           <div className="text-center py-10 bg-bg2 border border-dashed border-border-subtle rounded-xl">
-            <p className="text-[13px] text-text3">Em breve organizadores oficiais.</p>
+            <p className="text-[13px] text-text3">Em breve parceiros oficiais.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
@@ -152,11 +152,11 @@ export default function PublicOrganizersPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 pt-10 md:pt-14 pb-16">
         <div className="flex items-end justify-between mb-5">
           <div>
-            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest">Todos os organizadores</p>
+            <p className="text-[11px] font-semibold text-text3 uppercase tracking-widest">Todos os parceiros</p>
             <p className="text-[12.5px] text-text3 mt-1">
               {others.length > 0
-                ? `${others.length} ${others.length === 1 ? 'organizador' : 'organizadores'} com eventos publicados`
-                : 'Nenhum outro organizador com eventos ainda'}
+                ? `${others.length} ${others.length === 1 ? 'parceiro' : 'parceiros'} com eventos publicados`
+                : 'Nenhum outro parceiro com eventos ainda'}
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function PublicOrganizersPage() {
           </div>
         ) : others.length === 0 ? (
           <div className="text-center py-10 bg-bg2 border border-dashed border-border-subtle rounded-xl">
-            <p className="text-[13px] text-text3">Ainda não há outros organizadores publicados.</p>
+            <p className="text-[13px] text-text3">Ainda não há outros parceiros publicados.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">

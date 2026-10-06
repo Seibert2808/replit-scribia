@@ -252,7 +252,10 @@ function Router() {
       <Route path="/influenciadores" component={PalestrantesLandingPage} />
       <Route path="/participantes" component={ParticipantesLandingPage} />
       <Route path="/patrocinadores" component={PatrocinadoresLandingPage} />
-      <Route path="/organizadores" component={PublicOrganizersPage} />
+      <Route path="/parceiros" component={PublicOrganizersPage} />
+      {/* A aba nasceu como /organizadores e o endereco antigo ja circula em
+          material impresso e em conversa, entao continua respondendo. */}
+      <Route path="/organizadores"><Redirect to="/parceiros" /></Route>
       <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
       {/* Portal */}

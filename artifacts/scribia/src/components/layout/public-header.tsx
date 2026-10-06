@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { href: '/quero-no-meu-evento', label: 'Quero no meu evento', externo: false },
   { href: '/eventos', label: 'Eventos', externo: false },
   { href: `${SITE.appUrl}/vitrine`, label: 'Vitrine', externo: true },
-  { href: '/organizadores', label: 'Organizadores', externo: false },
+  { href: '/parceiros', label: 'Parceiros', externo: false },
 ] as const
 
 // A home tambem responde em /sobre, e '/' e prefixo de toda rota, entao o

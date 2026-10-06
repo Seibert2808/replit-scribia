@@ -121,8 +121,8 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
     <div className="min-h-screen bg-bg">
       <PublicHeader />
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <h1 className="font-heading text-2xl font-bold text-text mb-2">Organizador não encontrado</h1>
-        <p className="text-[13px] text-text3 mb-6">Não conseguimos achar o organizador <code className="text-purple-light">{params.orgSlug}</code>.</p>
+        <h1 className="font-heading text-2xl font-bold text-text mb-2">Parceiro não encontrado</h1>
+        <p className="text-[13px] text-text3 mb-6">Não conseguimos achar o parceiro <code className="text-purple-light">{params.orgSlug}</code>.</p>
         <Link href="/" className="inline-flex items-center gap-1 text-[13px] text-purple-light hover:text-purple transition-colors">
           <ChevronLeft className="w-4 h-4" /> Voltar para a home
         </Link>
@@ -137,8 +137,8 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
       {/* Organizer hero */}
       <section className="border-b border-border-subtle bg-bg2/40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 py-10 md:py-14">
-          <Link href="/organizadores" className="inline-flex items-center gap-1 text-[12px] text-text3 hover:text-purple-light transition-colors mb-5">
-            <ChevronLeft className="w-3.5 h-3.5" /> Todos os organizadores
+          <Link href="/parceiros" className="inline-flex items-center gap-1 text-[12px] text-text3 hover:text-purple-light transition-colors mb-5">
+            <ChevronLeft className="w-3.5 h-3.5" /> Todos os parceiros
           </Link>
           {loading || !organizer ? (
             <div className="flex items-start gap-4">
@@ -193,7 +193,7 @@ export default function PublicOrganizerPage({ params }: { params: { orgSlug: str
         ) : events.length === 0 ? (
           <div className="text-center py-12 bg-bg2 border border-dashed border-border-subtle rounded-xl">
             <Calendar className="w-8 h-8 text-text3 mx-auto mb-3" />
-            <p className="text-[13px] text-text3">Nenhum evento publicado por este organizador.</p>
+            <p className="text-[13px] text-text3">Nenhum evento publicado por este parceiro.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
