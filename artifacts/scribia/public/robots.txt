@@ -1,0 +1,17 @@
+# Site do ScribIA. O que está aqui é só para buscador: as áreas bloqueadas
+# exigem login e não têm o que mostrar numa busca.
+
+User-agent: *
+Allow: /
+
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /portal
+Disallow: /speaker
+Disallow: /auth
+Disallow: /login
+Disallow: /register
+Disallow: /select-role
+Disallow: /forbidden
+
+Sitemap: https://www.scribia.com.br/sitemap.xml
