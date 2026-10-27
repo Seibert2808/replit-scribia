@@ -122,6 +122,20 @@ const exemplos = [
   { leads: "150 leads", conta: "R$ 100 + 100 × R$ 6,00 + 50 × R$ 5,80", total: "R$ 990" },
 ]
 
+/**
+ * Link de pagamento da parte FIXA, R$ 100 por palestra.
+ *
+ * ⚠️ So da para cobrar a parte fixa aqui. O valor por lead depende da
+ * contagem, que so existe DEPOIS do evento, entao ele e faturado
+ * depois. O botao diz isso ao lado, senao a pessoa paga R$ 100 achando
+ * que quitou tudo.
+ *
+ * Vazio de proposito: enquanto nao houver link de verdade, o botao nao
+ * e desenhado. Botao de pagamento quebrado em pagina publica e pior do
+ * que botao nenhum.
+ */
+const LINK_PAGAMENTO = ""
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
@@ -432,6 +446,23 @@ export default function PalestrantesLandingPage() {
                 ))}
               </div>
             </div>
+
+            {LINK_PAGAMENTO ? (
+              <div className="mt-6 flex flex-col items-center gap-2">
+                <a href={LINK_PAGAMENTO} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="group px-8 py-6 text-base font-semibold">
+                    <span className="flex items-center gap-2">
+                      Contratar agora, R$ 100 por palestra
+                      <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </a>
+                <p className="text-xs text-muted-foreground">
+                  O pagamento aqui é da parte fixa. Os leads são faturados depois do evento, com a
+                  contagem fechada.
+                </p>
+              </div>
+            ) : null}
 
             <ul className="mx-auto mt-7 max-w-2xl space-y-2.5">
               {[
