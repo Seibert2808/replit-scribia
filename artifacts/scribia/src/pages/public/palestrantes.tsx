@@ -375,7 +375,7 @@ export default function PalestrantesLandingPage() {
 
             <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
               <div
-                className="rounded-2xl p-7 text-white"
+                className="flex flex-col justify-center rounded-2xl p-7 text-white"
                 style={{ backgroundImage: GRADIENTE_MARCA }}
               >
                 <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
