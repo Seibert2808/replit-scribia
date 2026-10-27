@@ -46,9 +46,9 @@ const perguntas = [
 const entregas = [
   {
     icon: BookOpen,
-    titulo: "O livebook da sua palestra",
+    titulo: "Livebooks e playbooks",
     texto:
-      "A sua fala vira material escrito e organizado, com os destaques e a sua bio, e fica com quem assistiu. É o que você manda para quem pediu o conteúdo.",
+      "A sua fala vira material escrito e organizado, em mais de um nível de leitura, e fica com quem assistiu. É o que você manda para quem pediu o conteúdo depois do evento.",
   },
   {
     icon: Sparkles,
