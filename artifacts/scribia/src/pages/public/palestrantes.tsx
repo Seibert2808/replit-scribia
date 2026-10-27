@@ -356,6 +356,15 @@ export default function PalestrantesLandingPage() {
               ))}
             </div>
 
+            <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-border bg-card p-6 text-center">
+              <h3 className="text-base font-bold">A temperatura muda ao longo do ano</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                O ScribIA reengaja os seus leads por <strong className="text-foreground">12 meses</strong>{" "}
+                depois da palestra. Quem entrou frio volta a receber o seu conteúdo e pode esquentar
+                meses depois, sem você precisar fazer nada.
+              </p>
+            </div>
+
             <p className="mx-auto mt-7 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
               Nome e contato aparecem de quem autorizou, no termo do evento. Quem não autorizou
               continua contando no engajamento, sem identificação.
@@ -375,7 +384,7 @@ export default function PalestrantesLandingPage() {
 
             <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
               <div
-                className="flex flex-col justify-center rounded-2xl p-7 text-white"
+                className="rounded-2xl p-7 text-white md:self-start"
                 style={{ backgroundImage: GRADIENTE_MARCA }}
               >
                 <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
@@ -383,7 +392,7 @@ export default function PalestrantesLandingPage() {
                 </p>
                 <p className="mt-2 text-4xl font-extrabold">R$ 100</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/90">
-                  Você ganha perfil de Palestrante e página de captura.
+                  Você ganha perfil de palestrante e página de captura.
                 </p>
               </div>
 
