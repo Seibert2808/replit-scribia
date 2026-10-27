@@ -165,15 +165,15 @@ export default function PalestrantesLandingPage() {
                     className="bg-clip-text text-transparent"
                     style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
                   >
-                    A sua palestra continua trabalhando
+                    Seu conhecimento continua em ação
                   </span>{" "}
-                  depois que você desce do palco.
+                  mesmo depois que você desce do palco.
                 </h1>
 
                 <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
                   O ScribIA é a memória do evento. A sua fala vira livebook, resumo e cards que
                   ficam com quem assistiu, e cada pessoa que entra pelo seu QR Code vira um lead
-                  seu, com nome, contato e o que ela leu.
+                  seu, com nome, contato e o que ela usou e achou de você.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -225,7 +225,7 @@ export default function PalestrantesLandingPage() {
         <section className="border-b border-border">
           <div className="mx-auto max-w-5xl px-4 sm:px-8 py-16">
             <h2 className="text-center text-2xl font-extrabold md:text-3xl">
-              O evento acaba. E aí?
+              O evento acaba. E o que vem depois?
             </h2>
 
             <motion.div
@@ -255,9 +255,15 @@ export default function PalestrantesLandingPage() {
         {/* -------------------------------------------------------- entregas */}
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-4 sm:px-8 py-16">
-            <h2 className="text-center text-2xl font-extrabold md:text-3xl">
-              O que você recebe de cada palestra
+            <h2
+              className="bg-clip-text text-center text-3xl font-extrabold text-transparent md:text-4xl"
+              style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+            >
+              Diferencie-se com o ScribIA
             </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
+              O que você recebe de cada palestra, sem precisar produzir nada além da sua fala.
+            </p>
 
             <motion.div
               variants={containerVariants}
@@ -364,8 +370,7 @@ export default function PalestrantesLandingPage() {
               Quanto custa
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
-              Uma parte fixa por palestra e um valor por lead captado. Se a sua palestra trouxer
-              pouca gente, você paga pouco.
+              Uma parte fixa por palestra e um valor por lead captado.
             </p>
 
             <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
