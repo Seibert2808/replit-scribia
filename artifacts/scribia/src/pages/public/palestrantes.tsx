@@ -1,242 +1,515 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { PublicHeader } from "@/components/layout/public-header"
 import Footer from "@/components/sections/Footer"
 import { LeadWizardDialog } from "@/components/lead-wizard-dialog"
+import { FUNDO_PORTFOLIO, GRADIENTE_MARCA, GRADIENTE_MARCA_CLARO } from "@/utils/paleta"
 import palestraRetrato from "@/assets/images/Nicolai_Site.png"
 import palestraPalco from "@/assets/images/palestrante-palco.jpeg"
 import {
   Sparkles,
-  Eye,
-  Award,
-  Search,
-  BarChart3,
-  ShoppingBag,
-  Briefcase,
   Mic,
-  Brain,
+  QrCode,
   BookOpen,
-  TrendingUp,
+  Users,
   ChevronRight,
-  Star,
+  Flame,
+  Check,
 } from "lucide-react"
+
+/**
+ * Landing do palestrante.
+ *
+ * ⚠️ REESCRITA EM 27/10/2026, por pedido dela, e o que mudou nao foi so
+ * a cor:
+ *
+ * 1. FUNDO ESCURO. A pagina tinha um hero lilas claro chapado
+ *    (#b9b4d4) que nao existe na paleta. Agora usa FUNDO_PORTFOLIO,
+ *    o mesmo da aba de eventos e do portfolio comercial.
+ * 2. PRECO. A pagina nao dizia quanto custa, em lugar nenhum, e a
+ *    unica saida era o formulario. Agora o modelo esta escrito:
+ *    parte fixa por palestra + valor por lead em faixas marginais.
+ * 3. O PASSO 1 ESTAVA ERRADO. Dizia "seu publico envia o audio da sua
+ *    fala", o que nunca foi verdade. Quem grava e a organizacao, ou o
+ *    proprio palestrante em app.scribia.io/enviar-audio.
+ * 4. "Livebook" em maiuscula virou "livebook": e substantivo comum.
+ */
+
+const perguntas = [
+  "Quem ainda lembra do que você ensinou, duas semanas depois do evento?",
+  "O que sobrou da sua fala, além das fotos e do crachá?",
+  "Quantas pessoas da plateia você consegue nomear hoje?",
+  "Como provar, numa proposta, o que você entregou no palco?",
+]
+
+const entregas = [
+  {
+    icon: BookOpen,
+    titulo: "Livebooks e playbooks",
+    texto:
+      "A sua fala vira material escrito e organizado, em mais de um nível de leitura, e fica com quem assistiu. É o que você manda para quem pediu o conteúdo depois do evento.",
+  },
+  {
+    icon: Sparkles,
+    titulo: "Cards com a sua frase",
+    texto:
+      "A frase que você escolher vira arte para redes sociais, com a sua foto e o seu nome. Divulgação pronta, que você não precisou produzir.",
+  },
+  {
+    icon: Users,
+    titulo: "A lista de quem te procurou",
+    texto:
+      "Nome e contato de quem entrou na sua palestra e autorizou a identificação, com o que cada pessoa abriu do seu material.",
+  },
+  {
+    icon: Flame,
+    titulo: "A temperatura de cada pessoa",
+    texto:
+      "Quente, morno ou frio, conforme o quanto a pessoa já consumiu do seu conteúdo, somando todas as suas palestras no ScribIA.",
+  },
+  {
+    icon: QrCode,
+    titulo: "Um QR Code que é seu",
+    texto:
+      "Na tela, no slide final ou impresso. É por ele que a plateia entra, e é por ele que você sabe quem entrou.",
+  },
+  {
+    icon: Mic,
+    titulo: "O seu acervo, evento após evento",
+    texto:
+      "Cada palestra se soma às anteriores. Quem acompanhou duas delas aparece como uma pessoa só, com o interesse acumulado.",
+  },
+]
+
+const passos = [
+  {
+    titulo: "Você se cadastra e completa o seu perfil",
+    texto:
+      "O perfil é o que sai nos materiais: foto, biografia, os seus títulos e os links que você marcar como públicos.",
+  },
+  {
+    titulo: "A gente gera a sua página de captura e o seu QR Code",
+    texto:
+      "O QR Code entra na sua apresentação. É por ele que a plateia entra na sua palestra, e é por ele que você sabe quem entrou.",
+  },
+  {
+    titulo: "A gravação",
+    texto:
+      "Pode ser gravado pela organização do evento ou por você. O envio é pelo login do palestrante, em app.scribia.io/enviar-audio.",
+  },
+  {
+    titulo: "Os materiais saem e o engajamento aparece",
+    texto:
+      "Livebooks, playbooks, resumo e cards saem da sua fala. O painel mostra quem entrou, o que cada pessoa abriu e o contato de quem autorizou.",
+  },
+]
+
+const faixas = [
+  { quando: "Os primeiros 100 leads", valor: "R$ 6,00" },
+  { quando: "Do 101º ao 500º lead", valor: "R$ 5,80" },
+  { quando: "Do 501º em diante", valor: "R$ 5,50" },
+]
+
+// Exemplos no tamanho dos eventos que existem de verdade. A peca
+// comercial traz um exemplo de 600 leads, que da R$ 3.570 e esta uma
+// ordem de grandeza acima da realidade medida: a palestra com mais
+// acessos que ja existiu teve 71. Numero que o palestrante nao reconhece
+// quebra a confianca no resto da pagina.
+const exemplos = [
+  { leads: "30 leads", conta: "R$ 100 + 30 × R$ 6,00", total: "R$ 280" },
+  { leads: "70 leads", conta: "R$ 100 + 70 × R$ 6,00", total: "R$ 520" },
+  { leads: "150 leads", conta: "R$ 100 + 100 × R$ 6,00 + 50 × R$ 5,80", total: "R$ 990" },
+]
+
+/**
+ * Pagamento da parte FIXA, R$ 100 por palestra.
+ *
+ * 27/10/2026: por enquanto o botao so abre o WhatsApp dela avisando que
+ * quer contratar, e ela manda o link de pagamento ou o Pix na mao,
+ * pessoa a pessoa. Decisao dela: ainda nao existe um link publico
+ * pronto para colar aqui.
+ *
+ * Quando houver link direto, CONFERIR DUAS COISAS antes de trocar esse
+ * fluxo, porque as duas ja derrubaram um link em 27/10/2026:
+ *    1. A cobranca tem que sair no CNPJ do ScribIA, a S2 Solucoes I.S.
+ *       (63.623.914/0001-29), e nao no da clinica.
+ *    2. Nao pode ter VENCIMENTO: link com validade numa pagina publica
+ *       para de funcionar sozinho e ninguem avisa.
+ */
+const WHATSAPP_CONTRATACAO = "5521997478748"
+const MENSAGEM_CONTRATACAO =
+  "Olá! Quero contratar o ScribIA para minha palestra, parte fixa de R$ 100. Pode me mandar o link de pagamento ou o Pix?"
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 18 },
   visible: { opacity: 1, y: 0 },
 }
-
-const questions = [
-  "Quem realmente lembra do que você ensinou depois do evento?",
-  "Como fazer seu conteúdo continuar circulando, sendo citado e compartilhado?",
-  "Como descobrir o que o público realmente quer aprender de você?",
-  "Como transformar cada palestra em um ativo que gera novas vendas ou convites?",
-]
-
-const benefitsData = [
-  { icon: Eye, title: "Ser lembrado além do momento ao vivo", description: "Sua fala vira um Livebook estruturado e memorável que permanece acessível ao público." },
-  { icon: Award, title: "Aumentar sua autoridade como especialista", description: "Livebooks circulam, viralizam trechos e reforçam sua credibilidade continuamente." },
-  { icon: Search, title: "Ser mais referenciado e encontrado", description: "Conteúdo citável, pesquisável e fácil de referenciar por qualquer pessoa." },
-  { icon: BarChart3, title: "Entender o que o público realmente quer", description: "Métricas mostram os trechos que geram mais atenção e interesse real." },
-  { icon: ShoppingBag, title: "Criar produtos alinhados à demanda real", description: "Mentorias, cursos e trilhas nascem das métricas de engajamento do público." },
-  { icon: Briefcase, title: "Transformar cada palestra em um portfólio vivo", description: "Use os Livebooks em propostas, vendas e redes para demonstrar expertise." },
-]
-
-const processSteps = [
-  { icon: Mic, title: "Seu público envia o áudio da sua fala", description: "Eles mesmos gravam e enviam — sem exigir nada extra de você." },
-  { icon: Brain, title: "A IA transforma sua apresentação em um Livebook", description: "Com estrutura, destaques, frases marcantes e aplicações práticas." },
-  { icon: BookOpen, title: "Você recebe o Livebook pronto para divulgar", description: "Ele entra no seu portfólio e na sua estratégia de autoridade." },
-  { icon: TrendingUp, title: "Você acompanha o interesse real da audiência", description: "As métricas mostram temas mais atrativos e onde aprofundar sua mensagem." },
-]
 
 export default function PalestrantesLandingPage() {
   const [wizardOpen, setWizardOpen] = useState(false)
 
   useEffect(() => {
-    document.title = "ScribIA — Para palestrantes e influenciadores"
+    document.title = "ScribIA — Para palestrantes"
   }, [])
 
-  const openWizard = () => setWizardOpen(true)
+  const abrirWizard = () => setWizardOpen(true)
 
   return (
-    <div className="min-h-screen bg-bg text-text">
+    <div style={FUNDO_PORTFOLIO} className="min-h-screen bg-background text-foreground">
       <PublicHeader />
 
-      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
-        {/* Hero */}
-        <section className="relative py-12 md:py-16 overflow-hidden" style={{ backgroundColor: "#b9b4d4" }}>
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center max-w-6xl mx-auto">
-              <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="flex justify-center md:justify-end order-2 md:order-1">
-                <div className="w-56 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 rounded-2xl overflow-hidden shadow-2xl">
-                  <img src={palestraRetrato} alt="Palestrante em destaque" className="w-full h-full object-cover object-top" />
-                </div>
-              </motion.div>
+      <main>
+        {/* ---------------------------------------------------------- hero */}
+        <section className="relative overflow-hidden border-b border-border">
+          <div className="mx-auto max-w-6xl px-4 sm:px-8 py-14 md:py-20">
+            <div className="grid gap-10 md:grid-cols-[1.15fr_1fr] md:items-center">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  PARA PALESTRANTES
+                </span>
 
-              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="text-center order-1 md:order-2">
-                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-foreground px-4 py-2 rounded-full text-sm font-medium mb-6">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Para Palestrantes e Influenciadores</span>
-                </div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2 leading-tight">
-                  Transforme cada palestra em presença contínua, autoridade e novas oportunidades
+                <h1 className="mt-5 text-3xl font-extrabold leading-[1.15] md:text-[2.7rem]">
+                  <span
+                    className="bg-clip-text text-transparent"
+                    style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+                  >
+                    Seu conhecimento continua em ação
+                  </span>{" "}
+                  mesmo depois que você desce do palco.
                 </h1>
+
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+                  O ScribIA é a memória do evento. A sua fala vira livebook, resumo e cards que
+                  ficam com quem assistiu, e cada pessoa que entra pelo seu QR Code vira um lead
+                  seu, com nome, contato e o que ela usou e achou de você.
+                </p>
+
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <a href="#planos">
+                    <Button size="lg" className="group px-7 py-5 text-base font-semibold">
+                      <span className="flex items-center gap-2">
+                        Ver os planos
+                        <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </Button>
+                  </a>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={abrirWizard}
+                    className="px-7 py-5 text-base font-semibold"
+                  >
+                    Falar com o ScribIA
+                  </Button>
+                </div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="flex justify-center md:justify-start order-3">
-                <div className="w-56 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 rounded-2xl overflow-hidden shadow-2xl">
-                  <img src={palestraPalco} alt="Palestrante no palco" className="w-full h-full object-cover object-center" />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-border">
+                  <img
+                    src={palestraPalco}
+                    alt="Palestrante no palco"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="aspect-[3/4] translate-y-6 overflow-hidden rounded-2xl border border-border">
+                  <img
+                    src={palestraRetrato}
+                    alt="Palestrante em destaque"
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
               </motion.div>
             </div>
           </div>
         </section>
 
-        {/* CTA entre hero e próxima seção */}
-        <section className="py-8 md:py-10">
-          <div className="container mx-auto px-4 text-center">
-            <Button size="lg" onClick={openWizard} className="group px-8 py-5 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
+        {/* -------------------------------------------------------- perguntas */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-5xl px-4 sm:px-8 py-16">
+            <h2 className="text-center text-2xl font-extrabold md:text-3xl">
+              O evento acaba. E o que vem depois?
+            </h2>
+
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mt-9 grid gap-4 md:grid-cols-2"
+            >
+              {perguntas.map((pergunta) => (
+                <motion.p
+                  key={pergunta}
+                  variants={itemVariants}
+                  className="rounded-xl border border-border bg-card px-6 py-5 text-[15px] leading-relaxed text-muted-foreground"
+                >
+                  {pergunta}
+                </motion.p>
+              ))}
+            </motion.div>
+
+            <p className="mx-auto mt-9 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
+              O que você falou não precisa terminar com os aplausos. É disso que o ScribIA cuida.
+            </p>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------- entregas */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-6xl px-4 sm:px-8 py-16">
+            <h2
+              className="bg-clip-text text-center text-3xl font-extrabold text-transparent md:text-4xl"
+              style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+            >
+              Diferencie-se com o ScribIA
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
+              O que você recebe de cada palestra, sem precisar produzir nada além da sua fala.
+            </p>
+
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+            >
+              {entregas.map((entrega) => (
+                <motion.div
+                  key={entrega.titulo}
+                  variants={itemVariants}
+                  className="rounded-2xl border border-border bg-card p-6"
+                >
+                  <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-background">
+                    <entrega.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="mb-2 text-base font-bold">{entrega.titulo}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{entrega.texto}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------- como funciona */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-4xl px-4 sm:px-8 py-16">
+            <h2 className="text-center text-2xl font-extrabold md:text-3xl">Como funciona</h2>
+
+            <div className="mt-10 space-y-4">
+              {passos.map((passo, i) => (
+                <motion.div
+                  key={passo.titulo}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="flex gap-5 rounded-2xl border border-border bg-card p-6"
+                >
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                    style={{ backgroundImage: GRADIENTE_MARCA }}
+                  >
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-base font-bold">{passo.titulo}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      {passo.texto}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ------------------------------------------------------------ leads */}
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-5xl px-4 sm:px-8 py-16">
+            <h2 className="text-center text-2xl font-extrabold md:text-3xl">
+              Lead aqui é quem entrou na sua palestra
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
+              Não é quem passou pelo evento, nem quem viu o seu nome na programação: é quem abriu a
+              sua palestra pelo QR Code ou pelo link. Você recebe todos, e o painel diz o quanto
+              cada um já consumiu do seu conteúdo.
+            </p>
+
+            <div className="mt-9 grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  nome: "Quente",
+                  texto: "Consumiu dois materiais seus ou mais. Já sabe do que você falou.",
+                },
+                {
+                  nome: "Morno",
+                  texto: "Consumiu um material inteiro, ou boa parte do áudio.",
+                },
+                {
+                  nome: "Frio",
+                  texto: "Entrou e quase não tocou em nada. É onde uma mensagem sua rende mais.",
+                },
+              ].map((faixa) => (
+                <div key={faixa.nome} className="rounded-2xl border border-border bg-card p-6">
+                  <h3 className="mb-2 text-base font-bold">{faixa.nome}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{faixa.texto}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mx-auto mt-8 max-w-3xl rounded-2xl border border-border bg-card p-6 text-center">
+              <h3 className="text-base font-bold">A temperatura muda ao longo do ano</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                O ScribIA reengaja os seus leads por <strong className="text-foreground">12 meses</strong>{" "}
+                depois da palestra. Quem entrou frio volta a receber o seu conteúdo e pode esquentar
+                meses depois, sem você precisar fazer nada.
+              </p>
+            </div>
+
+            <p className="mx-auto mt-7 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+              Nome e contato aparecem de quem autorizou, no termo do evento. Quem não autorizou
+              continua contando no engajamento, sem identificação.
+            </p>
+          </div>
+        </section>
+
+        {/* ----------------------------------------------------------- planos */}
+        <section id="planos" className="border-b border-border scroll-mt-20">
+          <div className="mx-auto max-w-5xl px-4 sm:px-8 py-16">
+            <h2 className="text-center text-2xl font-extrabold md:text-3xl">
+              Quanto custa
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
+              Uma parte fixa por palestra e um valor por lead captado.
+            </p>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
+              <div
+                className="rounded-2xl p-7 text-white md:self-start"
+                style={{ backgroundImage: GRADIENTE_MARCA }}
+              >
+                <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
+                  Por palestra
+                </p>
+                <p className="mt-2 text-4xl font-extrabold">R$ 100</p>
+                <p className="mt-3 text-sm leading-relaxed text-white/90">
+                  Você ganha perfil de palestrante e página de captura.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card p-7">
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  Mais, por lead captado
+                </p>
+                <ul className="mt-4 space-y-3">
+                  {faixas.map((faixa) => (
+                    <li
+                      key={faixa.quando}
+                      className="flex items-baseline justify-between gap-4 border-b border-border pb-3 last:border-0 last:pb-0"
+                    >
+                      <span className="text-sm text-muted-foreground">{faixa.quando}</span>
+                      <span className="text-base font-bold text-primary">{faixa.valor}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                  As faixas são marginais: os primeiros 100 leads saem a R$ 6,00 mesmo que você
+                  passe de 500.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-border bg-card p-7">
+              <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Na prática
+              </p>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                {exemplos.map((exemplo) => (
+                  <div key={exemplo.leads} className="rounded-xl border border-border p-5">
+                    <p className="text-sm font-bold">{exemplo.leads}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{exemplo.conta}</p>
+                    <p className="mt-3 text-2xl font-extrabold text-primary">{exemplo.total}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <a
+                href={`https://wa.me/${WHATSAPP_CONTRATACAO}?text=${encodeURIComponent(MENSAGEM_CONTRATACAO)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" className="group px-8 py-6 text-base font-semibold">
+                  <span className="flex items-center gap-2">
+                    Contratar agora, R$ 100 por palestra
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Button>
+              </a>
+              <p className="text-xs text-muted-foreground">
+                O pagamento aqui é da parte fixa. Os leads são faturados depois do evento, com a
+                contagem fechada.
+              </p>
+            </div>
+
+            <ul className="mx-auto mt-7 max-w-2xl space-y-2.5">
+              {[
+                "Você só paga pelos leads que a sua palestra trouxer.",
+                "O material fica disponível para quem entrou, e continua rendendo depois do evento.",
+                "A conta fecha depois do evento, com a contagem na mão.",
+              ].map((linha) => (
+                <li key={linha} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  {linha}
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-7 text-center text-xs text-muted-foreground">
+              Valores vigentes em outubro de 2026.
+            </p>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------------- cta final */}
+        <section>
+          <div className="mx-auto max-w-3xl px-4 sm:px-8 py-20 text-center">
+            <h2 className="text-2xl font-extrabold md:text-3xl">
+              Leve o ScribIA para a sua próxima palestra
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+              Conte em qual evento você vai falar e a gente responde com o que dá para fazer, e em
+              quanto tempo.
+            </p>
+            <Button
+              size="lg"
+              onClick={abrirWizard}
+              className="group mt-8 px-8 py-6 text-base font-semibold"
+            >
               <span className="flex items-center gap-2">
-                Quero transformar minha fala em Livebooks
+                Falar com o ScribIA
                 <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </span>
             </Button>
-          </div>
-        </section>
-
-        {/* Você já se perguntou? */}
-        <section className="py-16 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-4xl mx-auto">
-              <motion.div variants={itemVariants}>
-                <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Você já se perguntou?</h2>
-              </motion.div>
-
-              <div className="grid md:grid-cols-2 gap-4 mb-8">
-                {questions.map((question, idx) => (
-                  <motion.div key={idx} variants={itemVariants}>
-                    <Card className="h-full hover:shadow-md transition-all duration-300 border-l-4 border-l-primary">
-                      <CardContent className="p-6">
-                        <p className="text-muted-foreground">{question}</p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div variants={itemVariants} className="text-center">
-                <p className="text-lg text-muted-foreground italic">
-                  O ScribIA existe para transformar sua fala em autoridade contínua, presença ampliada e oportunidades reais — mesmo quando você está offline.
-                </p>
-              </motion.div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Benefícios */}
-        <section id="beneficios" className="py-16 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Benefícios do ScribIA para Palestrantes</h2>
-            </motion.div>
-
-            <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-              {benefitsData.map((benefit, idx) => (
-                <motion.div key={idx} variants={itemVariants}>
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
-                    <CardContent className="p-6">
-                      <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform">
-                        <benefit.icon className="h-6 w-6" />
-                      </div>
-                      <h3 className="font-semibold text-lg mb-3">{benefit.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Como Funciona */}
-        <section id="como-funciona" className="py-16">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Como Funciona</h2>
-            </motion.div>
-
-            <div className="max-w-4xl mx-auto space-y-6">
-              {processSteps.map((step, idx) => (
-                <motion.div key={idx} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}>
-                  <Card className="hover:shadow-md transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="flex gap-4">
-                        <div className="flex-shrink-0">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">{idx + 1}</div>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-start gap-3 mb-2">
-                            <step.icon className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                            <h3 className="font-semibold text-lg">{step.title}</h3>
-                          </div>
-                          <p className="text-muted-foreground">{step.description}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Por que amam */}
-        <section className="py-16 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-8">Por que Palestrantes Amam o ScribIA?</h2>
-              <p className="text-lg text-muted-foreground mb-8">Porque finalmente existe um jeito de:</p>
-              <div className="flex flex-wrap justify-center gap-3 mb-8">
-                {["ser lembrado", "ser encontrado", "ser referenciado", "ser procurado", "ser desejado como especialista"].map((item, idx) => (
-                  <motion.div key={idx} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: idx * 0.08 }}>
-                    <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-2.5 rounded-full text-sm font-medium">
-                      <Star className="h-3.5 w-3.5" />
-                      {item}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-              <p className="text-muted-foreground italic max-w-2xl mx-auto">
-                Não só pelo que você fala, mas pelo que o seu conteúdo continua gerando depois que você sai do palco.
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* CTA Final */}
-        <section className="py-20 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Leve o ScribIA para sua próxima apresentação</h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Transforme cada fala em legado, autoridade e oportunidade — como Palestrante ou Influenciador.
-              </p>
-
-              <Button size="lg" onClick={openWizard} className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                <span className="flex items-center gap-2">
-                  Quero transformar minha fala em Livebooks
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Button>
-            </motion.div>
           </div>
         </section>
       </main>
