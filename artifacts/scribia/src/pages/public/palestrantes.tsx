@@ -383,8 +383,7 @@ export default function PalestrantesLandingPage() {
                 </p>
                 <p className="mt-2 text-4xl font-extrabold">R$ 100</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/90">
-                  A parte fixa, que cobre o material da sua fala: livebook, resumo, cards e a
-                  página da palestra com o seu QR Code.
+                  Você ganha perfil de Palestrante e página de captura.
                 </p>
               </div>
 
