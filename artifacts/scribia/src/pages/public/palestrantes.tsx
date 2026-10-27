@@ -86,7 +86,7 @@ const passos = [
   {
     titulo: "O áudio da palestra é gravado",
     texto:
-      "Em geral pela organização do evento. Se você gravou por conta própria, no celular ou pela mesa de som, envia o arquivo você mesmo em app.scribia.io/enviar-audio.",
+      "Pode ser gravado pela organização do evento ou por você. O envio é pelo login do palestrante, em app.scribia.io/enviar-audio.",
   },
   {
     titulo: "O ScribIA monta o material",
