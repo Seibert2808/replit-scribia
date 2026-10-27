@@ -134,7 +134,7 @@ const exemplos = [
  * e desenhado. Botao de pagamento quebrado em pagina publica e pior do
  * que botao nenhum.
  */
-const LINK_PAGAMENTO = ""
+const LINK_PAGAMENTO = "https://checkout.nubank.com.br/Nnw3B6DREk8fd44u"
 
 const containerVariants = {
   hidden: { opacity: 0 },
