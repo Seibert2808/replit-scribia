@@ -16,7 +16,6 @@ interface FormData {
   organizerName: string
   email: string
   whatsapp: string
-  meetingDateTime: string
   otherInfo: string
 }
 
@@ -29,7 +28,6 @@ const INITIAL_DATA: FormData = {
   organizerName: "",
   email: "",
   whatsapp: "",
-  meetingDateTime: "",
   otherInfo: "",
 }
 
@@ -98,14 +96,6 @@ const STEPS: Step[] = [
     ),
   },
   {
-    question: "Qual o melhor dia e horário para uma reunião?",
-    hint: "Vamos confirmar por WhatsApp depois.",
-    validate: (d) => d.meetingDateTime.trim().length >= 4,
-    render: (d, set) => (
-      <Input autoFocus type="datetime-local" value={d.meetingDateTime} onChange={(e) => set({ meetingDateTime: e.target.value })} />
-    ),
-  },
-  {
     question: "Quer compartilhar mais alguma coisa? (opcional)",
     hint: "Patrocinadores, dúvidas, contexto do evento, qualquer informação útil.",
     validate: () => true,
@@ -140,8 +130,6 @@ function buildWhatsappMessage(d: FormData): string {
     `• Nome: ${d.organizerName}`,
     `• E-mail: ${d.email}`,
     `• WhatsApp: ${d.whatsapp}`,
-    "",
-    `*Melhor dia/hora p/ conversar:* ${formatBRDate(d.meetingDateTime)}`,
     d.otherInfo ? `\n*Outras informações:*\n${d.otherInfo}` : "",
   ].filter(Boolean).join("\n")
 }
