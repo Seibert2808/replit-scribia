@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { PublicHeader } from "@/components/layout/public-header"
 import Footer from "@/components/sections/Footer"
 import { LeadWizardDialog } from "@/components/lead-wizard-dialog"
-import { FUNDO_PORTFOLIO, GRADIENTE_MARCA_CLARO } from "@/utils/paleta"
+import { FUNDO_PORTFOLIO, GRADIENTE_MARCA, GRADIENTE_MARCA_CLARO } from "@/utils/paleta"
 import palestraRetrato from "@/assets/images/Nicolai_Site.png"
 import palestraPalco from "@/assets/images/palestrante-palco.jpeg"
 import {
@@ -91,7 +91,7 @@ const passos = [
   {
     titulo: "O ScribIA monta o material",
     texto:
-      "Livebook, resumo, cards e a página da sua palestra, com os seus dados do jeito que você cadastrou.",
+      "O livebook, o resumo, os cards e a página da sua palestra, com os seus dados do jeito que você cadastrou.",
   },
   {
     titulo: "A plateia entra pelo QR Code",
@@ -300,7 +300,7 @@ export default function PalestrantesLandingPage() {
                 >
                   <span
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                    style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+                    style={{ backgroundImage: GRADIENTE_MARCA }}
                   >
                     {i + 1}
                   </span>
@@ -371,7 +371,7 @@ export default function PalestrantesLandingPage() {
             <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
               <div
                 className="rounded-2xl p-7 text-white"
-                style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}
+                style={{ backgroundImage: GRADIENTE_MARCA }}
               >
                 <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
                   Por palestra
