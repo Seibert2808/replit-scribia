@@ -84,24 +84,24 @@ const entregas = [
 
 const passos = [
   {
-    titulo: "O áudio da palestra é gravado",
+    titulo: "Você se cadastra e completa o seu perfil",
+    texto:
+      "O perfil é o que sai nos materiais: foto, biografia, os seus títulos e os links que você marcar como públicos.",
+  },
+  {
+    titulo: "A gente gera a sua página de captura e o seu QR Code",
+    texto:
+      "O QR Code entra na sua apresentação. É por ele que a plateia entra na sua palestra, e é por ele que você sabe quem entrou.",
+  },
+  {
+    titulo: "A gravação",
     texto:
       "Pode ser gravado pela organização do evento ou por você. O envio é pelo login do palestrante, em app.scribia.io/enviar-audio.",
   },
   {
-    titulo: "O ScribIA monta o material",
+    titulo: "Os materiais saem e o engajamento aparece",
     texto:
-      "O livebook, o resumo, os cards e a página da sua palestra, com os seus dados do jeito que você cadastrou.",
-  },
-  {
-    titulo: "A plateia entra pelo QR Code",
-    texto:
-      "Cada pessoa que entra é um lead seu. Ela acessa o material quando quiser, e continua acessando depois do evento.",
-  },
-  {
-    titulo: "Você vê quem engajou, e fala com quem autorizou",
-    texto:
-      "O painel mostra o que cada pessoa abriu, ordena pelos mais quentes e entrega o contato de quem liberou.",
+      "Livebooks, playbooks, resumo e cards saem da sua fala. O painel mostra quem entrou, o que cada pessoa abriu e o contato de quem autorizou.",
   },
 ]
 
