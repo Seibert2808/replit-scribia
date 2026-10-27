@@ -133,8 +133,21 @@ const exemplos = [
  * Vazio de proposito: enquanto nao houver link de verdade, o botao nao
  * e desenhado. Botao de pagamento quebrado em pagina publica e pior do
  * que botao nenhum.
+ *
+ * 🔴 O LINK DE 27/10/2026 NAO SERVE, e o motivo nao e tecnico:
+ *
+ *   https://checkout.nubank.com.br/Nnw3B6DREk8fd44u
+ *
+ *   1. A cobranca sai no CNPJ 68.626.579/0001-36, SEIBERT SADDY SAUDE
+ *      INTEGRAL LTDA, que e a CLINICA. O ScribIA e a S2 Solucoes I.S.,
+ *      CNPJ 63.623.914/0001-29. Palestrante pagaria uma clinica por um
+ *      servico de evento, e a nota sairia da empresa errada.
+ *   2. Tem VENCIMENTO em 26/11/2026. Link com validade numa pagina
+ *      publica para de funcionar sozinho, e ninguem avisa.
+ *
+ *   O valor (R$ 100, Pix; R$ 104,16 no cartao) esta certo.
  */
-const LINK_PAGAMENTO = "https://checkout.nubank.com.br/Nnw3B6DREk8fd44u"
+const LINK_PAGAMENTO = ""
 
 const containerVariants = {
   hidden: { opacity: 0 },
