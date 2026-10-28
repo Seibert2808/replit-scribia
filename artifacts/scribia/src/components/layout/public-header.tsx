@@ -12,6 +12,7 @@ import { SITE } from '@/utils/constants'
 const NAV_LINKS = [
   { href: '/', label: 'Home', externo: false },
   { href: '/quero-no-meu-evento', label: 'Quero no meu evento', externo: false },
+  { href: '/palestrantes', label: 'Palestrantes', externo: false },
   { href: '/eventos', label: 'Eventos', externo: false },
   { href: `${SITE.appUrl}/vitrine`, label: 'Vitrine', externo: true },
   { href: '/parceiros', label: 'Parceiros', externo: false },
