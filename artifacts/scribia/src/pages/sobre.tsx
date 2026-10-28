@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { PublicHeader } from '@/components/layout/public-header'
-import NewHero from '@/components/sections/new/NewHero'
+import { FUNDO_PORTFOLIO } from '@/utils/paleta'
+import NewHero, { PersonaCards } from '@/components/sections/new/NewHero'
 import ProblemSection from '@/components/sections/new/ProblemSection'
 import SolutionSection from '@/components/sections/new/SolutionSection'
 import HowItWorksNew from '@/components/sections/new/HowItWorksNew'
@@ -19,22 +20,25 @@ export default function SobrePage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-bg text-text">
-      <PublicHeader />
-      <main className="px-4 sm:px-8 md:px-14 lg:px-16">
-        <NewHero />
-        <ProblemSection />
-        <SolutionSection />
-        <HowItWorksNew />
-        <FeaturesSection />
-        <LivebookSection />
-        <BiaSection />
-        <MetricsSection />
-        <FAQSectionNew />
-        <DemoSection />
-        <ContactSection />
-      </main>
-      <Footer />
+    <div className="min-h-screen" style={FUNDO_PORTFOLIO}>
+      <div className="bg-bg text-text">
+        <PublicHeader />
+        <main className="px-4 sm:px-8 md:px-14 lg:px-16">
+          <NewHero />
+          <PersonaCards />
+          <ProblemSection />
+          <SolutionSection />
+          <HowItWorksNew />
+          <FeaturesSection />
+          <LivebookSection />
+          <BiaSection />
+          <MetricsSection />
+          <FAQSectionNew />
+          <DemoSection />
+          <ContactSection />
+        </main>
+        <Footer />
+      </div>
     </div>
   )
 }
