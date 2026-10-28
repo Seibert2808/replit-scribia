@@ -46,11 +46,16 @@ const LivebookSection = () => {
           </div>
           
           <div className="relative flex justify-center items-center">
-            <img 
-              src={livebookImage} 
-              alt="Profissional apresentando Livebook ScribIA em tablet" 
-              className="w-full max-w-md rounded-2xl shadow-2xl"
-            />
+            {/* Mesma moldura branca da SolutionSection: a foto em si tem
+                fundo claro, sem moldura ficava um retangulo branco cru
+                sobre o degrade escuro. */}
+            <div className="w-full max-w-md rounded-2xl bg-white p-3 shadow-glow">
+              <img
+                src={livebookImage}
+                alt="Profissional apresentando Livebook ScribIA em tablet"
+                className="w-full rounded-xl"
+              />
+            </div>
           </div>
         </div>
       </div>

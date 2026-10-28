@@ -20,11 +20,16 @@ const SolutionSection = () => {
         </div>
         
         <div className="flex justify-center">
-          <img 
-            src={ecosystemDiagram} 
-            alt="Diagrama do ecossistema ScribIA conectando participantes, organizadores, palestrantes e patrocinadores" 
-            className="w-full max-w-5xl h-auto"
-          />
+          {/* A arte em si tem fundo branco: moldura clara com cantos
+              arredondados, em vez de deixar o retangulo branco flutuando
+              sozinho sobre o fundo escuro. */}
+          <div className="w-full max-w-5xl rounded-2xl bg-white p-4 sm:p-6 shadow-glow">
+            <img
+              src={ecosystemDiagram}
+              alt="Diagrama do ecossistema ScribIA conectando participantes, organizadores, palestrantes e patrocinadores"
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
         </div>
       </div>
     </section>
