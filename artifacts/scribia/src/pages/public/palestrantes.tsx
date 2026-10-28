@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { PublicHeader } from "@/components/layout/public-header"
 import Footer from "@/components/sections/Footer"
 import { LeadWizardDialog } from "@/components/lead-wizard-dialog"
+import { EventosDestaque } from "@/components/sections/EventosDestaque"
+import { PalestrantesDestaque } from "@/components/sections/PalestrantesDestaque"
 import { FUNDO_PORTFOLIO, GRADIENTE_MARCA, GRADIENTE_MARCA_CLARO } from "@/utils/paleta"
 import palestraRetrato from "@/assets/images/Nicolai_Site.png"
 import palestraPalco from "@/assets/images/palestrante-palco.jpeg"
@@ -487,6 +489,14 @@ export default function PalestrantesLandingPage() {
             <p className="mt-7 text-center text-xs text-muted-foreground">
               Valores vigentes em outubro de 2026.
             </p>
+          </div>
+        </section>
+
+        {/* -------------------------------------------------- prova social */}
+        <section>
+          <div className="mx-auto max-w-6xl space-y-14 px-4 py-16 sm:px-8">
+            <EventosDestaque />
+            <PalestrantesDestaque />
           </div>
         </section>
 
