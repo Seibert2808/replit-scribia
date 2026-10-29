@@ -73,11 +73,11 @@ const HowItWorksNew = () => {
           })}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 px-4">
           <Button
             asChild
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 text-lg shadow-xl hover-scale"
+            className="w-full sm:w-auto whitespace-normal bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg shadow-xl hover-scale"
           >
             <Link href="/quero-no-meu-evento">QUERO O SCRIBIA NO MEU EVENTO!</Link>
           </Button>
