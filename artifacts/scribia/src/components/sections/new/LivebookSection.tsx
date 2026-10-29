@@ -14,7 +14,7 @@ const LivebookSection = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
+          <div className="min-w-0">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               O Que São Livebooks?
             </h2>
@@ -39,13 +39,13 @@ const LivebookSection = () => {
             <Button
               asChild
               size="lg"
-              className="bg-white text-primary hover:bg-white/90 font-bold px-8 py-6 text-lg shadow-2xl hover-scale"
+              className="w-full sm:w-auto whitespace-normal text-center bg-white text-primary hover:bg-white/90 font-bold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg shadow-2xl hover-scale"
             >
               <Link href="/quero-no-meu-evento">QUERO O SCRIBIA NO MEU EVENTO!</Link>
             </Button>
           </div>
-          
-          <div className="relative flex justify-center items-center">
+
+          <div className="relative flex justify-center items-center min-w-0">
             {/* Mesma moldura branca da SolutionSection: a foto em si tem
                 fundo claro, sem moldura ficava um retangulo branco cru
                 sobre o degrade escuro. */}
