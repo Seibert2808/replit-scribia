@@ -56,16 +56,16 @@ const NewHero = () => {
             style={{ background: GRADIENTE_MARCA }}
           />
           <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white">
-            Transforme eventos em ativos digitais{" "}
+            A{" "}
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
-              com IA
+              Netflix
             </span>
-            .
+            {" "}dos Eventos.
           </h1>
           <p className="relative mt-5 text-base md:text-lg text-white/80 leading-relaxed max-w-xl">
-            Nosso ecossistema de inteligência artificial transforma o engajamento dos participantes,
-            prolonga o impacto dos seus eventos e desbloqueia novas fontes de receita para
-            organizadores, palestrantes e patrocinadores.
+            Ecossistema de inteligência artificial que aumenta o acesso e o engajamento dos
+            participantes de eventos presenciais e remotos, prolonga o impacto e desbloqueia novas
+            fontes de receita para organizadores, palestrantes e patrocinadores.
           </p>
 
           <div className="relative flex flex-wrap gap-3 mt-8">
