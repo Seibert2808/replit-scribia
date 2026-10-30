@@ -320,9 +320,16 @@ export default function PublicEventsPage() {
   // da plataforma tem pagina propria; evento do Calendario marcado com
   // ScribIA aponta para o site do organizador, porque a pagina no ScribIA
   // ainda nao existe.
+  // Paginas proprias de palestrante ("Fulano Palestrante", criadas pelo
+  // tipo "Palestrante" no cadastro de evento) sao eventos de verdade no
+  // banco, entao entravam aqui tambem. Pedido dela em 29/10/2026: o
+  // destaque e so para eventos de verdade, essas paginas tem o proprio
+  // destaque na pagina de Palestrantes.
+  const ehPaginaDePalestrante = (nome: string) => /\sPalestrante$/.test(nome.trim())
+
   const destaques: Destaque[] = [
     ...events
-      .filter((e) => soODia(e.end_date || e.start_date) >= HOJE)
+      .filter((e) => soODia(e.end_date || e.start_date) >= HOJE && !ehPaginaDePalestrante(e.name))
       .map((e) => ({
         id: e.id,
         name: e.name,
