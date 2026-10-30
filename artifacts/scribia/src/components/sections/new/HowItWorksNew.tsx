@@ -1,8 +1,7 @@
 import { Link } from "wouter";
 import { GRADIENTE_MARCA } from "@/utils/paleta";
-import { Upload, Brain, BookOpen, Share2, Settings } from "lucide-react";
+import { Upload, Brain, BookOpen, Share2, Settings, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const HowItWorksNew = () => {
   // Leva a pagina de venda, e nao mais ao formulario do fim da home.
@@ -74,13 +73,14 @@ const HowItWorksNew = () => {
         </div>
 
         <div className="text-center mt-12 px-4">
-          <Button
-            asChild
-            size="lg"
-            className="w-full sm:w-auto whitespace-normal bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg shadow-xl hover-scale"
+          <Link
+            href="/quero-no-meu-evento"
+            className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 whitespace-normal rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_55px_hsla(260,85%,65%,0.6)]"
+            style={{ background: GRADIENTE_MARCA }}
           >
-            <Link href="/quero-no-meu-evento">QUERO O SCRIBIA NO MEU EVENTO!</Link>
-          </Button>
+            QUERO O SCRIBIA NO MEU EVENTO!
+            <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>
