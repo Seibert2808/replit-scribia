@@ -124,23 +124,20 @@ const exemplos = [
 ]
 
 /**
- * Pagamento da parte FIXA, R$ 100 por palestra.
+ * Pagamento da parte FIXA, direto por link do Stripe.
  *
- * 27/10/2026: por enquanto o botao so abre o WhatsApp dela avisando que
- * quer contratar, e ela manda o link de pagamento ou o Pix na mao,
- * pessoa a pessoa. Decisao dela: ainda nao existe um link publico
- * pronto para colar aqui.
- *
- * Quando houver link direto, CONFERIR DUAS COISAS antes de trocar esse
- * fluxo, porque as duas ja derrubaram um link em 27/10/2026:
- *    1. A cobranca tem que sair no CNPJ do ScribIA, a S2 Solucoes I.S.
- *       (63.623.914/0001-29), e nao no da clinica.
- *    2. Nao pode ter VENCIMENTO: link com validade numa pagina publica
- *       para de funcionar sozinho e ninguem avisa.
+ * 27/10/2026: ate aqui o botao so abria o WhatsApp dela, porque nao
+ * havia link publico pronto. Trocado em 09/11/2026 pelos dois links
+ * abaixo, SO depois de confirmado com ela (de novo) as duas coisas que
+ * ja derrubaram um link antes:
+ *    1. A cobranca sai no CNPJ do ScribIA, a S2 Solucoes I.S.
+ *       (63.623.914/0001-29), e nao no da clinica. CONFIRMADO.
+ *    2. Os links NAO TEM vencimento configurado no Stripe. CONFIRMADO.
+ * Se um dos dois mudar no futuro, os botoes abaixo quebram em silencio
+ * numa pagina publica — conferir de novo antes de trocar os links.
  */
-const WHATSAPP_CONTRATACAO = "5521997478748"
-const MENSAGEM_CONTRATACAO =
-  "Olá! Quero contratar o ScribIA para minha palestra, parte fixa de R$ 100. Pode me mandar o link de pagamento ou o Pix?"
+const STRIPE_LINK_AVULSA = "https://buy.stripe.com/9B6aEX3J01nc7X302697G02"
+const STRIPE_LINK_PACOTE = "https://buy.stripe.com/4gM9ATdjA3vk9177uy97G01"
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -466,19 +463,42 @@ export default function PalestrantesLandingPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col items-center gap-2">
-              <a
-                href={`https://wa.me/${WHATSAPP_CONTRATACAO}?text=${encodeURIComponent(MENSAGEM_CONTRATACAO)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button size="lg" className="group px-8 py-6 text-base font-semibold">
-                  <span className="flex items-center gap-2">
-                    Contratar agora, R$ 100 por palestra
-                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Button>
-              </a>
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <div className="flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <a
+                  href={STRIPE_LINK_AVULSA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
+                >
+                  <Button
+                    size="lg"
+                    className="group w-full bg-[#1B1930] px-8 py-6 text-base font-semibold text-white sm:w-auto"
+                  >
+                    <span className="flex items-center gap-2">
+                      Contratar Palestra Avulsa
+                      <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </a>
+
+                <a
+                  href={STRIPE_LINK_PACOTE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
+                >
+                  <Button
+                    size="lg"
+                    className="group w-full scale-105 bg-[#1B1930] px-8 py-6 text-base font-semibold text-white shadow-lg ring-2 ring-primary sm:w-auto"
+                  >
+                    <span className="flex items-center gap-2">
+                      Contratar Pacote (10 Palestras)
+                      <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Button>
+                </a>
+              </div>
               <p className="text-xs text-muted-foreground">
                 O pagamento aqui é da parte fixa. Os leads são faturados depois do evento, com a
                 contagem fechada.
@@ -497,6 +517,13 @@ export default function PalestrantesLandingPage() {
                 </li>
               ))}
             </ul>
+
+            <div className="mx-auto mt-5 max-w-2xl rounded-xl border border-primary/30 bg-primary/5 p-4 text-center">
+              <p className="text-sm leading-relaxed text-foreground">
+                Um lead capturado ao vivo em palco tem taxa de conversão ~5 a 7 vezes maior que um
+                lead frio. Com R$ 6,00 por lead, você se paga em 10–15 leads quentes.
+              </p>
+            </div>
 
             <p className="mt-7 text-center text-xs text-muted-foreground">
               Valores vigentes em outubro de 2026.
