@@ -396,24 +396,37 @@ export default function PalestrantesLandingPage() {
         <section id="planos" className="border-b border-border scroll-mt-20">
           <div className="mx-auto max-w-5xl px-4 sm:px-8 py-16">
             <h2 className="text-center text-2xl font-extrabold md:text-3xl">
-              Quanto custa
+              Quanto custa o investimento
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-[15px] leading-relaxed text-muted-foreground">
               Uma parte fixa por palestra e um valor por lead captado.
             </p>
 
             <div className="mt-10 grid gap-5 md:grid-cols-[1fr_1.1fr]">
-              <div
-                className="rounded-2xl p-7 text-white md:self-start"
-                style={{ backgroundImage: GRADIENTE_MARCA }}
-              >
-                <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
-                  Por palestra
-                </p>
-                <p className="mt-2 text-4xl font-extrabold">R$ 100</p>
-                <p className="mt-3 text-sm leading-relaxed text-white/90">
-                  Você ganha perfil de palestrante e página de captura.
-                </p>
+              <div className="flex flex-col gap-4 md:self-start">
+                <div
+                  className="rounded-2xl p-7 text-white"
+                  style={{ backgroundImage: GRADIENTE_MARCA }}
+                >
+                  <p className="text-sm font-semibold uppercase tracking-wide text-white/80">
+                    Por palestra avulsa
+                  </p>
+                  <p className="mt-2 text-4xl font-extrabold">R$ 100</p>
+                  <p className="mt-3 text-sm leading-relaxed text-white/90">
+                    Você ganha perfil de palestrante e página de captura.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-card p-7">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    Pacote de 10 palestras
+                  </p>
+                  <p className="mt-2 text-4xl font-extrabold text-primary">R$ 900</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    Válido por 1 ano. Os leads de cada palestra do pacote contam na mesma
+                    tabela progressiva ao lado.
+                  </p>
+                </div>
               </div>
 
               <div className="rounded-2xl border border-border bg-card p-7">
