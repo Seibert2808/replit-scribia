@@ -170,6 +170,10 @@ function RowCard({ ev }: { ev: PublicEvent }) {
 // (participantes cadastrados entram nele), mas NÃO listado na vitrine pública.
 const DEMO_EVENT_ID = 'ea692433-bfa8-483e-b9da-82dda6fc13d1'
 
+// Evento de teste da Sabrina (ScribIA 4me) — nunca deve aparecer em nenhuma
+// listagem publica, so existe para ela testar o produto.
+const TEST_EVENT_ID = 'f5ee143d-71f9-400b-aef6-58851b3e7f42'
+
 // REMENDO REMOVIDO em 16/09/2026. Aqui existia tambem getLocalCoverImage(),
 // irma da funcao descrita abaixo: devolvia um arquivo VERTICAL fixo para a
 // miniatura da lista, procurando "siaparto", "pericia" ou "imersao" no nome
@@ -272,7 +276,7 @@ export default function PublicEventsPage() {
           location: string | null; cover_image_url: string | null
           site_image_url: string | null
           organizer_id: string; organizer_name: string | null
-        }>(`public_events?status=eq.active&id=neq.${DEMO_EVENT_ID}&select=id,name,start_date,end_date,location,cover_image_url,site_image_url,organizer_id,organizer_name&order=end_date.desc`)
+        }>(`public_events?status=eq.active&id=not.in.(${DEMO_EVENT_ID},${TEST_EVENT_ID})&select=id,name,start_date,end_date,location,cover_image_url,site_image_url,organizer_id,organizer_name&order=end_date.desc`)
 
         if (!mounted) return
         setEvents(
@@ -431,8 +435,12 @@ export default function PublicEventsPage() {
 
         {/* Hero */}
         <section className="mb-10 md:mb-14 animate-fade-up text-center">
+          {/* TODO(confirmar): "ecossistema" solto fora do título oficial e do slogan é violação pela
+              regra 10.2.4, mas este H1 espelha o <title> oficial da home ("ScribIA: o ecossistema que
+              mantém seus eventos vivos", sobre.tsx). Mantido até a Sabrina decidir o alcance exato da
+              regra (plano de mudanças do site, 09/11/2026, seção 10.4). Corrigida aqui só a grafia. */}
           <h1 className="font-heading font-extrabold text-text leading-tight tracking-tight text-3xl sm:text-4xl md:text-5xl max-w-4xl mx-auto">
-            Scribia: o ecossistema inteligente que mantém eventos{' '}
+            ScribIA: o ecossistema inteligente que mantém eventos{' '}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
@@ -477,50 +485,51 @@ export default function PublicEventsPage() {
 
         {/* Mesma hierarquia da seção do Calendário, logo abaixo: as duas são
             seções de primeiro nível da página e estavam em corpos diferentes,
-            o que fazia esta parecer uma legenda perdida em cima dos cartões. */}
-        <div className="mb-4 animate-fade-up">
-          <h2 className="font-heading font-extrabold leading-tight tracking-tight text-2xl sm:text-3xl">
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
-            >
-              Em destaque: eventos com o ScribIA
-            </span>
-          </h2>
-          <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
-            Os próximos eventos que contam com a plataforma, na ordem em que vão acontecer.
-          </p>
-        </div>
+            o que fazia esta parecer uma legenda perdida em cima dos cartões.
+            A seção inteira (título + grid) só existe enquanto ainda carrega
+            ou quando há pelo menos um destaque: sem evento com ScribIA
+            marcado, não faz sentido anunciar "Em destaque" para uma grade
+            vazia. */}
+        {(loading || destaques.length > 0) && (
+          <>
+            <div className="mb-4 animate-fade-up">
+              <h2 className="font-heading font-extrabold leading-tight tracking-tight text-2xl sm:text-3xl">
+                <span
+                  className="bg-clip-text text-transparent"
+                  style={{ backgroundImage: 'linear-gradient(135deg, #725EA8, #698DC5)' }}
+                >
+                  Em destaque: eventos com o ScribIA
+                </span>
+              </h2>
+              <p className="mt-2 text-text2 text-[14px] sm:text-[15px] leading-relaxed max-w-2xl">
+                Os próximos eventos que contam com a plataforma, na ordem em que vão acontecer.
+              </p>
+            </div>
 
-        {/* Featured grid — Netwoo style */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
-            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
-            <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
-          </div>
-        ) : destaques.length === 0 ? (
-          <div className="text-center py-16 bg-bg2 border border-dashed border-border-subtle rounded-2xl mb-10">
-            <Calendar className="w-8 h-8 text-text3 mx-auto mb-3" />
-            <p className="text-[13px] text-text3">
-              Nenhum evento com o ScribIA marcado no calendário por enquanto.
-            </p>
-          </div>
-        ) : destaques.length === 1 ? (
-          // Um destaque sozinho ganha largura de verdade, em vez de virar um
-          // selo perdido na esquerda. O teto existe porque 2:1 na largura
-          // inteira da pagina passaria de 500px de altura no desktop.
-          <div className="mb-10 animate-fade-up max-w-2xl">
-            <FeaturedCard ev={destaques[0]} grande />
-          </div>
-        ) : destaques.length === 2 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 stagger-children">
-            {destaques.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 stagger-children">
-            {destaques.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
-          </div>
+            {/* Featured grid — Netwoo style */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
+                <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
+                <div className="sm:col-span-1 aspect-[2/1] bg-bg3 rounded-2xl animate-pulse" />
+              </div>
+            ) : destaques.length === 1 ? (
+              // Um destaque sozinho ganha largura de verdade, em vez de virar um
+              // selo perdido na esquerda. O teto existe porque 2:1 na largura
+              // inteira da pagina passaria de 500px de altura no desktop.
+              <div className="mb-10 animate-fade-up max-w-2xl">
+                <FeaturedCard ev={destaques[0]} grande />
+              </div>
+            ) : destaques.length === 2 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 stagger-children">
+                {destaques.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 stagger-children">
+                {destaques.map((ev) => <FeaturedCard key={ev.id} ev={ev} />)}
+              </div>
+            )}
+          </>
         )}
 
         <CalendarioAnual
