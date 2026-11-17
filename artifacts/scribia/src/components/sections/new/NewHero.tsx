@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Info, Users, Calendar, Mic, Handshake, ArrowRight, Megaphone, MessageCircle } from "lucide-react";
+import { Info, Calendar, Mic, ArrowRight, MessageCircle } from "lucide-react";
 import heroImage from "@/assets/images/organizadores-hero-bg.jpg";
 import { GRADIENTE_MARCA } from "@/utils/paleta";
 
@@ -48,24 +48,19 @@ const NewHero = () => {
             className="pointer-events-none absolute -left-20 -top-16 h-72 w-72 rounded-full blur-[90px] animate-pulse-dot"
             style={{ background: 'hsla(260, 85%, 65%, 0.45)' }}
           />
-          <p className="relative text-[11px] font-semibold text-purple-light uppercase tracking-widest mb-4">
-            Ecossistema ScribIA
-          </p>
           <div
             className="relative h-[3px] w-14 mb-5 rounded-full shadow-glow"
             style={{ background: GRADIENTE_MARCA }}
           />
           <h1 className="relative text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-white">
-            A{" "}
+            Seu evento gera valor por 2 dias.{" "}
             <span className="bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
-              Netflix
+              Deveria gerar por 365.
             </span>
-            {" "}dos Eventos.
           </h1>
           <p className="relative mt-5 text-base md:text-lg text-white/80 leading-relaxed max-w-xl">
-            Ecossistema de inteligência artificial que aumenta o acesso e o engajamento dos
-            participantes de eventos presenciais e remotos, prolonga o impacto e desbloqueia novas
-            fontes de receita para organizadores, palestrantes e patrocinadores.
+            O áudio que o seu congresso já produz vira acervo, patrocínio com audiência medida e
+            receita depois do último aplauso. Sua equipe só aperta PLAY.
           </p>
 
           <div className="relative flex flex-wrap gap-3 mt-8">
@@ -75,7 +70,7 @@ const NewHero = () => {
               className="shadow-glow transition-all duration-300 hover:shadow-[0_0_55px_hsla(260,85%,65%,0.6)] hover:-translate-y-0.5"
             >
               <a href="#contato" className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5" /> Fale conosco
+                <MessageCircle className="h-5 w-5" /> Conversar 20 minutos sobre o meu evento
               </a>
             </Button>
             <Button
@@ -89,6 +84,9 @@ const NewHero = () => {
               </a>
             </Button>
           </div>
+          <a href="/palestrantes" className="relative mt-4 inline-block text-sm text-white/70 hover:text-white underline underline-offset-4 transition-colors">
+            Sou palestrante →
+          </a>
         </div>
       </div>
     </section>
@@ -101,27 +99,11 @@ const NewHero = () => {
 export function PersonaCards() {
   return (
     <div className="flex flex-wrap justify-center gap-4 py-12 md:py-16">
-      <a href="/participantes" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
-        <Users className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-        <h4 className="font-semibold text-sm mb-2 text-center">Sou Participante</h4>
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Clique aqui</span>
-          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </div>
-      </a>
-      <a href="/influenciadores" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
-        <Megaphone className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-        <h4 className="font-semibold text-sm mb-2 text-center">Sou Influenciador</h4>
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Clique aqui</span>
-          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </div>
-      </a>
       <a href="/quero-no-meu-evento" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
         <Calendar className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
         <h4 className="font-semibold text-sm mb-2 text-center">Sou Organizador</h4>
         <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Clique aqui</span>
+          <span>Simular preço</span>
           <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
         </div>
       </a>
@@ -129,15 +111,7 @@ export function PersonaCards() {
         <Mic className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
         <h4 className="font-semibold text-sm mb-2 text-center">Sou Palestrante</h4>
         <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Clique aqui</span>
-          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </div>
-      </a>
-      <a href="/patrocinadores" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
-        <Handshake className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-        <h4 className="font-semibold text-sm mb-2 text-center">Sou Patrocinador</h4>
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Clique aqui</span>
+          <span>Falar com o ScribIA</span>
           <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
         </div>
       </a>

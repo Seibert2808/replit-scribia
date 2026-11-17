@@ -46,9 +46,11 @@ function OrganizerCard({ org, featured = false }: { org: Organizer; featured?: b
               </span>
             )}
           </div>
-          <div className="text-[11.5px] text-text3">
-            {org.event_count} {org.event_count === 1 ? 'evento' : 'eventos'}
-          </div>
+          {org.event_count > 0 && (
+            <div className="text-[11.5px] text-text3">
+              {org.event_count} {org.event_count === 1 ? 'evento' : 'eventos'}
+            </div>
+          )}
         </div>
       </div>
       {org.description && (
@@ -113,7 +115,7 @@ export default function PublicOrganizersPage() {
           Parceiros
         </h1>
         <p className="mt-4 sm:mt-5 text-text2 text-base sm:text-lg leading-relaxed max-w-3xl animate-fade-up">
-          Quem publica eventos e palestras no Scribia.
+          Quem publica eventos e palestras no ScribIA.
         </p>
       </section>
 
