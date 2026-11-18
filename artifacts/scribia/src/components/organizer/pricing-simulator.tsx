@@ -277,7 +277,7 @@ export function PricingSimulator({ onRequestProposal }: PricingSimulatorProps) {
                         <p>Faixa: {result.tier.label} participantes ({formatPriceBRL(result.tier.price as number)}).</p>
                       )}
                       {captureTeam === "event" ? (
-                        <p>Captação de áudio pela sua equipe, sem custo adicional.</p>
+                        <p>Captação de áudio pela sua equipe, sem custo adicional. Treinamento online incluso.</p>
                       ) : (
                         <p>
                           Inclui captação de áudio pela equipe do ScribIA: {formatPriceBRL(result.teamCaptureCost)}
@@ -318,7 +318,7 @@ export function PricingSimulator({ onRequestProposal }: PricingSimulatorProps) {
                       <p>Você define o preço cobrado do participante.</p>
                       <p>Cobrado após o evento, com a contagem final.</p>
                       {captureTeam === "event" ? (
-                        <p>Captação de áudio é da sua equipe.</p>
+                        <p>Captação de áudio é da sua equipe, sem custo adicional. Treinamento online incluso.</p>
                       ) : (
                         <p>
                           Inclui captação de áudio pela equipe do ScribIA: {formatPriceBRL(result.teamCaptureCost)}
