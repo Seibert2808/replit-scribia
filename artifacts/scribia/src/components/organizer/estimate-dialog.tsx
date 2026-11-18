@@ -48,7 +48,7 @@ export function EstimateDialog({ open, onOpenChange }: EstimateDialogProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] sm:w-auto sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Simule o preço do ScribIA no seu evento</DialogTitle>
             <DialogDescription>
