@@ -6,23 +6,18 @@ import {
   Users,
   Calendar,
   Mic,
-  Handshake,
   BookOpen,
   Bot,
   Network,
   Infinity,
   BarChart3,
-  DollarSign,
+  FileText,
   RefreshCw,
-  Plug,
+  Smartphone,
   Globe,
   Coins,
   Star,
   MessageCircle,
-  Eye,
-  Target,
-  TrendingUp,
-  Award,
 } from "lucide-react";
 
 const FeaturesSection = () => {
@@ -32,7 +27,6 @@ const FeaturesSection = () => {
     { id: "participantes", label: "Participantes", icon: Users },
     { id: "organizadores", label: "Organizadores", icon: Calendar },
     { id: "palestrantes", label: "Palestrantes", icon: Mic },
-    { id: "patrocinadores", label: "Patrocinadores", icon: Handshake },
   ];
 
   const features = {
@@ -54,8 +48,8 @@ const FeaturesSection = () => {
       },
       {
         icon: Infinity,
-        title: "Acesso Vitalício",
-        description: "Biblioteca pessoal de conhecimento sempre disponível",
+        title: "Livebooks e Playbooks Sempre Disponíveis",
+        description: "O áudio tem janela definida pelo organizador.",
       },
     ],
     organizadores: [
@@ -65,9 +59,9 @@ const FeaturesSection = () => {
         description: "Métricas detalhadas de engajamento e satisfação em tempo real",
       },
       {
-        icon: DollarSign,
-        title: "ROI Mensurável",
-        description: "Dados concretos sobre o impacto e valor gerado pelo evento",
+        icon: FileText,
+        title: "Relatório do Evento",
+        description: "Dashboard e relatório final, exclusivos do organizador",
       },
       {
         icon: RefreshCw,
@@ -75,16 +69,16 @@ const FeaturesSection = () => {
         description: "Mantenha participantes engajados mesmo após o evento",
       },
       {
-        icon: Plug,
-        title: "Integração Fácil",
-        description: "Conecte com Zoom, Sympla, Eventbrite e outras plataformas",
+        icon: Smartphone,
+        title: "Captação Simples",
+        description: "Pela sua equipe ou pela equipe do ScribIA, sem instalar nada",
       },
     ],
     palestrantes: [
       {
         icon: Globe,
         title: "Alcance Ampliado",
-        description: "Seu conteúdo alcança mais pessoas através dos Livebooks",
+        description: "Seu conteúdo alcança mais pessoas através dos livebooks",
       },
       { icon: Coins, title: "Monetização", description: "Marketplace para vender produtos e serviços relacionados" },
       { icon: Star, title: "Autoridade", description: "Construa sua reputação com conteúdo documentado e acessível" },
@@ -92,28 +86,6 @@ const FeaturesSection = () => {
         icon: MessageCircle,
         title: "Feedback Direto",
         description: "Receba insights sobre o que mais interessou sua audiência",
-      },
-    ],
-    patrocinadores: [
-      {
-        icon: Eye,
-        title: "Visibilidade Estendida",
-        description: "Sua marca presente nos diversos ativos digitais e nas interações pós-evento",
-      },
-      {
-        icon: Target,
-        title: "Leads Qualificados",
-        description: "Acesse participantes realmente interessados no seu segmento",
-      },
-      {
-        icon: TrendingUp,
-        title: "ROI Mensurável",
-        description: "Dados concretos de impressões, engajamento e conversões",
-      },
-      {
-        icon: Award,
-        title: "Branding Duradouro",
-        description: "Associação com conteúdo de valor mantém sua marca em evidência",
       },
     ],
   };
@@ -129,7 +101,7 @@ const FeaturesSection = () => {
             Benefícios para Todos
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Funcionalidades específicas que atendem às necessidades únicas de cada parte do ecossistema
+            Funcionalidades específicas que atendem às necessidades únicas de cada público do evento
           </p>
         </div>
 
