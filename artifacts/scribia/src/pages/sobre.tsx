@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { PublicHeader } from '@/components/layout/public-header'
 import { FUNDO_PORTFOLIO } from '@/utils/paleta'
-import NewHero, { PersonaCards } from '@/components/sections/new/NewHero'
+import NewHero from '@/components/sections/new/NewHero'
 import ProblemSection from '@/components/sections/new/ProblemSection'
 import SolutionSection from '@/components/sections/new/SolutionSection'
 import HowItWorksNew from '@/components/sections/new/HowItWorksNew'
@@ -10,6 +10,7 @@ import LivebookSection from '@/components/sections/new/LivebookSection'
 import VitrineCta from '@/components/sections/new/VitrineCta'
 import BiaSection from '@/components/sections/new/BiaSection'
 import MetricsSection from '@/components/sections/new/MetricsSection'
+import { EventosRealizados } from '@/components/sections/new/EventosRealizados'
 import FAQSectionNew from '@/components/sections/new/FAQSectionNew'
 import DemoSection from '@/components/sections/new/DemoSection'
 import ContactSection from '@/components/sections/new/ContactSection'
@@ -26,7 +27,6 @@ export default function SobrePage() {
         <PublicHeader />
         <main className="px-4 sm:px-8 md:px-14 lg:px-16">
           <NewHero />
-          <PersonaCards />
           <ProblemSection />
           <SolutionSection />
           <HowItWorksNew />
@@ -35,6 +35,7 @@ export default function SobrePage() {
           <VitrineCta />
           <BiaSection />
           <MetricsSection />
+          <EventosRealizados />
           <FAQSectionNew />
           <DemoSection />
           <ContactSection />

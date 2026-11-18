@@ -84,39 +84,22 @@ const NewHero = () => {
               </a>
             </Button>
           </div>
-          <a href="/palestrantes" className="relative mt-4 inline-block text-sm text-white/70 hover:text-white underline underline-offset-4 transition-colors">
-            Sou palestrante →
-          </a>
+          <div className="relative flex flex-wrap gap-5 mt-6">
+            <a href="/quero-no-meu-evento" className="group inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors">
+              <Calendar className="h-4 w-4" />
+              Sou Organizador
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+            <a href="/palestrantes" className="group inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors">
+              <Mic className="h-4 w-4" />
+              Sou Palestrante
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+          </div>
         </div>
       </div>
     </section>
   );
 };
-
-// As cartas de persona saiam da FOTO: uma foto de tela cheia pedindo
-// atencao e cinco cartoes por cima virava poluicao visual. Agora moram
-// logo abaixo, como a continuacao natural do heroi.
-export function PersonaCards() {
-  return (
-    <div className="flex flex-wrap justify-center gap-4 py-12 md:py-16">
-      <a href="/quero-no-meu-evento" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
-        <Calendar className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-        <h4 className="font-semibold text-sm mb-2 text-center">Sou Organizador</h4>
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Simular preço</span>
-          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </div>
-      </a>
-      <a href="/palestrantes" className="group bg-background/80 backdrop-blur-md border-2 border-primary/20 hover:border-primary hover:bg-background hover:shadow-glow p-6 rounded-2xl transition-all hover:-translate-y-2 cursor-pointer min-w-[160px]">
-        <Mic className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-        <h4 className="font-semibold text-sm mb-2 text-center">Sou Palestrante</h4>
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Falar com o ScribIA</span>
-          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </div>
-      </a>
-    </div>
-  );
-}
 
 export default NewHero;
