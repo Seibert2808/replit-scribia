@@ -23,6 +23,10 @@ const DEMO_EVENT_ID = "ea692433-bfa8-483e-b9da-82dda6fc13d1"
 // listagem publica, so existe para ela testar o produto.
 const TEST_EVENT_ID = "f5ee143d-71f9-400b-aef6-58851b3e7f42"
 
+// Atitude Brasil (Igreja Atitude) — foi so um teste para mostrar eventos
+// religiosos, sem autorizacao de divulgacao. Pedido dela em 18/11/2026.
+const ATITUDE_EVENT_ID = "af6118b0-e57c-4b34-846a-b6b9a4ec7df7"
+
 function soODia(iso: string): string {
   return iso.slice(0, 10)
 }
@@ -39,7 +43,7 @@ export function EventosRealizados() {
   useEffect(() => {
     let mounted = true
     publicGet<PublicEvent>(
-      `public_events?status=eq.active&id=not.in.(${DEMO_EVENT_ID},${TEST_EVENT_ID})&select=id,name,start_date,end_date,location,cover_image_url,organizer_name&order=end_date.desc`,
+      `public_events?status=eq.active&id=not.in.(${DEMO_EVENT_ID},${TEST_EVENT_ID},${ATITUDE_EVENT_ID})&select=id,name,start_date,end_date,location,cover_image_url,organizer_name&order=end_date.desc`,
     )
       .then((list) => {
         if (mounted) setEvents(list)
