@@ -308,8 +308,8 @@ export function PricingSimulator({ onRequestProposal }: PricingSimulatorProps) {
 
                     <div className="text-sm text-muted-foreground space-y-1 mt-3">
                       <p>
-                        Esse valor é a garantia mínima; conforme os ingressos com o adicional forem vendidos,
-                        o valor arrecadado é abatido dele.
+                        A garantia mínima do upsell é {formatPriceBRL(result.upsellMinimum)}: conforme os ingressos
+                        com o adicional forem vendidos, o valor arrecadado é abatido dela.
                       </p>
                       <p>R$ {UPSELL.perTicket.toFixed(2).replace(".", ",")} por ingresso com o adicional.</p>
                       {result.upsellBreakeven !== null && (
@@ -322,7 +322,8 @@ export function PricingSimulator({ onRequestProposal }: PricingSimulatorProps) {
                       ) : (
                         <p>
                           Inclui captação de áudio pela equipe do ScribIA: {formatPriceBRL(result.teamCaptureCost)}
-                          {" "}(sem transporte; varia conforme a cidade do evento).
+                          {" "}(sem transporte; varia conforme a cidade do evento). Esse valor é cobrado à parte e
+                          não é abatido pelas vendas do upsell.
                         </p>
                       )}
                     </div>
