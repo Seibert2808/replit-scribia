@@ -1,11 +1,13 @@
-import { Link } from "wouter";
+import { useState } from "react";
 import { GRADIENTE_MARCA } from "@/utils/paleta";
 import { Upload, Brain, BookOpen, Share2, Settings, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { EstimateDialog } from "@/components/organizer/estimate-dialog";
 
 const HowItWorksNew = () => {
-  // Leva a pagina de venda, e nao mais ao formulario do fim da home.
-  // Quem clica aqui ja decidiu que quer saber como contratar.
+  // Pedido dela em 18/11/2026: abre o simulador de preço num popup, em vez
+  // de levar para a página /quero-no-meu-evento.
+  const [estimateOpen, setEstimateOpen] = useState(false);
 
   const steps = [
     {
@@ -13,7 +15,7 @@ const HowItWorksNew = () => {
       icon: Upload,
       title: "Captura",
       description:
-        "Áudios gravados em software próprio, que envia os dados à plataforma de Inteligência Artificial Agêntica, responsável por gerar diversos ativos digitais.",
+        "Áudios gravados em software próprio, que envia os dados à plataforma de inteligência artificial, responsável por gerar diversos ativos digitais.",
     },
     {
       number: 2,
@@ -26,14 +28,14 @@ const HowItWorksNew = () => {
       icon: BookOpen,
       title: "Geração",
       description:
-        "Livebooks personalizados, Plano de Ação, Cards para Redes Sociais, Slides e Áudios na íntegra — em tempo real.",
+        "Livebooks personalizados, playbooks, cards para redes sociais e áudio na íntegra, entregues em minutos.",
     },
     {
       number: 4,
       icon: Share2,
       title: "Distribuição",
       description:
-        "Entrega inteligente com a Bia, nossa Scriba Digital, que tira dúvidas dos participantes, aprofunda o conhecimento com base no que foi discutido no evento e conecta o usuários aos palestrantes, expositores e patrocinadores, de acordo com a demanda e perfil.",
+        "Entrega inteligente com a Bia, nossa Scriba Digital, que tira dúvidas dos participantes, aprofunda o conhecimento com base no que foi discutido no evento e conecta os usuários aos palestrantes, expositores e patrocinadores, de acordo com a demanda e perfil.",
     },
   ];
 
@@ -73,16 +75,19 @@ const HowItWorksNew = () => {
         </div>
 
         <div className="text-center mt-12 px-4">
-          <Link
-            href="/quero-no-meu-evento"
+          <button
+            type="button"
+            onClick={() => setEstimateOpen(true)}
             className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 whitespace-normal rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_55px_hsla(260,85%,65%,0.6)]"
             style={{ background: GRADIENTE_MARCA }}
           >
             QUERO O SCRIBIA NO MEU EVENTO!
             <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
-          </Link>
+          </button>
         </div>
       </div>
+
+      <EstimateDialog open={estimateOpen} onOpenChange={setEstimateOpen} />
     </section>
   );
 };

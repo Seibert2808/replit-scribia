@@ -1,11 +1,13 @@
-import { Link } from "wouter";
+import { useState } from "react";
 import { Check, ArrowRight } from "lucide-react";
 import { GRADIENTE_MARCA } from "@/utils/paleta";
 import livebookImage from "@/assets/images/livebook-tablet-home.png";
+import { EstimateDialog } from "@/components/organizer/estimate-dialog";
 
 const LivebookSection = () => {
-  // Leva a pagina de venda, e nao mais ao formulario do fim da home.
-  // Quem clica aqui ja decidiu que quer saber como contratar.
+  // Pedido dela em 18/11/2026: abre o simulador de preço num popup, em vez
+  // de levar para a página /quero-no-meu-evento.
+  const [estimateOpen, setEstimateOpen] = useState(false);
 
   return (
     <section className="py-16 md:py-24 text-white relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #1B1930 0%, #232041 100%)' }}>
@@ -28,7 +30,7 @@ const LivebookSection = () => {
                 "Resumos estruturados com principais insights",
                 "Personalização baseada no perfil do usuário",
                 "Acesso via web, mobile ou PDF download",
-                "Entrega em até 3 minutos após a palestra"
+                "Entrega em minutos após a palestra"
               ].map((item, idx) => (
                 <li key={idx} className="flex items-center gap-3 text-base">
                   <Check className="h-5 w-5 text-green-300 flex-shrink-0" />
@@ -36,14 +38,15 @@ const LivebookSection = () => {
                 </li>
               ))}
             </ul>
-            <Link
-              href="/quero-no-meu-evento"
+            <button
+              type="button"
+              onClick={() => setEstimateOpen(true)}
               className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 whitespace-normal rounded-2xl px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_55px_hsla(260,85%,65%,0.6)]"
               style={{ background: GRADIENTE_MARCA }}
             >
               QUERO O SCRIBIA NO MEU EVENTO!
               <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
-            </Link>
+            </button>
           </div>
 
           <div className="relative flex justify-center items-center min-w-0">
@@ -60,6 +63,8 @@ const LivebookSection = () => {
           </div>
         </div>
       </div>
+
+      <EstimateDialog open={estimateOpen} onOpenChange={setEstimateOpen} />
     </section>
   );
 };

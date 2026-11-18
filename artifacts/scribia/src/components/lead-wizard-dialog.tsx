@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,6 +17,11 @@ interface FormData {
   email: string
   whatsapp: string
   otherInfo: string
+  // Preenchidos automaticamente pelo simulador de preço (não há pergunta própria no wizard para eles).
+  rooms: string
+  days: string
+  captureTeam: "" | "event" | "scribia"
+  teamCaptureCost: string
 }
 
 const INITIAL_DATA: FormData = {
@@ -29,9 +34,15 @@ const INITIAL_DATA: FormData = {
   email: "",
   whatsapp: "",
   otherInfo: "",
+  rooms: "",
+  days: "",
+  captureTeam: "",
+  teamCaptureCost: "",
 }
 
 interface Step {
+  /** Campos que esta pergunta preenche — se todos já vierem prontos no initialData, a pergunta é pulada. */
+  fields: (keyof FormData)[]
   question: string
   hint?: string
   render: (data: FormData, set: (patch: Partial<FormData>) => void) => ReactNode
@@ -40,6 +51,7 @@ interface Step {
 
 const STEPS: Step[] = [
   {
+    fields: ["eventName"],
     question: "Qual o nome do seu evento?",
     hint: "Pode ser o nome oficial ou um nome de trabalho.",
     validate: (d) => d.eventName.trim().length >= 2,
@@ -48,14 +60,16 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["eventDate"],
     question: "Qual a data provável do evento?",
-    hint: "Não precisa ser definitiva — uma estimativa já ajuda.",
+    hint: "Não precisa ser definitiva, uma estimativa já ajuda.",
     validate: (d) => d.eventDate.trim().length >= 4,
     render: (d, set) => (
       <Input autoFocus type="date" value={d.eventDate} onChange={(e) => set({ eventDate: e.target.value })} />
     ),
   },
   {
+    fields: ["city", "state"],
     question: "Em qual cidade e estado?",
     validate: (d) => d.city.trim().length >= 2 && d.state.trim().length >= 2,
     render: (d, set) => (
@@ -66,6 +80,7 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["participants"],
     question: "Qual a média esperada de participantes?",
     hint: "Estimativa do público total do evento.",
     validate: (d) => Number(d.participants) > 0,
@@ -74,6 +89,7 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["organizerName"],
     question: "Qual o seu nome?",
     validate: (d) => d.organizerName.trim().length >= 2,
     render: (d, set) => (
@@ -81,6 +97,7 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["email"],
     question: "Seu melhor e-mail?",
     validate: (d) => /\S+@\S+\.\S+/.test(d.email),
     render: (d, set) => (
@@ -88,6 +105,7 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["whatsapp"],
     question: "Seu WhatsApp para contato?",
     hint: "Com DDD. Pode incluir +55 se preferir.",
     validate: (d) => d.whatsapp.replace(/\D/g, "").length >= 10,
@@ -96,14 +114,24 @@ const STEPS: Step[] = [
     ),
   },
   {
+    fields: ["otherInfo"],
     question: "Quer compartilhar mais alguma coisa? (opcional)",
     hint: "Patrocinadores, dúvidas, contexto do evento, qualquer informação útil.",
     validate: () => true,
     render: (d, set) => (
-      <Textarea autoFocus rows={5} value={d.otherInfo} onChange={(e) => set({ otherInfo: e.target.value })} placeholder="Outras informações para a equipe Scribia..." />
+      <Textarea autoFocus rows={5} value={d.otherInfo} onChange={(e) => set({ otherInfo: e.target.value })} placeholder="Outras informações para a equipe ScribIA..." />
     ),
   },
 ]
+
+/** true quando todo campo daquela pergunta já veio preenchido no initialData passado pelo simulador. */
+function isPrefilled(step: Step, initialData: Partial<FormData> | undefined): boolean {
+  if (!initialData) return false
+  return step.fields.every((field) => {
+    const value = initialData[field]
+    return value !== undefined && String(value).trim() !== ""
+  })
+}
 
 function formatBRDate(iso: string): string {
   if (!iso) return ""
@@ -116,15 +144,27 @@ function formatBRDate(iso: string): string {
   return `${d}/${m}/${y}`
 }
 
+function captureTeamLine(d: FormData): string {
+  if (d.captureTeam === "event") return "• Captação de áudio: equipe do próprio evento (sem custo adicional)"
+  if (d.captureTeam === "scribia") {
+    const cost = Number(d.teamCaptureCost)
+    return `• Captação de áudio: equipe do ScribIA${cost > 0 ? ` (+ R$ ${cost.toLocaleString("pt-BR", { minimumFractionDigits: 2 })})` : ""}`
+  }
+  return ""
+}
+
 function buildWhatsappMessage(d: FormData): string {
   return [
-    "Olá Scribia! Tenho interesse em levar o ScribIA para meu evento.",
+    "Olá ScribIA! Tenho interesse em levar o ScribIA para meu evento.",
     "",
     "*Sobre o evento:*",
     `• Nome: ${d.eventName}`,
     `• Data: ${formatBRDate(d.eventDate)}`,
     `• Local: ${d.city}/${d.state}`,
     `• Participantes esperados: ${d.participants}`,
+    d.rooms ? `• Salas: ${d.rooms}` : "",
+    d.days ? `• Dias de evento: ${d.days}` : "",
+    captureTeamLine(d),
     "",
     "*Sobre mim:*",
     `• Nome: ${d.organizerName}`,
@@ -137,16 +177,31 @@ function buildWhatsappMessage(d: FormData): string {
 interface LeadWizardDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Pré-preenche o formulário (ex.: com os dados já digitados no simulador de preço). */
+  initialData?: Partial<FormData>
 }
 
-export function LeadWizardDialog({ open, onOpenChange }: LeadWizardDialogProps) {
+export function LeadWizardDialog({ open, onOpenChange, initialData }: LeadWizardDialogProps) {
   const [step, setStep] = useState(0)
-  const [data, setData] = useState<FormData>(INITIAL_DATA)
+  const [data, setData] = useState<FormData>(() => ({ ...INITIAL_DATA, ...initialData }))
+  const [visibleSteps, setVisibleSteps] = useState<Step[]>(STEPS)
   const [sent, setSent] = useState(false)
 
+  // Reabrir com initialData novo (ex.: outra simulação) reseta o formulário para os novos valores e pula
+  // as perguntas cujo dado já veio pronto do simulador de preço.
+  useEffect(() => {
+    if (open) {
+      setData({ ...INITIAL_DATA, ...initialData })
+      setVisibleSteps(STEPS.filter((s) => !isPrefilled(s, initialData)))
+      setStep(0)
+      setSent(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
   const set = (patch: Partial<FormData>) => setData((d) => ({ ...d, ...patch }))
-  const current = STEPS[step]
-  const isLast = step === STEPS.length - 1
+  const current = visibleSteps[step]
+  const isLast = step === visibleSteps.length - 1
   const canAdvance = current.validate(data)
 
   function handleNext() {
@@ -186,7 +241,7 @@ export function LeadWizardDialog({ open, onOpenChange }: LeadWizardDialogProps) 
             <h2 className="font-heading text-xl font-bold text-text mb-2">Mensagem aberta no WhatsApp!</h2>
             <p className="text-[13.5px] text-text2 leading-relaxed">
               Se a janela do WhatsApp não abriu automaticamente, verifique se seu navegador bloqueou pop-ups.
-              Você pode fechar este diálogo — assim que enviarmos uma mensagem, a equipe Scribia entrará em contato.
+              Você pode fechar este diálogo. Assim que enviarmos uma mensagem, a equipe ScribIA entrará em contato.
             </p>
             <Button onClick={() => handleClose(false)} className="mt-6" size="lg">Fechar</Button>
           </div>
@@ -196,13 +251,13 @@ export function LeadWizardDialog({ open, onOpenChange }: LeadWizardDialogProps) 
             <div className="h-1 bg-bg3">
               <div
                 className="h-full bg-purple transition-all duration-300"
-                style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+                style={{ width: `${((step + 1) / visibleSteps.length) * 100}%` }}
               />
             </div>
 
             <div className="p-6 sm:p-8">
               <div className="text-[11px] uppercase tracking-widest text-text3 font-semibold mb-3">
-                Pergunta {step + 1} de {STEPS.length}
+                Pergunta {step + 1} de {visibleSteps.length}
               </div>
               <h2 className="font-heading text-lg sm:text-xl font-bold text-text leading-snug mb-1">
                 {current.question}
