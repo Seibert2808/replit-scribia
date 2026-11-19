@@ -14,7 +14,7 @@ const BiaSection = () => {
                   <Bot className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-primary">BIA - a Scriba Digital</h4>
+                  <h4 className="font-bold text-primary">Bia, a Scriba Digital</h4>
                   <small className="text-muted-foreground">Sua assistente de IA para eventos</small>
                 </div>
               </div>
@@ -58,15 +58,15 @@ const BiaSection = () => {
 
           <div className="order-1 md:order-2">
             <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              <MessageCircle className="h-4 w-4" /> Tutor IA
+              <MessageCircle className="h-4 w-4" /> Scriba Digital
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-6 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA }}>
-              Conheça a BIA: a assistente de IA do ScribIA
+              Conheça a Bia, a Scriba Digital
             </h2>
             <h3 className="text-xl font-bold mb-4 text-primary">Aprendizado Contínuo e Personalizado</h3>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              A BIA é uma assistente inteligente que acompanha você após o evento. Ela conhece todo o conteúdo dos
-              Livebooks e está pronta para:
+              A Bia, nossa Scriba Digital, acompanha você depois do evento. Ela conhece todo o conteúdo dos
+              livebooks e está pronta para:
             </p>
             <ul className="space-y-3">
               {[

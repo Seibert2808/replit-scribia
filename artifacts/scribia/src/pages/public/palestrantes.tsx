@@ -153,7 +153,7 @@ export default function PalestrantesLandingPage() {
   const [wizardOpen, setWizardOpen] = useState(false)
 
   useEffect(() => {
-    document.title = "ScribIA — Para palestrantes"
+    document.title = "ScribIA: Para palestrantes"
   }, [])
 
   const abrirWizard = () => setWizardOpen(true)
@@ -518,10 +518,13 @@ export default function PalestrantesLandingPage() {
               ))}
             </ul>
 
+            {/* TODO(confirmar): "5 a 7 vezes maior" e "se paga em 10 a 15 leads quentes" são frases sem
+                fonte (plano de mudanças do site, 09/11/2026, seção 7/10.3). Remover ou fundamentar
+                pendente de decisão da Sabrina — mantido aqui só com a grafia corrigida. */}
             <div className="mx-auto mt-5 max-w-2xl rounded-xl border border-primary/30 bg-primary/5 p-4 text-center">
               <p className="text-sm leading-relaxed text-foreground">
                 Um lead capturado ao vivo em palco tem taxa de conversão ~5 a 7 vezes maior que um
-                lead frio. Com R$ 6,00 por lead, você se paga em 10–15 leads quentes.
+                lead frio. Com R$ 6,00 por lead, você se paga em 10 a 15 leads quentes.
               </p>
             </div>
 

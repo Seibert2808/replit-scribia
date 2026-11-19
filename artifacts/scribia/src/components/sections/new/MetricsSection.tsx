@@ -86,14 +86,14 @@ const MetricsSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            <Trophy className="h-4 w-4" /> Resultados Comprovados
+            <Trophy className="h-4 w-4" /> Direto da Plataforma
           </div>
           <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}>
-            Números que Impressionam
+            O ScribIA em Números
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            O ecossistema do ScribIA só faz crescer. Estes números são contados agora,
-            direto da plataforma.
+            Contados em {new Date().toLocaleDateString("pt-BR")}, direto da plataforma. O ScribIA só faz
+            crescer.
           </p>
         </div>
         

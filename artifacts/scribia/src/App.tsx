@@ -249,13 +249,17 @@ function Router() {
       <Route path="/sobre" component={SobrePage} />
       <Route path="/quero-no-meu-evento" component={QueroNoMeuEventoPage} />
       <Route path="/palestrantes" component={PalestrantesLandingPage} />
-      <Route path="/influenciadores" component={PalestrantesLandingPage} />
+      {/* /influenciadores era uma copia integral de /palestrantes (mesmo componente). Redirect 301
+          (ver vercel.json) cobre o acesso direto; esta rota cobre navegacao interna sem reload. */}
+      <Route path="/influenciadores"><Redirect to="/palestrantes" /></Route>
       <Route path="/participantes" component={ParticipantesLandingPage} />
       <Route path="/patrocinadores" component={PatrocinadoresLandingPage} />
       <Route path="/parceiros" component={PublicOrganizersPage} />
-      {/* A aba nasceu como /organizadores e o endereco antigo ja circula em
-          material impresso e em conversa, entao continua respondendo. */}
-      <Route path="/organizadores"><Redirect to="/parceiros" /></Route>
+      {/* A aba nasceu como /organizadores e o endereco antigo ja circula em material impresso e em
+          conversa, entao continua respondendo, agora direto para a pagina do organizador (nao mais
+          para /parceiros). Redirect 301 (ver vercel.json) cobre o acesso direto; esta rota cobre
+          navegacao interna sem reload. */}
+      <Route path="/organizadores"><Redirect to="/quero-no-meu-evento" /></Route>
       <Route path="/o/:orgSlug" component={PublicOrganizerPage} />
 
       {/* Portal */}

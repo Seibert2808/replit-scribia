@@ -15,7 +15,10 @@ export default function ParticipantesLandingPage() {
   const [wizardOpen, setWizardOpen] = useState(false)
 
   useEffect(() => {
-    document.title = "Scribia — Sistema de processamento inteligente de áudio e texto"
+    // TODO(confirmar): título e headline ainda posicionam o produto como "transcritor" (plano de
+    // mudanças do site, 09/11/2026, seção 8) — rewrite de conteúdo pendente de decisão da Sabrina.
+    // Corrigida aqui só a grafia (ScribIA) e o travessão.
+    document.title = "ScribIA: Sistema de processamento inteligente de áudio e texto"
   }, [])
 
   return (
@@ -36,7 +39,7 @@ export default function ParticipantesLandingPage() {
                 Quer experimentar o ScribIA no seu próximo evento?
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Conte para a gente sobre o evento e seu interesse. Em minutos uma conversa pelo WhatsApp para entender como o Scribia pode ampliar a experiência do seu público.
+                Conte para a gente sobre o evento e seu interesse. Em minutos uma conversa pelo WhatsApp para entender como o ScribIA pode ampliar a experiência do seu público.
               </p>
               <Button size="lg" onClick={() => setWizardOpen(true)} className="group px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
                 <span className="flex items-center gap-2">

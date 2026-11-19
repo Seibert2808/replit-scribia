@@ -56,7 +56,7 @@ function formatDateRange(startISO: string, endISO: string): string {
   const end = new Date(endISO)
   const sameDay = start.toDateString() === end.toDateString()
   const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-  return sameDay ? fmt(start) : `${fmt(start)} – ${fmt(end)}`
+  return sameDay ? fmt(start) : `${fmt(start)} a ${fmt(end)}`
 }
 
 export default function PublicOrganizerPage({ params }: { params: { orgSlug: string } }) {

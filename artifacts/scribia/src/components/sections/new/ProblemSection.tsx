@@ -13,7 +13,7 @@ const ProblemSection = () => {
             <AlertTriangle className="h-4 w-4" /> O Desafio
           </div>
           <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENTE_MARCA_CLARO }}>
-            95% do Conteúdo de Eventos se Perde
+            Mais de 90% do Conteúdo de Eventos se Perde
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Eventos geram conhecimento valioso, mas sem as ferramentas certas, 

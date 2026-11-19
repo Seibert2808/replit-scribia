@@ -3,6 +3,10 @@
   "outputDirectory": "artifacts/scribia/dist/public",
   "installCommand": "pnpm install --frozen-lockfile=false",
   "framework": null,
+  "redirects": [
+    { "source": "/influenciadores", "destination": "/palestrantes", "statusCode": 301 },
+    { "source": "/organizadores", "destination": "/quero-no-meu-evento", "statusCode": 301 }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]

@@ -5,7 +5,7 @@ import Footer from "@/components/sections/Footer"
 
 export default function PatrocinadoresLandingPage() {
   useEffect(() => {
-    document.title = "ScribIA — Patrocinadores"
+    document.title = "ScribIA: Patrocinadores"
   }, [])
 
   return (
@@ -26,7 +26,7 @@ export default function PatrocinadoresLandingPage() {
             <li>Como não depender apenas de banners, totens e estandes?</li>
             <li>Como transformar branding em impacto real e mensurável?</li>
             <li>Como saber quais temas e quais palestrantes geram melhor retorno?</li>
-            <li>Como fazer parte da jornada mental do participante — não só da paisagem visual do evento?</li>
+            <li>Como fazer parte da jornada mental do participante, não só da paisagem visual do evento?</li>
           </ul>
           <p className="text-muted-foreground mb-6">
             É para isso que o ScribIA existe: para conectar sua marca ao conteúdo, aos assuntos relevantes e aos especialistas certos, criando visibilidade inteligente e rastreável.
@@ -36,7 +36,7 @@ export default function PatrocinadoresLandingPage() {
           <ul className="list-disc pl-6 space-y-3 mb-8">
             <li>
               <span className="font-semibold">Patrocínio que aparece onde realmente importa: no conteúdo.</span>
-              <p className="text-muted-foreground">Sua marca é exibida dentro dos Livebooks — no exato espaço onde os participantes estão buscando informação.</p>
+              <p className="text-muted-foreground">Sua marca é exibida dentro dos Livebooks, no exato espaço onde os participantes estão buscando informação.</p>
             </li>
             <li>
               <span className="font-semibold">Exposição contextualizada pelo tema da palestra.</span>
@@ -68,7 +68,7 @@ export default function PatrocinadoresLandingPage() {
           <ol className="list-decimal pl-6 space-y-4 mb-8">
             <li>
               <p className="font-semibold">Você escolhe o formato de patrocínio</p>
-              <p className="text-muted-foreground">Evento, Palestra, Tema, Palestrante/Influenciador — ou combinações estratégicas.</p>
+              <p className="text-muted-foreground">Evento, Palestra, Tema, Palestrante/Influenciador, ou combinações estratégicas.</p>
             </li>
             <li>
               <p className="font-semibold">Sua marca é integrada aos Livebooks no contexto certo</p>
@@ -76,7 +76,7 @@ export default function PatrocinadoresLandingPage() {
             </li>
             <li>
               <p className="font-semibold">O participante vê seu produto no exato momento de interesse</p>
-              <p className="text-muted-foreground">Usuários que buscam temas do seu nicho recebem sugestões alinhadas — marketing de contexto real.</p>
+              <p className="text-muted-foreground">Usuários que buscam temas do seu nicho recebem sugestões alinhadas, marketing de contexto real.</p>
             </li>
             <li>
               <p className="font-semibold">Métricas em tempo real</p>
@@ -93,7 +93,7 @@ export default function PatrocinadoresLandingPage() {
             <li>e com total segurança e curadoria.</li>
           </ul>
 
-          <p className="mb-2 font-semibold">🟩 Patrocine com inteligência, não com esperança.</p>
+          <p className="mb-2 font-semibold">Patrocine com inteligência, não com esperança.</p>
           <p className="mb-6"><strong>Seja visto onde o interesse acontece.</strong><br />
           <strong>Seja lembrado pelo contexto certo.</strong><br />
           <strong>Seja encontrado por quem realmente importa.</strong></p>
