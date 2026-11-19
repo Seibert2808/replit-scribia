@@ -1,6 +1,6 @@
 import { GRADIENTE_MARCA } from "@/utils/paleta";
 import { Lightbulb } from "lucide-react";
-import ecosystemDiagram from "@/assets/images/ecosystem-diagram-home.png";
+import ecosystemVideo from "@/assets/videos/ecossistema-scribia.mp4";
 
 const SolutionSection = () => {
   return (
@@ -24,10 +24,17 @@ const SolutionSection = () => {
               arredondados, em vez de deixar o retangulo branco flutuando
               sozinho sobre o fundo escuro. */}
           <div className="w-full max-w-5xl rounded-2xl bg-white p-4 sm:p-6 shadow-glow">
-            <img
-              src={ecosystemDiagram}
-              alt="Diagrama do ecossistema ScribIA conectando participantes, organizadores, palestrantes e patrocinadores"
+            {/* Vídeo sem áudio (12s), substitui o diagrama estático a
+                pedido da Sabrina em 19/11/2026. autoPlay+loop+muted porque
+                não tem trilha, faz as vezes de uma imagem animada. */}
+            <video
+              src={ecosystemVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
               className="w-full h-auto rounded-lg"
+              aria-label="Animação do ScribIA conectando participantes, organizadores, palestrantes e patrocinadores"
             />
           </div>
         </div>
