@@ -20,3 +20,18 @@ export async function publicGetOne<T>(path: string): Promise<T | null> {
   const rows = await publicGet<T>(path)
   return rows[0] ?? null
 }
+
+// Chama uma RPC pela REST, sem esperar nem exigir resposta. Usado para
+// contadores (ex.: visita à página do evento), onde falhar em silêncio é
+// melhor do que travar a página por causa de uma métrica.
+export function publicRpcFireAndForget(fn: string, args: Record<string, unknown>): void {
+  fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(args),
+  }).catch(() => { /* contador, não trava a pagina */ })
+}

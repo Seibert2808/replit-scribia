@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useRoute } from 'wouter'
 import { supabase } from '@/lib/supabase'
-import { publicGet, publicGetOne } from '@/lib/public-fetch'
+import { publicGet, publicGetOne, publicRpcFireAndForget } from '@/lib/public-fetch'
 import { PublicHeader } from '@/components/layout/public-header'
 import Footer from '@/components/sections/Footer'
 import { Calendar, ChevronLeft, MapPin, Mic, Users, Lock, ArrowUpRight } from 'lucide-react'
@@ -25,6 +25,13 @@ interface EventDetail {
 interface OrganizerLite {
   id: string
   full_name: string
+}
+
+interface SponsorLite {
+  id: string
+  name: string
+  logo_url: string | null
+  link_url: string
 }
 
 interface LectureItem {
@@ -52,7 +59,7 @@ function formatDateRange(startISO: string, endISO: string): string {
   const end = new Date(endISO)
   const sameDay = start.toDateString() === end.toDateString()
   const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
-  return sameDay ? fmt(start) : `${fmt(start)} – ${fmt(end)}`
+  return sameDay ? fmt(start) : `${fmt(start)} a ${fmt(end)}`
 }
 
 function formatDuration(seconds: number | null): string {
@@ -94,6 +101,7 @@ export default function PublicEventPage() {
   const [organizer, setOrganizer] = useState<OrganizerLite | null>(null)
   const [event, setEvent] = useState<EventDetail | null>(null)
   const [lectures, setLectures] = useState<LectureItem[]>([])
+  const [sponsors, setSponsors] = useState<SponsorLite[]>([])
   const [hasAccess, setHasAccess] = useState(false)
   const [authed, setAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -117,6 +125,21 @@ export default function PublicEventPage() {
         if (!mounted) return
         if (!ev) { setNotFound(true); setLoading(false); return }
         setEvent(ev)
+
+        // Contador de visitas para o relatório de patrocinador: um
+        // registro por carregamento, sem dado pessoal nenhum. Não espera
+        // resposta, não trava a página se falhar.
+        publicRpcFireAndForget('registrar_visita_pagina_evento', { p_event_id: ev.id })
+
+        // Patrocinadores do evento: TODOS aparecem no rodapé desta página.
+        try {
+          const spRows = await publicGet<SponsorLite>(
+            `public_event_sponsors?event_id=eq.${ev.id}&select=id,name,logo_url,link_url&order=sort_order.asc`
+          )
+          if (mounted) setSponsors(spRows)
+        } catch (_) {
+          /* sem patrocinador, rodapé segue sem a seção */
+        }
 
         // O nome do organizador ja vem embutido em public_events, entao
         // nao ha mais nenhuma consulta a user_profiles nesta pagina.
@@ -492,6 +515,33 @@ export default function PublicEventPage() {
           </div>
         </section>
       ) : null}
+
+      {/* Patrocinadores: todos os do evento, lado a lado. */}
+      {sponsors.length > 0 && (
+        <section className="border-t border-border-subtle">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-10 py-8 text-center">
+            <p className="text-[11px] text-text3 uppercase tracking-widest mb-4">Patrocinadores deste evento</p>
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              {sponsors.map((s) => (
+                <a
+                  key={s.id}
+                  href={s.link_url}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  title={s.name}
+                  className="opacity-80 hover:opacity-100 transition-opacity"
+                >
+                  {s.logo_url ? (
+                    <img src={s.logo_url} alt={s.name} className="h-10 max-w-[140px] object-contain" />
+                  ) : (
+                    <span className="text-[13px] text-text2">{s.name}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>
