@@ -20,23 +20,19 @@ const SolutionSection = () => {
         </div>
         
         <div className="flex justify-center">
-          {/* A arte em si tem fundo branco: moldura clara com cantos
-              arredondados, em vez de deixar o retangulo branco flutuando
-              sozinho sobre o fundo escuro. */}
-          <div className="w-full max-w-5xl rounded-2xl bg-white p-4 sm:p-6 shadow-glow">
-            {/* Vídeo sem áudio (12s), substitui o diagrama estático a
-                pedido da Sabrina em 19/11/2026. autoPlay+loop+muted porque
-                não tem trilha, faz as vezes de uma imagem animada. */}
-            <video
-              src={ecosystemVideo}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-auto rounded-lg"
-              aria-label="Animação do ScribIA conectando participantes, organizadores, palestrantes e patrocinadores"
-            />
-          </div>
+          {/* Sem moldura branca: o vídeo já nasce no azul/roxo escuro da
+              marca, então ele mesmo se integra ao fundo da seção, sem
+              precisar do cartão claro que a arte estática pedia. Pedido da
+              Sabrina em 19/11/2026: maior, com menos margem ao redor. */}
+          <video
+            src={ecosystemVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full max-w-6xl h-auto rounded-2xl shadow-glow"
+            aria-label="Animação do ScribIA conectando participantes, organizadores, palestrantes e patrocinadores"
+          />
         </div>
       </div>
     </section>
